@@ -1,0 +1,10 @@
+{
+    "name": "Clinic",
+    "alias": "clinic",
+    "description": "Professional Clinic Management System module – patients, doctors, appointments, medical records, prescriptions, lab orders, queues, insurance, and billing.",
+    "priority": 0,
+    "providers": [
+        "Modules\\Clinic\\Providers\\ClinicServiceProvider"
+    ],
+    "files": []
+}

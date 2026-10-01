@@ -1,0 +1,14 @@
+{
+    "name": "Shopify",
+    "alias": "shopify",
+    "description": "Shopify API integration module for syncing products, orders, customers, and enabling Shopify-related operations.",
+    "keywords": ["shopify", "ecommerce", "sync", "api", "integration"],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\Shopify\\Providers\\ShopifyServiceProvider"
+    ],
+    "aliases": [],
+    "files": [],
+    "requires": []
+}

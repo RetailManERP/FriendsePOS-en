@@ -1,0 +1,13 @@
+{
+    "name": "shopify",
+    "version": "1.0.0",
+    "description": "Shopify API integration module",
+    "license": "MIT",
+    "author": "BitorePOS Development Team",
+    "keywords": ["shopify", "ecommerce", "integration", "module"],
+    "scripts": {
+        "build": "mix",
+        "watch": "mix watch"
+    },
+    "dependencies": {}
+}

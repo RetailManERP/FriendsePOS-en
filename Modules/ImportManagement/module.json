@@ -1,0 +1,14 @@
+{
+    "name": "ImportManagement",
+    "alias": "importmanagement",
+    "description": "Comprehensive Import Management module with multi-currency support, logistics tracking, overhead charges, landed cost calculation, and full inventory & accounting integration.",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\ImportManagement\\Providers\\ImportManagementServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

@@ -1,0 +1,23 @@
+{
+    "name": "twf/tailorpro",
+    "description": "Tailoring & Custom Stitching Module",
+    "authors": [
+        {
+            "name": "BitorePOS",
+            "email": "info@bitorepos.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\TailorPro\\Providers\\TailorProServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\TailorPro\\": ""
+        }
+    }
+}

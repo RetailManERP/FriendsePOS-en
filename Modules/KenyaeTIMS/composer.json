@@ -1,0 +1,23 @@
+{
+    "name": "twf/kenyaetims",
+    "description": "Kenya Revenue Authority eTIMS OSCU/VSCU Integration Module",
+    "authors": [
+        {
+            "name": "BitorePOS",
+            "email": "BitorePOS@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\KenyaeTIMS\\Providers\\KenyaeTIMSServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\KenyaeTIMS\\": ""
+        }
+    }
+}

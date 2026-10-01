@@ -1,0 +1,571 @@
+{
+  "features/pos-software": {
+    "group": "features",
+    "slug": "pos-software",
+    "title": "POS Software for Retail Businesses",
+    "h1": "POS Software for Connected Sales and Stock",
+    "description": "Process counter sales, record payments and print receipts with POS software connected to products, customers and inventory.",
+    "intro": "{brand} connects the sales counter with customer records and stock. Use the POS screen for face-to-face checkout and the direct sale form for transactions that need more detail. Sales teams can work with products and payment records in the same business system.",
+    "sections": [
+      [
+        "Checkout built around your products",
+        "Find products by name or scan their barcodes, adjust quantities and apply item discounts. Keeping product selection and payment entry together helps staff complete the transaction with the correct items and amounts."
+      ],
+      [
+        "Customer payments and receipts",
+        "Select the customer, record the payment method and amount, and print the sale receipt. The sales workflow also covers returns and refunds, so the original sale and follow-up activity can be reviewed."
+      ],
+      [
+        "Registers and connected inventory",
+        "Cash register opening and closing support daily counter operations. Stock reports show purchased, sold, transferred and adjusted quantities by location, giving the back office context for replenishment."
+      ]
+    ],
+    "steps": [
+      "Select the business location and customer, then add products to the sale.",
+      "Review quantities, discounts and payment details before completing checkout.",
+      "Print the receipt and review sales and register records at the end of the shift."
+    ],
+    "example": "A retail counter can record a walk-in purchase while an office team uses direct sales for a more detailed customer invoice. Both workflows use the product catalog and connect sales activity with inventory.",
+    "docs": [
+      "sales-pos-guide",
+      "cash-register-guide",
+      "desktop-app-guide"
+    ],
+    "related": [
+      "features/inventory-management",
+      "industries/retail-wholesale",
+      "industries/electronics-mobile"
+    ]
+  },
+  "features/inventory-management": {
+    "group": "features",
+    "slug": "inventory-management",
+    "title": "Inventory Management Software",
+    "h1": "Inventory Management Software for Complete Stock Control",
+    "description": "Track purchases, sales, transfers, serial numbers and stock alerts. Manage lot numbers and expiry dates with connected inventory records.",
+    "intro": "{brand} keeps stock movements connected to purchases and sales. Teams can review available quantities by location, record transfers and investigate adjustments instead of relying on a separate stock spreadsheet.",
+    "sections": [
+      [
+        "Understand stock movement",
+        "Stock reports separate purchased, sold, transferred and adjusted quantities. Location and product filters help a team investigate a shortage before deciding whether to buy more stock or move existing stock."
+      ],
+      [
+        "Track product and batch details",
+        "Enable lot numbers and expiry tracking for products that need them. Purchase records also support serial number and IMEI fields where configured, helping businesses retain item identifiers alongside received stock."
+      ],
+      [
+        "Replenish with stock alerts",
+        "Set an alert quantity on a product and review low-stock items in the dashboard or reorder report. Use those alerts with purchasing records to decide what to order; an alert is a signal for review, not a promise of automatic procurement."
+      ]
+    ],
+    "steps": [
+      "Configure products, locations and the tracking options required by your stock.",
+      "Receive purchases and record sales, transfers and adjustments as they happen.",
+      "Review stock balances, low-stock alerts and expiry information before replenishment."
+    ],
+    "example": "A branch with low stock can check whether another location has the item before placing a supplier order. A batch-based retailer can also review lot and expiry information when deciding which stock needs attention.",
+    "docs": [
+      "stock-management-guide",
+      "products-guide",
+      "purchases-guide",
+      "locations-guide"
+    ],
+    "related": [
+      "features/pos-software",
+      "features/warehouse-management",
+      "features/manufacturing",
+      "industries/pharmacy",
+      "industries/electronics-mobile"
+    ]
+  },
+  "features/manufacturing": {
+    "group": "features",
+    "slug": "manufacturing",
+    "title": "Manufacturing ERP Software",
+    "h1": "Manufacturing ERP Software for Production and Inventory",
+    "description": "Define recipes and BOMs, consume materials, record finished goods and review production costs with the Manufacturing module.",
+    "intro": "The {brand} Manufacturing module connects recipes, production orders and inventory. It suits businesses that turn stocked ingredients or components into finished products and need to understand the materials and costs involved.",
+    "sections": [
+      [
+        "Recipes and material requirements",
+        "Define a bill of materials as a recipe with ingredient quantities and waste percentages. Recipe records give production staff a repeatable starting point for preparing a finished product."
+      ],
+      [
+        "Production connected to stock",
+        "Production orders consume ingredients and produce finished goods. Optional status and quality-control settings help teams follow production progress and inspect output within the configured workflow."
+      ],
+      [
+        "Costs and production review",
+        "Review ingredient costs and, when enabled, labour and overhead costs. Manufacturing and recipe reports help explain production volumes, wastage and ingredient consumption rather than leaving those figures in disconnected records."
+      ]
+    ],
+    "steps": [
+      "Create the finished product and its ingredient products, then define the recipe.",
+      "Create a production order and record the required quantities and enabled cost details.",
+      "Complete the configured production workflow and review finished stock and manufacturing reports."
+    ],
+    "example": "A business preparing packaged products can purchase ingredients, record a production batch and then sell the resulting finished goods. Purchasing and inventory pages explain the stock workflows that surround production.",
+    "docs": [
+      "module-manufacturing",
+      "purchases-guide",
+      "stock-management-guide"
+    ],
+    "related": [
+      "features/inventory-management",
+      "features/warehouse-management",
+      "industries/manufacturing"
+    ]
+  },
+  "features/repair-management": {
+    "group": "features",
+    "slug": "repair-management",
+    "title": "Repair Shop Management Software",
+    "h1": "Repair Management Software from Intake to Invoice",
+    "description": "Manage device intake, job sheets, technicians, repair statuses and parts billing with the RetailMan ERP Repair module.",
+    "intro": "The {brand} Repair module organizes device intake, workshop jobs and repair invoices. It connects the customer and device record with the work assigned to technicians, helping the front desk and workshop follow the same job.",
+    "sections": [
+      [
+        "Keep intake details with the job",
+        "Create a job sheet with the customer, device model, serial or IMEI number and reported problem. Checklists and document attachments can retain the details needed when a technician examines the device."
+      ],
+      [
+        "Coordinate technicians and statuses",
+        "Assign service staff and use configurable repair statuses and priorities to organize work. The module includes customer repair-status lookup and configurable SMS/email notifications; messaging requires the corresponding setup."
+      ],
+      [
+        "Connect parts and billing",
+        "Repair invoices link back to job sheets and support parts and labour billing. Collection information and printable job sheets help staff connect the completed service with the customer handover."
+      ]
+    ],
+    "steps": [
+      "Record the customer, device, reported fault and intake checklist on a job sheet.",
+      "Assign a technician and update the status as diagnosis and repair progress.",
+      "Prepare the repair invoice, record the relevant parts and labour, and capture collection details."
+    ],
+    "example": "A mobile repair desk can retain a device identifier and intake condition while a technician updates the repair job. The counter team can use the same record when preparing the invoice and handing the item back.",
+    "docs": [
+      "module-repair-guide",
+      "sales-pos-guide"
+    ],
+    "related": [
+      "features/pos-software",
+      "features/inventory-management",
+      "industries/repair-service",
+      "industries/electronics-mobile"
+    ]
+  },
+  "features/warehouse-management": {
+    "group": "features",
+    "slug": "warehouse-management",
+    "title": "Warehouse Management Software",
+    "h1": "Warehouse Management Software for Stock and Transfers",
+    "description": "Organize warehouses, zones and bins, manage stock transfers and review movement and expiry reports with RetailMan ERP.",
+    "intro": "The {brand} Warehouse module provides warehouse records, stock views and transfer workflows. Businesses can organize storage locations and review how goods move between warehouses without treating every storage site as an isolated stock list.",
+    "sections": [
+      [
+        "Organize storage locations",
+        "Define warehouses with zones and bins to describe where stock is held. This structure gives warehouse staff a more specific location reference than the business branch alone."
+      ],
+      [
+        "Follow transfers through shipment and receipt",
+        "Create warehouse transfers and use the shipment and receiving actions to follow movement between sites. Stock adjustments provide a separate way to record corrections when physical quantities need reconciliation."
+      ],
+      [
+        "Review movement and stock reports",
+        "Use stock summary, transfer, movement and expiry reports to inspect warehouse activity. These reports support review of stock position and transfer history across the warehouse workflow."
+      ]
+    ],
+    "steps": [
+      "Set up warehouses and the zones and bins needed for storage.",
+      "Review warehouse stock and create a transfer when goods need to move.",
+      "Record shipment and receipt, then inspect movements and stock summary reports."
+    ],
+    "example": "A business supplying several sales locations can organize reserve stock in warehouse bins and follow transfers to the next site. Inventory and purchasing workflows provide the surrounding product and replenishment context.",
+    "docs": [
+      "module-warehouse",
+      "stock-management-guide",
+      "locations-guide"
+    ],
+    "related": [
+      "features/inventory-management",
+      "industries/warehouse-distribution",
+      "industries/manufacturing"
+    ]
+  },
+  "features/ecommerce-integrations": {
+    "group": "features",
+    "slug": "ecommerce-integrations",
+    "title": "WooCommerce and Shopify POS Integrations",
+    "h1": "Connect eCommerce Product and Order Workflows",
+    "description": "Explore RetailMan ERP connectors for WooCommerce and Shopify, including product and order synchronization tools and setup guides.",
+    "intro": "{brand} includes separate WooCommerce and Shopify modules for connecting online store workflows with business records. Each connector has its own setup and synchronization tools, so the right starting point is the platform your store actually uses.",
+    "sections": [
+      [
+        "WooCommerce product and order tools",
+        "The WooCommerce module provides product, category and order synchronization actions, along with synchronization logs. Configure the store connection and review the relevant options before transferring catalog or order data."
+      ],
+      [
+        "Shopify product and order tools",
+        "The Shopify module includes services for retrieving products and orders from a connected Shopify store, along with product push tools. Store connection settings and synchronization status help staff review the transfer process."
+      ],
+      [
+        "Plan the connection around your workflow",
+        "Decide which product records and order workflows should connect before enabling synchronization. Review results and exceptions through the connector tools. Confirm the required stock-update direction and timing during setup for your specific store."
+      ]
+    ],
+    "steps": [
+      "Choose the connector for your store and configure its credentials and connection settings.",
+      "Review product mappings and the available product and order synchronization actions.",
+      "Run the intended synchronization and inspect logs or status before relying on the connected workflow."
+    ],
+    "example": "A retailer with a shop counter and an online store can evaluate the connector alongside POS and inventory. A catalog import and an online order workflow have different requirements, so check each with representative store records.",
+    "docs": [
+      "module-woocommerce",
+      "module-shopify"
+    ],
+    "related": [
+      "features/pos-software",
+      "features/inventory-management",
+      "industries/ecommerce-retail",
+      "industries/retail-wholesale"
+    ]
+  },
+  "industries/retail-wholesale": {
+    "group": "industries",
+    "slug": "retail-wholesale",
+    "title": "Retail and Wholesale POS & ERP Software",
+    "h1": "POS and ERP Software for Retail and Wholesale Operations",
+    "description": "Connect counter sales, wholesale invoices, purchasing and stock records. Explore POS and ERP workflows for retail and wholesale teams.",
+    "intro": "Retail and wholesale teams need to serve customers while keeping purchasing and stock records usable for the next order. {brand} combines counter POS and direct sales with inventory and supplier purchasing, supporting businesses that sell both across a counter and through detailed invoices.",
+    "sections": [
+      [
+        "Serve walk-in and account customers",
+        "Use POS for counter transactions and direct sales for more detailed orders. Customer records and payment entries keep the transaction tied to the buyer, while returns can be handled through the sales workflow."
+      ],
+      [
+        "Connect replenishment with demand",
+        "Review sold quantities and available stock before raising purchases. Supplier records and purchase entries provide the receiving side of the stock cycle, making it easier to investigate what was ordered and what is now available."
+      ],
+      [
+        "Coordinate stock across sites",
+        "Use location stock reports and transfers to review branch requirements. Businesses with separate storage operations can evaluate the Warehouse module, and online sellers can explore the platform-specific connectors."
+      ]
+    ],
+    "steps": [
+      "Review available products and record a counter sale or customer invoice.",
+      "Check stock movement and low-stock alerts after sales activity.",
+      "Receive supplier purchases or transfer existing stock to the location that needs it."
+    ],
+    "example": "For example, a business selling individual items in-store and larger orders to trade customers can use separate sales entry workflows while keeping one connected product and stock process. This is an illustrative workflow, not a customer testimonial.",
+    "docs": [
+      "sales-pos-guide",
+      "purchases-guide",
+      "contacts-guide",
+      "reports-guide"
+    ],
+    "related": [
+      "features/pos-software",
+      "features/inventory-management",
+      "features/ecommerce-integrations"
+    ]
+  },
+  "industries/pharmacy": {
+    "group": "industries",
+    "slug": "pharmacy",
+    "title": "Pharmacy POS and Inventory Software",
+    "h1": "POS and Inventory Software for Pharmacy Retail Stock",
+    "description": "Manage pharmacy retail purchases, lot numbers, expiry dates and stock alerts with connected POS and inventory workflows.",
+    "intro": "Pharmacy retail stock needs attention to supplier receipts, batches and expiry dates as well as checkout. {brand} offers business-management workflows for these retail tasks, connecting product and purchase records with sales and stock reporting.",
+    "sections": [
+      [
+        "Retain batch details on receipts",
+        "Enable lot number tracking and enter lot details when recording purchases. Keeping the batch reference with received stock helps staff review which lots entered the business and their related sales records."
+      ],
+      [
+        "Make expiry information visible",
+        "Enable product expiry tracking and record dates in the purchasing workflow. Use expiry information and stock reports to identify items that need attention during a stock review."
+      ],
+      [
+        "Replenish from actual stock records",
+        "Product alert quantities highlight low-stock items. Review those alerts alongside available stock and supplier purchase history before replenishing, then use POS to record retail sales and payments."
+      ]
+    ],
+    "steps": [
+      "Configure product lot and expiry settings before receiving tracked stock.",
+      "Record supplier purchases with the relevant batch and expiry details.",
+      "Review stock alerts and expiry information, and record retail transactions through POS."
+    ],
+    "example": "A pharmacy retail team can review an approaching-expiry batch while checking whether another product has fallen below its alert quantity. These are inventory and sales tasks; the described scope does not include prescription processing or clinical decision-making.",
+    "docs": [
+      "products-guide",
+      "stock-management-guide",
+      "purchases-guide"
+    ],
+    "related": [
+      "features/inventory-management",
+      "features/pos-software"
+    ]
+  },
+  "industries/electronics-mobile": {
+    "group": "industries",
+    "slug": "electronics-mobile",
+    "title": "Electronics and Mobile Shop POS Software",
+    "h1": "POS and Stock Records for Electronics and Mobile Stores",
+    "description": "Connect electronics sales, serial and IMEI records, purchasing and device repair jobs in RetailMan ERP.",
+    "intro": "Electronics and mobile retailers often need more detail than a product name and quantity. {brand} supports serial and IMEI fields in purchase records where configured, alongside retail sales and a Repair module for businesses that also accept devices for service.",
+    "sections": [
+      [
+        "Retain item identifiers with purchasing",
+        "Use the configured serial number and IMEI fields when receiving tracked products. Keeping these identifiers in the stock process gives staff information to review when handling individual devices."
+      ],
+      [
+        "Connect sales with stock review",
+        "Record the customer purchase through POS and review sales and stock reports by product and location. This connects the shop counter with the purchasing team responsible for replenishing devices and accessories."
+      ],
+      [
+        "Add a structured service desk",
+        "For stores offering repairs, job sheets capture device model, serial or IMEI number and the reported fault. Technician assignment and repair invoices support a service operation alongside retail selling."
+      ]
+    ],
+    "steps": [
+      "Configure tracked products and enter the available identifiers on purchase records.",
+      "Record device and accessory sales through the POS workflow.",
+      "If a customer brings a device for repair, create a job sheet with its identifier and intake details."
+    ],
+    "example": "A mobile store can manage accessory sales at the counter while using repair jobs for devices left with the workshop. Device intake records retain the reported issue and identifier instead of relying on an informal handover note.",
+    "docs": [
+      "products-guide",
+      "module-repair-guide",
+      "sales-pos-guide"
+    ],
+    "related": [
+      "features/pos-software",
+      "features/inventory-management",
+      "features/repair-management"
+    ]
+  },
+  "industries/repair-service": {
+    "group": "industries",
+    "slug": "repair-service",
+    "title": "ERP for Repair and Service Centers",
+    "h1": "Manage the Service Desk, Workshop and Repair Billing",
+    "description": "Connect device intake, technician work, parts and customer collection with ERP workflows for repair and service businesses.",
+    "intro": "A repair business has to coordinate the customer at the desk, the device in the workshop and the invoice at collection. {brand} connects these steps through repair job sheets and invoices, giving staff a shared record of the work.",
+    "sections": [
+      [
+        "Capture the handover before work starts",
+        "Record the reported problem, device details and intake checklist. Attach documents or photos where needed so the workshop can refer back to the condition and information recorded by the service desk."
+      ],
+      [
+        "Keep the workshop queue understandable",
+        "Assign technicians and use repair priorities and statuses to organize jobs. Staff can review work by location and follow status changes as repairs move toward completion."
+      ],
+      [
+        "Bring parts and customer collection together",
+        "Use repair invoices for the parts and labour being billed, then record collection details. Customer repair-status lookup and configured notifications provide additional ways to communicate progress."
+      ]
+    ],
+    "steps": [
+      "Open a job sheet at intake and record the device and customer details.",
+      "Assign service staff and keep the job status current during diagnosis and repair.",
+      "Prepare billing and record collection when the completed item is handed back."
+    ],
+    "example": "A computer service center can separate urgent jobs from routine repairs while preserving each intake checklist. The invoice remains connected to the repair job, helping desk staff explain the completed work at collection.",
+    "docs": [
+      "module-repair-guide",
+      "sales-pos-guide"
+    ],
+    "related": [
+      "features/repair-management",
+      "features/inventory-management",
+      "features/pos-software"
+    ]
+  },
+  "industries/manufacturing": {
+    "group": "industries",
+    "slug": "manufacturing",
+    "title": "ERP Software for Manufacturing Businesses",
+    "h1": "Connect Purchasing, Production and Finished Stock",
+    "description": "Manage manufacturing materials, recipes, production and finished goods with connected purchasing and inventory workflows.",
+    "intro": "Manufacturing businesses need to understand both the materials available before production and the finished stock available afterward. {brand} connects purchasing and inventory with an optional Manufacturing module for recipe-based production.",
+    "sections": [
+      [
+        "Prepare materials before production",
+        "Use supplier purchasing and stock reports to understand the ingredients or components on hand. Recipes define the quantities needed for finished products, providing a reference for production preparation."
+      ],
+      [
+        "Record conversion into finished goods",
+        "Create production orders from recipes and follow the configured status and quality-control workflow. Production consumes ingredients and produces finished goods, connecting the workshop activity with stock records."
+      ],
+      [
+        "Review costs across the production cycle",
+        "Inspect ingredient costs and enabled labour and overhead entries, then use manufacturing reports to review output and wastage. Warehouse operations can be added where material and finished-goods storage need separate organization."
+      ]
+    ],
+    "steps": [
+      "Receive raw materials and check the recipe requirements against stock.",
+      "Record production quantities and costs through the Manufacturing module.",
+      "Review finished stock and production reports before the next production or sales cycle."
+    ],
+    "example": "A producer of packaged goods can receive ingredients, manufacture a finished batch and review the resulting stock for sale. Recipe and production records describe the conversion, while purchasing explains the incoming materials.",
+    "docs": [
+      "module-manufacturing",
+      "purchases-guide",
+      "stock-management-guide"
+    ],
+    "related": [
+      "features/manufacturing",
+      "features/inventory-management",
+      "features/warehouse-management"
+    ]
+  },
+  "industries/warehouse-distribution": {
+    "group": "industries",
+    "slug": "warehouse-distribution",
+    "title": "Warehouse and Distribution ERP Software",
+    "h1": "Connect Warehouse Stock with Distribution Sales",
+    "description": "Manage warehouse stock, transfers, receiving and inventory reports for businesses supplying goods across locations.",
+    "intro": "Distribution teams need to know where goods are held and whether a transfer has been sent or received. {brand} connects warehouse stock and transfer records with the purchasing and sales workflows that create demand for those goods.",
+    "sections": [
+      [
+        "Organize incoming and stored goods",
+        "Use purchasing to record supplier receipts and warehouse zones and bins to describe storage locations. Stock views give teams a place to review the quantities available for the next movement."
+      ],
+      [
+        "Track transfers between sites",
+        "Create transfers and record their shipment and receipt through the Warehouse module. Keeping those stages visible helps staff investigate the movement history when one site is waiting for goods from another."
+      ],
+      [
+        "Review supply and stock activity",
+        "Use warehouse summary, movement and transfer reports alongside sales and inventory reports. The described scope supports stock distribution; transportation planning is a separate requirement to discuss during evaluation."
+      ]
+    ],
+    "steps": [
+      "Record incoming stock and organize its warehouse location.",
+      "Create a transfer for stock needed at another site and record dispatch.",
+      "Record receipt at the destination and review stock and movement reports."
+    ],
+    "example": "A wholesaler supplying branch counters can move stock from central storage and follow the transfer through receiving. The branch sales team and warehouse team can then review their respective stock records.",
+    "docs": [
+      "module-warehouse",
+      "stock-management-guide",
+      "purchases-guide",
+      "reports-guide"
+    ],
+    "related": [
+      "features/warehouse-management",
+      "features/inventory-management",
+      "features/pos-software"
+    ]
+  },
+  "industries/ecommerce-retail": {
+    "group": "industries",
+    "slug": "ecommerce-retail",
+    "title": "ERP for eCommerce and Store Retail",
+    "h1": "Connect Online Store Workflows with Retail Operations",
+    "description": "Explore WooCommerce and Shopify connectors alongside POS, purchasing and inventory for businesses selling online and in-store.",
+    "intro": "Online and in-store retail bring different order and catalog workflows into the same business. {brand} offers WooCommerce and Shopify connectors alongside POS and inventory, so retailers can evaluate the specific connection their storefront needs.",
+    "sections": [
+      [
+        "Give the catalog a defined connection",
+        "Choose the connector for the store platform and review its product synchronization options. Establish which records and mappings are required before moving the catalog between systems."
+      ],
+      [
+        "Review online orders separately from checkout",
+        "Use the connector order tools for the online store and POS for face-to-face sales. Reviewing each workflow with representative transactions helps staff understand how online activity will be handled in their setup."
+      ],
+      [
+        "Keep synchronization review part of operations",
+        "Use connector logs and status tools to investigate results. Confirm stock-update direction, scheduling and exception handling for the selected integration before making those processes part of daily stock management."
+      ]
+    ],
+    "steps": [
+      "Identify the store platform and configure the corresponding connector.",
+      "Check product mapping and run the intended product and order workflows.",
+      "Review synchronization results together with the retail inventory process."
+    ],
+    "example": "A shop that also sells through WooCommerce can evaluate catalog synchronization and online orders alongside its counter sales. A Shopify retailer should use the Shopify-specific tools and guide because the connectors have separate configuration and behavior.",
+    "docs": [
+      "module-woocommerce",
+      "module-shopify",
+      "sales-pos-guide"
+    ],
+    "related": [
+      "features/ecommerce-integrations",
+      "features/inventory-management",
+      "features/pos-software"
+    ]
+  },
+  "features/rental-management": {
+    "group": "features",
+    "slug": "rental-management",
+    "title": "Rental Management Software",
+    "h1": "Rental Management Software for Items, Agreements and Returns",
+    "description": "Manage rental items, availability, agreements, deposits, returns and payment records with the RetailMan ERP Rental module.",
+    "intro": "The {brand} Rental module organizes items offered for hire, customer agreements and returns. Rental item records can link to products, variations and business locations, while keeping their own available quantities and rental rates.",
+    "sections": [
+      [
+        "Rental items and availability",
+        "Define rental items with quantities, location references and hourly, daily, weekly or monthly rates. Available-item views use the rental item availability flag and available quantity, giving staff a record to review before preparing an agreement."
+      ],
+      [
+        "Agreements and customer charges",
+        "Create an agreement with the customer, rental dates and item quantities. Agreement lines calculate rental charges from the rate, quantity and duration, and can include a per-unit deposit. The agreement calendar helps teams review scheduled rental periods."
+      ],
+      [
+        "Returns, deposits and payments",
+        "Record returns and item condition against the agreement. Payment records distinguish rental payments, deposits and deposit refunds. Damage reports and maintenance records support follow-up when returned items need attention."
+      ]
+    ],
+    "steps": [
+      "Create rental item records and configure quantities, rates and deposit details.",
+      "Prepare a customer agreement with the rental period and selected items.",
+      "Record payments and returns, then review the agreement balance and item condition."
+    ],
+    "example": "An equipment hire desk can record the items issued under a customer agreement, retain the deposit payment and inspect condition on return. Rental availability is maintained in the Rental module; product links provide catalog context without implying automatic synchronization with every retail stock process.",
+    "docs": [
+      "contacts-guide",
+      "products-guide"
+    ],
+    "related": [
+      "industries/rental",
+      "features/inventory-management"
+    ]
+  },
+  "industries/rental": {
+    "group": "industries",
+    "slug": "rental",
+    "title": "ERP for Rental Businesses",
+    "h1": "Connect the Hire Desk, Rental Returns and Customer Balances",
+    "description": "Explore rental business workflows for item availability, customer agreements, deposits, returns, condition checks and payment records.",
+    "intro": "Rental businesses need to follow an item beyond its initial handover. {brand} brings rental agreements, expected return dates, payments and item condition into the Rental module, helping the hire desk organize each customer rental from issue to return.",
+    "sections": [
+      [
+        "Prepare the agreement around the rental period",
+        "Review available rental items and choose the quantities, rates and dates for the customer agreement. Rental item records can reference a product and location, while the agreement retains the customer and charging details."
+      ],
+      [
+        "Keep deposits visible beside rental charges",
+        "Record deposit payments and other rental payments against the agreement. Separate deposit-refund entries retain the refund history, while agreement totals provide a balance to review with the customer."
+      ],
+      [
+        "Inspect returns before the next hire",
+        "Record returned items and their condition, and use damage or maintenance records when follow-up work is needed. Expected return information and the calendar help staff review current rental commitments."
+      ]
+    ],
+    "steps": [
+      "Review available hire items and prepare the customer agreement.",
+      "Record the rental and deposit payments associated with the handover.",
+      "Inspect items on return, record the return and review remaining charges or deposit refunds."
+    ],
+    "example": "An equipment rental business can track a customer hiring several items for a defined period and inspect each return against the agreement. Items requiring attention can have damage or maintenance records so the next hire is considered alongside their condition.",
+    "docs": [
+      "contacts-guide",
+      "products-guide"
+    ],
+    "related": [
+      "features/rental-management",
+      "features/inventory-management"
+    ]
+  }
+}

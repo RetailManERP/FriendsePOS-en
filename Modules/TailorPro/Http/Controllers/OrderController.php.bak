@@ -1,0 +1,449 @@
+<?php
+
+namespace Modules\TailorPro\Http\Controllers;
+
+use App\BusinessLocation;
+use App\Contact;
+use App\Product;
+use App\User;
+use App\Utils\Util;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
+use Modules\TailorPro\Entities\Measurement;
+use Modules\TailorPro\Entities\StockConsumptionLog;
+use Modules\TailorPro\Entities\TailoringOrder;
+use Modules\TailorPro\Entities\TailorProStatus;
+use Yajra\DataTables\Facades\DataTables;
+
+class OrderController extends Controller
+{
+    protected $commonUtil;
+
+    public function __construct(Util $commonUtil)
+    {
+        $this->commonUtil = $commonUtil;
+    }
+
+    public function index(Request $request)
+    {
+        $business_id = request()->session()->get('user.business_id');
+
+        if (!auth()->user()->can('tailorpro_order.view_all') &&
+            !auth()->user()->can('tailorpro_order.view_assigned')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        if ($request->ajax()) {
+            $orders = TailoringOrder::leftJoin('contacts', 'tailorpro_orders.customer_id', '=', 'contacts.id')
+                ->leftJoin('tailorpro_statuses as ts', 'tailorpro_orders.status_id', '=', 'ts.id')
+                ->leftJoin('users as tailor', 'tailorpro_orders.tailor_id', '=', 'tailor.id')
+                ->leftJoin('products as fabric', 'tailorpro_orders.fabric_product_id', '=', 'fabric.id')
+                ->where('tailorpro_orders.business_id', $business_id)
+                ->select(
+                    'tailorpro_orders.*',
+                    'contacts.name as customer_name',
+                    'ts.name as status_name',
+                    'ts.color as status_color',
+                    'fabric.name as fabric_name',
+                    DB::raw("CONCAT(COALESCE(tailor.first_name, ''), ' ', COALESCE(tailor.last_name, '')) as tailor_name")
+                );
+
+            if (!auth()->user()->can('tailorpro_order.view_all')) {
+                $is_admin = auth()->user()->hasRole('Admin#' . session('business.id'));
+                if (!$is_admin) {
+                    $user_id = auth()->user()->id;
+                    $orders->where(function ($query) use ($user_id) {
+                        $query->where('tailorpro_orders.tailor_id', $user_id)
+                            ->orWhere('tailorpro_orders.created_by', $user_id);
+                    });
+                }
+            }
+
+            return DataTables::of($orders)
+                ->addColumn('action', function ($row) {
+                    $html = '';
+                    if (auth()->user()->can('tailorpro_order.edit')) {
+                        $html .= '<a href="' . action([\Modules\TailorPro\Http\Controllers\OrderController::class, 'edit'], [$row->id]) . '" class="btn btn-xs btn-primary"><i class="fas fa-edit"></i></a> ';
+                    }
+                    if (auth()->user()->can('tailorpro_order.update_status')) {
+                        $html .= '<a href="#" class="btn btn-xs btn-info edit_order_status" data-href="' . action([\Modules\TailorPro\Http\Controllers\OrderController::class, 'editStatus'], [$row->id]) . '"><i class="fas fa-exchange-alt"></i></a> ';
+                    }
+                    if (auth()->user()->can('tailorpro_order.delete')) {
+                        $html .= '<a href="' . action([\Modules\TailorPro\Http\Controllers\OrderController::class, 'destroy'], [$row->id]) . '" class="btn btn-xs btn-danger delete_order"><i class="fas fa-trash"></i></a>';
+                    }
+                    return $html;
+                })
+                ->addColumn('status', function ($row) {
+                    $html = '<span class="badge" style="background:' . ($row->status_color ?? '#6c757d') . ';color:#fff;">' . ($row->status_name ?? '') . '</span>';
+                    if (auth()->user()->can('tailorpro_order.update_status') || auth()->user()->can('tailorpro_order.edit')) {
+                        $html = '<a href="#" class="edit_order_status" data-href="' . action([\Modules\TailorPro\Http\Controllers\OrderController::class, 'editStatus'], [$row->id]) . '">' . $html . '</a>';
+                    }
+                    return $html;
+                })
+                ->editColumn('order_date', function ($row) {
+                    return $row->order_date ? Carbon::parse($row->order_date)->format('d M Y') : '';
+                })
+                ->editColumn('delivery_date', function ($row) {
+                    return $row->delivery_date ? Carbon::parse($row->delivery_date)->format('d M Y') : '';
+                })
+                ->addColumn('priority_badge', function ($row) {
+                    $colors = ['normal' => 'secondary', 'urgent' => 'warning', 'express' => 'danger'];
+                    $color = $colors[$row->priority] ?? 'secondary';
+                    return '<span class="badge badge-' . $color . '">' . ucfirst($row->priority) . '</span>';
+                })
+                ->rawColumns(['action', 'status', 'priority_badge'])
+                ->make(true);
+        }
+
+        $statuses = TailorProStatus::getStatuses($business_id);
+
+        return view('tailorpro::order.index', compact('statuses'));
+    }
+
+    public function create()
+    {
+        $business_id = request()->session()->get('user.business_id');
+
+        if (!auth()->user()->can('tailorpro_order.create')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $statuses = TailorProStatus::forDropdown($business_id);
+        $business_locations = BusinessLocation::forDropdown($business_id);
+        $customers = Contact::customersDropdown($business_id, false);
+        $tailors = $this->getTailors($business_id);
+
+        return view('tailorpro::order.create', compact(
+            'statuses',
+            'business_locations',
+            'customers',
+            'tailors'
+        ));
+    }
+
+    public function store(Request $request)
+    {
+        $business_id = request()->session()->get('user.business_id');
+
+        if (!auth()->user()->can('tailorpro_order.create')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $request->validate([
+                'customer_id' => 'required|integer|exists:contacts,id',
+                'status_id' => 'required|integer',
+                'stitching_cost' => 'nullable|numeric|min:0',
+                'fabric_cost' => 'nullable|numeric|min:0',
+                'addon_cost' => 'nullable|numeric|min:0',
+                'fabric_qty' => 'nullable|numeric|min:0',
+                'priority' => 'nullable|in:normal,urgent,express',
+            ]);
+
+            $input = $request->only([
+                'location_id', 'customer_id', 'measurement_id', 'status_id',
+                'garment_type', 'tailor_id', 'fabric_product_id', 'fabric_qty',
+                'stitching_cost', 'fabric_cost', 'addon_cost',
+                'order_date', 'delivery_date', 'trial_date', 'priority',
+                'design_notes', 'remarks',
+                'custom_field_1', 'custom_field_2', 'custom_field_3',
+                'custom_field_4', 'custom_field_5',
+            ]);
+
+            $input['business_id'] = $business_id;
+            $input['created_by'] = auth()->user()->id;
+            $input['order_no'] = $this->generateOrderNo($business_id);
+            $input['order_date'] = !empty($input['order_date']) ? $this->commonUtil->uf_date($input['order_date']) : now()->format('Y-m-d');
+            $input['delivery_date'] = !empty($input['delivery_date']) ? $this->commonUtil->uf_date($input['delivery_date']) : null;
+            $input['trial_date'] = !empty($input['trial_date']) ? $this->commonUtil->uf_date($input['trial_date']) : null;
+
+            $input['stitching_cost'] = $input['stitching_cost'] ?? 0;
+            $input['fabric_cost'] = $input['fabric_cost'] ?? 0;
+            $input['addon_cost'] = $input['addon_cost'] ?? 0;
+            $input['total_cost'] = $input['stitching_cost'] + $input['fabric_cost'] + $input['addon_cost'];
+
+            if ($request->has('accessories')) {
+                $input['accessories_json'] = json_encode($request->input('accessories'));
+            }
+
+            $order = TailoringOrder::create($input);
+
+            DB::commit();
+
+            $output = [
+                'success' => true,
+                'msg' => __('tailorpro::lang.order_created_success'),
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::emergency('File:'.$e->getFile().'Line:'.$e->getLine().'Message:'.$e->getMessage());
+
+            $output = [
+                'success' => false,
+                'msg' => __('messages.something_went_wrong'),
+            ];
+        }
+
+        return redirect()
+            ->action([\Modules\TailorPro\Http\Controllers\OrderController::class, 'index'])
+            ->with('status', $output);
+    }
+
+    public function show($id)
+    {
+        $business_id = request()->session()->get('user.business_id');
+
+        $order = TailoringOrder::where('business_id', $business_id)
+            ->with(['customer', 'measurement', 'tailor', 'fabricProduct', 'status', 'stockConsumptions', 'trialLogs'])
+            ->findOrFail($id);
+
+        return view('tailorpro::order.show', compact('order'));
+    }
+
+    public function edit($id)
+    {
+        $business_id = request()->session()->get('user.business_id');
+
+        if (!auth()->user()->can('tailorpro_order.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $order = TailoringOrder::where('business_id', $business_id)->findOrFail($id);
+        $statuses = TailorProStatus::forDropdown($business_id);
+        $business_locations = BusinessLocation::forDropdown($business_id);
+        $customers = Contact::customersDropdown($business_id, false);
+        $tailors = $this->getTailors($business_id);
+        $measurements = Measurement::forDropdown($business_id, $order->customer_id);
+
+        return view('tailorpro::order.edit', compact(
+            'order', 'statuses', 'business_locations', 'customers', 'tailors', 'measurements'
+        ));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $business_id = request()->session()->get('user.business_id');
+
+        if (!auth()->user()->can('tailorpro_order.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $request->validate([
+                'customer_id' => 'required|integer|exists:contacts,id',
+                'status_id' => 'required|integer',
+                'stitching_cost' => 'nullable|numeric|min:0',
+                'fabric_cost' => 'nullable|numeric|min:0',
+                'addon_cost' => 'nullable|numeric|min:0',
+                'fabric_qty' => 'nullable|numeric|min:0',
+                'priority' => 'nullable|in:normal,urgent,express',
+            ]);
+
+            $order = TailoringOrder::where('business_id', $business_id)->findOrFail($id);
+
+            $input = $request->only([
+                'location_id', 'customer_id', 'measurement_id', 'status_id',
+                'garment_type', 'tailor_id', 'fabric_product_id', 'fabric_qty',
+                'stitching_cost', 'fabric_cost', 'addon_cost',
+                'order_date', 'delivery_date', 'trial_date', 'priority',
+                'design_notes', 'remarks',
+                'custom_field_1', 'custom_field_2', 'custom_field_3',
+                'custom_field_4', 'custom_field_5',
+            ]);
+
+            $input['order_date'] = !empty($input['order_date']) ? $this->commonUtil->uf_date($input['order_date']) : $order->order_date;
+            $input['delivery_date'] = !empty($input['delivery_date']) ? $this->commonUtil->uf_date($input['delivery_date']) : null;
+            $input['trial_date'] = !empty($input['trial_date']) ? $this->commonUtil->uf_date($input['trial_date']) : null;
+
+            $input['stitching_cost'] = $input['stitching_cost'] ?? 0;
+            $input['fabric_cost'] = $input['fabric_cost'] ?? 0;
+            $input['addon_cost'] = $input['addon_cost'] ?? 0;
+            $input['total_cost'] = $input['stitching_cost'] + $input['fabric_cost'] + $input['addon_cost'];
+
+            if ($request->has('accessories')) {
+                $input['accessories_json'] = json_encode($request->input('accessories'));
+            }
+
+            $order->update($input);
+
+            DB::commit();
+
+            $output = [
+                'success' => true,
+                'msg' => __('tailorpro::lang.order_updated_success'),
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::emergency('File:'.$e->getFile().'Line:'.$e->getLine().'Message:'.$e->getMessage());
+
+            $output = [
+                'success' => false,
+                'msg' => __('messages.something_went_wrong'),
+            ];
+        }
+
+        return redirect()
+            ->action([\Modules\TailorPro\Http\Controllers\OrderController::class, 'index'])
+            ->with('status', $output);
+    }
+
+    public function destroy($id)
+    {
+        $business_id = request()->session()->get('user.business_id');
+
+        if (!auth()->user()->can('tailorpro_order.delete')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        try {
+            $order = TailoringOrder::where('business_id', $business_id)->findOrFail($id);
+            $order->delete();
+
+            $output = [
+                'success' => true,
+                'msg' => __('tailorpro::lang.order_deleted_success'),
+            ];
+        } catch (\Exception $e) {
+            \Log::emergency('File:'.$e->getFile().'Line:'.$e->getLine().'Message:'.$e->getMessage());
+
+            $output = [
+                'success' => false,
+                'msg' => __('messages.something_went_wrong'),
+            ];
+        }
+
+        return $output;
+    }
+
+    public function editStatus($id)
+    {
+        $business_id = request()->session()->get('user.business_id');
+
+        $order = TailoringOrder::where('business_id', $business_id)->findOrFail($id);
+        $statuses = TailorProStatus::forDropdown($business_id, true);
+
+        return view('tailorpro::order.partials.status_modal', compact('order', 'statuses'));
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $business_id = request()->session()->get('user.business_id');
+
+        if (!auth()->user()->can('tailorpro_order.update_status') &&
+            !auth()->user()->can('tailorpro_order.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $order = TailoringOrder::where('business_id', $business_id)->findOrFail($id);
+            $order->status_id = $request->input('status_id');
+            $order->save();
+
+            DB::commit();
+
+            $output = [
+                'success' => true,
+                'msg' => __('tailorpro::lang.status_updated_success'),
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::emergency('File:'.$e->getFile().'Line:'.$e->getLine().'Message:'.$e->getMessage());
+
+            $output = [
+                'success' => false,
+                'msg' => __('messages.something_went_wrong'),
+            ];
+        }
+
+        return $output;
+    }
+
+    public function consumeStock(Request $request)
+    {
+        $business_id = request()->session()->get('user.business_id');
+
+        try {
+            DB::beginTransaction();
+
+            $order = TailoringOrder::where('business_id', $business_id)
+                ->findOrFail($request->input('order_id'));
+
+            // Check if stock already consumed for this order
+            $existing = StockConsumptionLog::where('order_id', $order->id)
+                ->where('transaction_type', 'consume')
+                ->first();
+
+            if ($existing) {
+                return [
+                    'success' => false,
+                    'msg' => __('tailorpro::lang.stock_already_consumed'),
+                ];
+            }
+
+            if ($order->fabric_product_id && $order->fabric_qty > 0) {
+                StockConsumptionLog::create([
+                    'business_id' => $business_id,
+                    'order_id' => $order->id,
+                    'product_id' => $order->fabric_product_id,
+                    'quantity' => $order->fabric_qty,
+                    'location_id' => $order->location_id,
+                    'transaction_type' => 'consume',
+                    'created_by' => auth()->user()->id,
+                ]);
+            }
+
+            DB::commit();
+
+            $output = [
+                'success' => true,
+                'msg' => __('tailorpro::lang.stock_consumed_success'),
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::emergency('File:'.$e->getFile().'Line:'.$e->getLine().'Message:'.$e->getMessage());
+
+            $output = [
+                'success' => false,
+                'msg' => __('messages.something_went_wrong'),
+            ];
+        }
+
+        return $output;
+    }
+
+    public function getCustomerMeasurements($customer_id)
+    {
+        $business_id = request()->session()->get('user.business_id');
+
+        $measurements = Measurement::where('business_id', $business_id)
+            ->where('customer_id', $customer_id)
+            ->get()
+            ->map(function ($m) {
+                return [
+                    'id' => $m->id,
+                    'text' => ($m->type ?? 'General') . ' (v' . $m->version . ')',
+                ];
+            });
+
+        return response()->json($measurements);
+    }
+
+    private function generateOrderNo($business_id)
+    {
+        $count = TailoringOrder::where('business_id', $business_id)->withTrashed()->count() + 1;
+        return 'TP-' . str_pad($count, 5, '0', STR_PAD_LEFT);
+    }
+
+    private function getTailors($business_id)
+    {
+        return User::forDropdown($business_id, false);
+    }
+}

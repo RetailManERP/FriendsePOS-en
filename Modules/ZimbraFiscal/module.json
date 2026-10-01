@@ -1,0 +1,14 @@
+{
+    "name": "ZimbraFiscal",
+    "alias": "zimbrafiscal",
+    "description": "Zimbabwe Revenue Authority (ZIMRA) Fiscal Device Management System (FDMS) Integration - Tax compliance for electronic invoicing and receipts.",
+    "keywords": ["zimbabwe", "zimra", "fdms", "fiscal", "tax", "invoice", "receipt", "vat"],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\ZimbraFiscal\\Providers\\ZimbraFiscalServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

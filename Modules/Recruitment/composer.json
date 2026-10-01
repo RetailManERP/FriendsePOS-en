@@ -1,0 +1,23 @@
+{
+    "name": "twf/recruitment",
+    "description": "Recruitment & Hiring Management Module",
+    "authors": [
+        {
+            "name": "BitorePOS",
+            "email": "BitorePOS@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\Recruitment\\Providers\\RecruitmentServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Recruitment\\": ""
+        }
+    }
+}

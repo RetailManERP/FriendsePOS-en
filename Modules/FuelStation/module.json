@@ -1,0 +1,14 @@
+{
+    "name": "FuelStation",
+    "alias": "fuelstation",
+    "description": "Fuel Station Management for petrol pumps - tanks, dispensers, nozzles, shifts, fuel sales, stock & dispenser integration.",
+    "keywords": ["fuel", "petrol", "pump", "station", "dispenser", "nozzle", "tank"],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\FuelStation\\Providers\\FuelStationServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

@@ -1,0 +1,14 @@
+{
+    "name": "FijiFRCS",
+    "alias": "fijifrcs",
+    "description": "Fiji Revenue & Customs Service (FRCS) Integration Module - VAT Monitoring System (VMS) / Electronic Fiscal Device (EFD) compliant fiscalisation for the Republic of Fiji.",
+    "keywords": ["fiji", "frcs", "vms", "efd", "fiscalisation", "vat", "tax", "e-invoicing", "qr-code"],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\FijiFRCS\\Providers\\FijiFRCSServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

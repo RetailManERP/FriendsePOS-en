@@ -1,0 +1,14 @@
+{
+    "name": "Recruitment",
+    "alias": "recruitment",
+    "description": "Recruitment & hiring management module - Job openings, candidates, interviews, offers & onboarding pipeline.",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\Recruitment\\Providers\\RecruitmentServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

@@ -1,0 +1,11 @@
+{
+    "name": "Foodpanda",
+    "alias": "foodpanda",
+    "description": "Foodpanda integration module for BitorePOS",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Foodpanda\\Providers\\FoodpandaServiceProvider"
+    ],
+    "files": []
+}

@@ -1,0 +1,10 @@
+{
+    "name": "Rental",
+    "alias": "rental",
+    "description": "Comprehensive Rental Management module – rent out inventory items, manage rental agreements, track returns, deposits, late fees, maintenance, damage reports, and rental analytics.",
+    "priority": 0,
+    "providers": [
+        "Modules\\Rental\\Providers\\RentalServiceProvider"
+    ],
+    "files": []
+}

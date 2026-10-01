@@ -1,0 +1,79 @@
+<div class="pos-tab-content">
+    <div class="row">
+        <?php $__env->startComponent('components.filters', ['title' => __('report.filters'), 'filterId' => 'expensesFilter']); ?>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <button class="btn btn-info btn-block" id="remap_defaults_expense" type="button">Remap Defaults <i class="hide fas fa-sync fa-spin fa-fw"></i></button>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <?php echo Form::label('expense_filter_location_id',  __('purchase.business_location') . ':'); ?>
+
+                    <?php echo Form::select('expense_filter_location_id', $business_locations, null, ['class' => 'form-control select2', 'style' => 'width:100%', 'placeholder' => __('lang_v1.all')]); ?>
+
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <?php echo Form::label('expense_filter_mapping_type',  'Mapping Type:'); ?>
+
+                    <?php echo Form::select('expense_filter_mapping_type', ['mapped' => 'Mapped', 'unmapped' => 'Unmapped'], null, ['class' => 'form-control select2', 'style' => 'width:100%', 'placeholder' => __('lang_v1.all')]); ?>
+
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <?php echo Form::label('expense_filter_payment_status',  __('purchase.payment_status') . ':'); ?>
+
+                    <?php echo Form::select('expense_filter_payment_status', ['paid' => __('lang_v1.paid'), 'due' => __('lang_v1.due'), 'partial' => __('lang_v1.partial'), 'overdue' => __('lang_v1.overdue')], null, ['class' => 'form-control select2', 'style' => 'width:100%', 'placeholder' => __('lang_v1.all')]); ?>
+
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <?php echo Form::label('expense_filter_date_range', __('report.date_range') . ':'); ?>
+
+                    <?php echo Form::text('expense_filter_date_range', null, ['placeholder' => __('lang_v1.select_a_date_range'), 'class' => 'form-control', 'readonly']); ?>
+
+                </div>
+            </div>
+        <?php echo $__env->renderComponent(); ?>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            
+
+        <div class="table-responsive">
+<table class="table table-bordered table-striped table-th-skin" id="expenses_table">
+            <thead>
+                <tr>
+                    <th><?php echo app('translator')->get('messages.action'); ?></th>
+                    <th><?php echo app('translator')->get('messages.date'); ?></th>
+                    <th><?php echo app('translator')->get('purchase.ref_no'); ?></th>
+                    <th><?php echo app('translator')->get('purchase.location'); ?></th>
+                    
+                    <th><?php echo app('translator')->get('purchase.payment_status'); ?></th>
+                    <th><?php echo app('translator')->get('purchase.grand_total'); ?> <?php echo e('('.session("currency")["symbol"].')', false); ?></th>
+                    <th><?php echo app('translator')->get('purchase.payment_due'); ?> <?php echo e('('.session("currency")["symbol"].')', false); ?> &nbsp;&nbsp;<i class="fa fa-info-circle text-info no-print" data-bs-toggle="tooltip" data-placement="bottom" data-html="true" data-original-title="<?php echo e(__('messages.purchase_due_tooltip'), false); ?>" aria-hidden="true"></i></th>
+                    <th><?php echo app('translator')->get('lang_v1.added_by'); ?></th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="text-right text-bold"><?php echo app('translator')->get('lang_v1.total'); ?></td>
+                    <td class="footer_final_total text-right text-bold"></td>
+                    <td class="footer_payment_due text-right text-bold"></td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+</div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,14 @@
+{
+    "name": "Warehouse",
+    "alias": "warehouse",
+    "description": "Multi-warehouse management with bin locations, stock transfers, pick/pack/ship workflows and inventory tracking",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\Warehouse\\Providers\\WarehouseServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

@@ -1,0 +1,23 @@
+{
+    "name": "twf/importmanagement",
+    "description": "Import Management module for BitorePOS",
+    "authors": [
+        {
+            "name": "BitorePOS",
+            "email": "BitorePOS@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\ImportManagement\\Providers\\ImportManagementServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\ImportManagement\\": ""
+        }
+    }
+}

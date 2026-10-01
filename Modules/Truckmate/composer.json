@@ -1,0 +1,25 @@
+{
+    "name": "twf/truckmate",
+    "description": "",
+    "authors": [
+        {
+            "name": "BitorePOS",
+            "email": "info@bitorepos.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\Truckmate\\Providers\\TruckMateServiceProvider"
+            ],
+            "aliases": {
+                
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Truckmate\\": ""
+        }
+    }
+}

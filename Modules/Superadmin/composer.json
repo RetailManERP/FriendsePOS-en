@@ -1,0 +1,25 @@
+{
+    "name": "twf/superadmin",
+    "description": "",
+    "authors": [
+        {
+            "name": "BitorePOS",
+            "email": "bitorepos@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\Superadmin\\Providers\\SuperadminServiceProvider"
+            ],
+            "aliases": {
+                
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Superadmin\\": ""
+        }
+    }
+}

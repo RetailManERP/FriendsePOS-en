@@ -1,0 +1,21 @@
+{
+    "name": "Slaughterhouse",
+    "alias": "slaughterhouse",
+    "description": "Slaughterhouse management with livestock intake, slaughter batches, carcass tracking, Eid ul Adha bookings, cutting, packing and compliance workflows.",
+    "keywords": [
+        "slaughterhouse",
+        "abattoir",
+        "livestock",
+        "meat",
+        "eid",
+        "qurbani"
+    ],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\Slaughterhouse\\Providers\\SlaughterhouseServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

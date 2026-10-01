@@ -1,0 +1,21 @@
+{
+    "name": "nwidart/warehouse",
+    "description": "Warehouse module for BitorePOS",
+    "authors": [
+        {
+            "name": "BitorePOS",
+            "email": "support@bitorepos.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Warehouse\\": ""
+        }
+    }
+}

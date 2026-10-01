@@ -1,0 +1,14 @@
+{
+    "name": "ZATCA",
+    "alias": "zatca",
+    "description": "ZATCA (Zakat, Tax & Customs Authority) E-Invoicing Module - Phase II compliant e-invoicing for Saudi Arabia.",
+    "keywords": ["zatca", "saudi", "e-invoicing", "tax", "vat", "ksa", "phase2", "qr-code"],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\ZATCA\\Providers\\ZATCAServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

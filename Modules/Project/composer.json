@@ -1,0 +1,25 @@
+{
+    "name": "twf/project",
+    "description": "",
+    "authors": [
+        {
+            "name": "Programmatic Surface",
+            "email": "programmaticsurface@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\Project\\Providers\\ProjectServiceProvider"
+            ],
+            "aliases": {
+                
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Project\\": ""
+        }
+    }
+}

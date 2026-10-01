@@ -1,0 +1,23 @@
+{
+    "name": "twf/zimbrafiscal",
+    "description": "Zimbabwe Revenue Authority ZIMRA FDMS Fiscal Device Integration Module",
+    "authors": [
+        {
+            "name": "BitorePOS",
+            "email": "BitorePOS@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\ZimbraFiscal\\Providers\\ZimbraFiscalServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\ZimbraFiscal\\": ""
+        }
+    }
+}

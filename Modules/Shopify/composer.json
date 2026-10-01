@@ -1,0 +1,19 @@
+{
+    "name": "modules/shopify",
+    "description": "Shopify API integration module for POS system",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "BitorePOS Development Team",
+            "email": "dev@bitorepos.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Modules\\Shopify\\": ""
+        }
+    },
+    "require": {
+        "guzzlehttp/guzzle": "^7.2"
+    }
+}

@@ -1,0 +1,32 @@
+<?php $service = $service ?? null; ?>
+<div class="row">
+    <div class="col-md-3"><div class="form-group"><?php echo Form::label('customer_name', __('slaughterhouse::lang.customer_name') . ':*'); ?><?php echo Form::text('customer_name', old('customer_name', $service->customer_name ?? null), ['class' => 'form-control', 'required']); ?></div></div>
+    <div class="col-md-3"><div class="form-group"><?php echo Form::label('mobile', __('slaughterhouse::lang.mobile') . ':'); ?><?php echo Form::text('mobile', old('mobile', $service->mobile ?? null), ['class' => 'form-control']); ?></div></div>
+    <div class="col-md-3"><div class="form-group"><?php echo Form::label('location_id', __('slaughterhouse::lang.location') . ':'); ?><?php echo Form::select('location_id', $business_locations, old('location_id', $service->location_id ?? null), ['class' => 'form-control select2', 'style' => 'width:100%', 'placeholder' => __('messages.please_select')]); ?></div></div>
+    <div class="col-md-3"><div class="form-group"><?php echo Form::label('freezer_id', __('slaughterhouse::lang.freezer') . ':'); ?><?php echo Form::select('freezer_id', $freezers, old('freezer_id', $service->freezer_id ?? null), ['class' => 'form-control select2', 'style' => 'width:100%', 'placeholder' => __('messages.please_select')]); ?></div></div>
+</div>
+<div class="row">
+    <div class="col-md-3"><div class="form-group"><?php echo Form::label('meat_type', __('slaughterhouse::lang.meat_type') . ':'); ?><?php echo Form::text('meat_type', old('meat_type', $service->meat_type ?? null), ['class' => 'form-control', 'placeholder' => 'Beef, mutton, mixed cuts']); ?></div></div>
+    <div class="col-md-3"><div class="form-group"><?php echo Form::label('cutting_type_id', __('slaughterhouse::lang.cutting_type') . ':'); ?><?php echo Form::select('cutting_type_id', $cutting_types, old('cutting_type_id', $service->cutting_type_id ?? null), ['class' => 'form-control select2', 'style' => 'width:100%', 'placeholder' => __('messages.please_select')]); ?></div></div>
+    <div class="col-md-2"><div class="form-group"><?php echo Form::label('intake_weight', __('slaughterhouse::lang.intake_weight') . ':*'); ?><?php echo Form::number('intake_weight', old('intake_weight', $service->intake_weight ?? 0), ['class' => 'form-control', 'step' => 'any', 'min' => 0, 'required']); ?></div></div>
+    <div class="col-md-2"><div class="form-group"><?php echo Form::label('package_count', __('slaughterhouse::lang.package_count') . ':'); ?><?php echo Form::number('package_count', old('package_count', $service->package_count ?? 0), ['class' => 'form-control', 'min' => 0]); ?></div></div>
+    <div class="col-md-2"><div class="form-group"><?php echo Form::label('storage_bin', __('slaughterhouse::lang.storage_bin') . ':'); ?><?php echo Form::text('storage_bin', old('storage_bin', $service->storage_bin ?? null), ['class' => 'form-control']); ?></div></div>
+    <div class="col-md-3"><div class="form-group"><?php echo Form::label('status', __('slaughterhouse::lang.status') . ':*'); ?><?php echo Form::select('status', ['received' => __('slaughterhouse::lang.received'), 'in_freezer' => __('slaughterhouse::lang.in_freezer'), 'ready' => __('slaughterhouse::lang.ready'), 'released' => __('slaughterhouse::lang.released'), 'cancelled' => __('slaughterhouse::lang.cancelled')], old('status', $service->status ?? 'received'), ['class' => 'form-control', 'required']); ?></div></div>
+</div>
+<div class="row">
+    <div class="col-md-3"><div class="form-group"><?php echo Form::label('intake_at', __('slaughterhouse::lang.intake_at') . ':'); ?><?php echo Form::input('datetime-local', 'intake_at', old('intake_at', optional($service->intake_at ?? null)->format('Y-m-d\\TH:i')), ['class' => 'form-control']); ?></div></div>
+    <div class="col-md-3"><div class="form-group"><?php echo Form::label('expected_release_at', __('slaughterhouse::lang.expected_release_at') . ':'); ?><?php echo Form::input('datetime-local', 'expected_release_at', old('expected_release_at', optional($service->expected_release_at ?? null)->format('Y-m-d\\TH:i')), ['class' => 'form-control']); ?></div></div>
+    <div class="col-md-3"><div class="form-group"><?php echo Form::label('release_weight', __('slaughterhouse::lang.release_weight') . ':'); ?><?php echo Form::number('release_weight', old('release_weight', $service->release_weight ?? null), ['class' => 'form-control', 'step' => 'any', 'min' => 0]); ?></div></div>
+</div>
+<div class="row">
+    <div class="col-md-3"><div class="form-group"><?php echo Form::label('charge_type', __('slaughterhouse::lang.charge_type') . ':*'); ?><?php echo Form::select('charge_type', ['fixed' => __('slaughterhouse::lang.fixed'), 'per_kg' => __('slaughterhouse::lang.per_kg'), 'per_package' => __('slaughterhouse::lang.per_package'), 'per_day' => __('slaughterhouse::lang.per_day')], old('charge_type', $service->charge_type ?? 'per_kg'), ['class' => 'form-control', 'required']); ?></div></div>
+    <div class="col-md-3"><div class="form-group"><?php echo Form::label('rate', __('slaughterhouse::lang.rate') . ':'); ?><?php echo Form::number('rate', old('rate', $service->rate ?? 0), ['class' => 'form-control', 'step' => 'any', 'min' => 0]); ?></div></div>
+    <div class="col-md-3"><div class="form-group"><?php echo Form::label('paid_amount', __('slaughterhouse::lang.paid_amount') . ':'); ?><?php echo Form::number('paid_amount', old('paid_amount', $service->paid_amount ?? 0), ['class' => 'form-control', 'step' => 'any', 'min' => 0]); ?></div></div>
+</div>
+<div class="row">
+    <div class="col-md-12"><div class="form-group"><?php echo Form::label('cutting_instructions', __('slaughterhouse::lang.cutting_instructions') . ':'); ?><?php echo Form::textarea('cutting_instructions', old('cutting_instructions', $service->cutting_instructions ?? null), ['class' => 'form-control', 'rows' => 2]); ?></div></div>
+</div>
+<div class="row">
+    <div class="col-md-6"><div class="form-group"><?php echo Form::label('address', __('slaughterhouse::lang.address') . ':'); ?><?php echo Form::textarea('address', old('address', $service->address ?? null), ['class' => 'form-control', 'rows' => 2]); ?></div></div>
+    <div class="col-md-6"><div class="form-group"><?php echo Form::label('notes', __('slaughterhouse::lang.notes') . ':'); ?><?php echo Form::textarea('notes', old('notes', $service->notes ?? null), ['class' => 'form-control', 'rows' => 2]); ?></div></div>
+</div>

@@ -1,0 +1,16 @@
+{
+    "name": "Truckmate",
+    "alias": "truckmate",
+    "description": "Useful for Trucking Business",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\Truckmate\\Providers\\TruckMateServiceProvider"
+    ],
+    "aliases": {},
+    "files": [
+        
+    ],
+    "requires": []
+}

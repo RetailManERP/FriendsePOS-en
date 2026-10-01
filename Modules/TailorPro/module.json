@@ -1,0 +1,14 @@
+{
+    "name": "TailorPro",
+    "alias": "tailorpro",
+    "description": "Tailoring & Custom Stitching Module for managing measurements, job cards, and delivery",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\TailorPro\\Providers\\TailorProServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

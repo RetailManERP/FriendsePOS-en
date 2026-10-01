@@ -1,0 +1,14 @@
+{
+    "name": "KenyaeTIMS",
+    "alias": "kenyaetims",
+    "description": "Kenya Revenue Authority (KRA) eTIMS Integration - OSCU/VSCU tax compliance for electronic tax invoicing.",
+    "keywords": ["kenya", "kra", "etims", "tax", "oscu", "vscu", "invoice"],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\KenyaeTIMS\\Providers\\KenyaeTIMSServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

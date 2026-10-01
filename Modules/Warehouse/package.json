@@ -1,0 +1,6 @@
+{
+    "name": "warehouse",
+    "version": "1.0.0",
+    "description": "Warehouse module for BitorePOS",
+    "private": true
+}
