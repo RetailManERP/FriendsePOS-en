@@ -45,4 +45,3 @@ run_print_server.sh
 # Local AI instructions and generated working artifacts
 /AGENTS.md
 /ai_storage/
-/subdomains/.env.*

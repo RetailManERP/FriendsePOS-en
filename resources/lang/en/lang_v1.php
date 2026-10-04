@@ -902,7 +902,7 @@ return [
     'collision_duplicates_renumbered' => 'collision duplicates re-numbered with new invoice numbers',
     'duplicate_invoice_numbers_renumbered' => 'duplicate invoice numbers re-numbered without deleting sales',
     'no_duplicates_found' => 'No duplicates found',
-    'duplicates_skipped' => 'duplicates skipped (has returns/FBR)',
+    'duplicates_skipped' => 'duplicates skipped',
     'modules' => 'Modules',
     'theme' => 'Theme',
     'account' => 'Payment Accounts',

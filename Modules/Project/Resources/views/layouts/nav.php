@@ -1,4 +1,4 @@
-<?php if (! $__env->hasRenderedOnce('222ba5ec-a24b-4fe7-867d-31f4816fbe45')): $__env->markAsRenderedOnce('222ba5ec-a24b-4fe7-867d-31f4816fbe45'); ?>
+<?php if (! $__env->hasRenderedOnce('53216bc6-f9f8-4383-b6f7-a34f8da04db3')): $__env->markAsRenderedOnce('53216bc6-f9f8-4383-b6f7-a34f8da04db3'); ?>
     <link rel="stylesheet" href="<?php echo e(asset('modules/project/sass/project.css?v=' . $asset_v . '.' . filemtime(public_path('modules/project/sass/project.css'))), false); ?>">
 <?php endif; ?>
 
