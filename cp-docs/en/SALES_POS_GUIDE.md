@@ -44,6 +44,8 @@ The POS screen is designed for fast, face-to-face sales — like at a shop count
    - The system shows the **Change Due** automatically
    - Add a **Payment Note** if needed
 
+   When **Disable Change Return on Overpay** is turned off in Business Settings, any amount received above the sale total is recorded as change returned, not as customer credit. If you need to correct products, quantities, discounts, payment amount, or payment method, edit the sale through POS or Sell so the sale total and change return are recalculated together. Editing a payment alone cannot create a new overpayment.
+
 8. Click **Finalise** to complete the sale.
 
 9. The **Receipt** appears:
@@ -118,6 +120,7 @@ The direct sale form gives you more control for invoices, shipments, and detaile
    - **Business Location** — Which shop/warehouse
    - **Sale Date** — When the sale was made
    - **Invoice Number** — Auto-generated
+   - **Customer Group** — Optionally narrow customer search results by group. **All** is selected by default; this filter is shown only when at least one customer group exists.
 3. Add products by searching or scanning.
 4. For each product, set:
    - **Quantity**
@@ -127,6 +130,8 @@ The direct sale form gives you more control for invoices, shipments, and detaile
 5. Add any **overall discount** or **shipping charges**.
 6. In the **Payment** section, enter payment details.
 7. Click **Save** to record the sale.
+
+The same **Customer Group** filter is available when editing a sale. It only filters customer search results; it does not change the selected customer's group.
 
 📸 *[Screenshot: The direct sale form with customer, products, and payment sections]*
 
@@ -176,7 +181,8 @@ When a customer returns a product:
 5. Choose how to refund:
    - **Cash** refund
    - **Credit** to the customer's account
-6. Click **Save**.
+6. Make sure the total refund does not exceed the calculated value of the returned items. The system blocks a larger refund.
+7. Click **Save**.
 
 Stock will be restored and the customer's balance will be updated.
 
@@ -188,6 +194,12 @@ Stock will be restored and the customer's balance will be updated.
 
 ### Per-Item Discount
 - While creating a sale, click the **Discount** field next to any product and enter a percentage or fixed amount.
+
+### Apply a Discount to All Products in Sell
+1. On the Add Sale or Edit Sale page, click the **Discount** column heading above the product list.
+2. Choose **%** to enter a percentage, or choose the currency symbol to enter one total discount amount for the products.
+3. Enter the discount and click **Apply**. A fixed total is converted to one percentage using the combined value of eligible products and their quantities.
+4. Review the product rows and sale total before saving.
 
 ### Overall Discount
 - At the bottom of the sale form, find the **Order Discount** field and enter the overall discount.

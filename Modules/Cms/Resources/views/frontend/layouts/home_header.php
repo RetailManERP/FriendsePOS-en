@@ -37,69 +37,6 @@
                 </a>
             </div>
             <?php endif; ?>
-            
-            <?php if((!empty($andriod_btn['text']) && !empty($andriod_btn['link'])) || (!empty($andriod_btn_2['text']) && !empty($andriod_btn_2['link']))): ?>
-                <div class="hero__btns-container mt-2">
-                    <?php if(!empty($andriod_btn['text']) && !empty($andriod_btn['link'])): ?>
-                        <a class="hero__btn btn btn-outline-secondary btn-sm" href="<?php echo e($andriod_btn['link'], false); ?>">
-                            <i class="fab fa-google-play"></i>
-                            <span><?php echo e(str_ireplace('Andriod', 'Android', $andriod_btn['text']), false); ?></span>
-                        </a>
-                    <?php endif; ?>
-                    <?php if(!empty($andriod_btn_2['text']) && !empty($andriod_btn_2['link'])): ?>
-                        <a class="hero__btn btn btn-outline-secondary btn-sm" href="<?php echo e($andriod_btn_2['link'], false); ?>">
-                            <i class="fab fa-google-play"></i>
-                            <span><?php echo e(str_ireplace('Andriod', 'Android', $andriod_btn_2['text']), false); ?></span>
-                        </a>
-                    <?php endif; ?>
-                </div>
-            <?php endif; ?>
-            
-            <?php if((!empty($ios_btn['text']) && !empty($ios_btn['link'])) || (!empty($ios_btn_2['text']) && !empty($ios_btn_2['link']))): ?>
-                <div class="hero__btns-container mt-2">
-                    <?php if(!empty($ios_btn['text']) && !empty($ios_btn['link'])): ?>
-                        <a class="hero__btn btn btn-outline-secondary btn-sm" href="<?php echo e($ios_btn['link'], false); ?>">
-                            <i class="fab fa-apple"></i>
-                            <span><?php echo e($ios_btn['text'], false); ?></span>
-                        </a>
-                    <?php endif; ?>
-                    <?php if(!empty($ios_btn_2['text']) && !empty($ios_btn_2['link'])): ?>
-                        <a class="hero__btn btn btn-outline-secondary btn-sm" href="<?php echo e($ios_btn_2['link'], false); ?>">
-                            <i class="fab fa-apple"></i>
-                            <span><?php echo e($ios_btn_2['text'], false); ?></span>
-                        </a>
-                    <?php endif; ?>
-                </div>
-            <?php endif; ?>
-            
-            <?php if((!empty($download_win_btn['text']) && !empty($download_win_btn['link'])) || (!empty($download_win_btn_2['text']) && !empty($download_win_btn_2['link'])) || (!empty($download_linux_btn['text']) && !empty($download_linux_btn['link'])) || (!empty($download_osx_btn['text']) && !empty($download_osx_btn['link']))): ?>
-                <div class="hero__btns-container mt-2">
-                    <?php if(!empty($download_win_btn['text']) && !empty($download_win_btn['link'])): ?>
-                        <a class="hero__btn btn btn-outline-secondary btn-sm" href="<?php echo e($download_win_btn['link'], false); ?>">
-                            <i class="fab fa-windows"></i>
-                            <span><?php echo e($download_win_btn['text'], false); ?></span>
-                        </a>
-                    <?php endif; ?>
-                    <?php if(!empty($download_win_btn_2['text']) && !empty($download_win_btn_2['link'])): ?>
-                        <a class="hero__btn btn btn-outline-secondary btn-sm" href="<?php echo e($download_win_btn_2['link'], false); ?>">
-                            <i class="fab fa-windows"></i>
-                            <span><?php echo e($download_win_btn_2['text'], false); ?></span>
-                        </a>
-                    <?php endif; ?>
-                    <?php if(!empty($download_linux_btn['text']) && !empty($download_linux_btn['link'])): ?>
-                        <a class="hero__btn btn btn-outline-secondary btn-sm" href="<?php echo e($download_linux_btn['link'], false); ?>">
-                            <i class="fab fa-linux"></i>
-                            <span><?php echo e($download_linux_btn['text'], false); ?></span>
-                        </a>
-                    <?php endif; ?>
-                    <?php if(!empty($download_osx_btn['text']) && !empty($download_osx_btn['link'])): ?>
-                        <a class="hero__btn btn btn-outline-secondary btn-sm" href="<?php echo e($download_osx_btn['link'], false); ?>">
-                            <i class="fab fa-apple"></i>
-                            <span><?php echo e($download_osx_btn['text'], false); ?></span>
-                        </a>
-                    <?php endif; ?>
-                </div>
-            <?php endif; ?>
         </div>
     </div>
     <div class="hero__row d-block d-lg-flex row">

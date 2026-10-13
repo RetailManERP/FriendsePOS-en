@@ -24,7 +24,7 @@
         </div>
     </div>
     <div class="clearfix"></div>
-    <div class="col-md-6 col-md-offset-3">
+    <div class="col-12">
         <div class="box box-primary">
             <div class="box-header with-border text-center">
                 <h2 class="box-title"><?php echo app('translator')->get( 'accounting::lang.profit_loss'); ?></h2>
@@ -45,6 +45,7 @@
                     $total_cos = 0;
                     $total_expense = 0;
                 ?>
+                <div class="table-responsive">
                     <table class="table table-stripped table-bordered">
                         
                         <tr>
@@ -242,6 +243,7 @@
                         </tr>
                         
                     </table>
+                </div>
                 
             </div>
 

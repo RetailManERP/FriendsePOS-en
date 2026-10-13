@@ -1,7 +1,34 @@
 <div class="pos-tab-content">
     <?php
+        $buttons = is_array($details['btns'] ?? null) ? $details['btns'] : [];
         $download_files = $download_files ?? [];
         $download_file_input = !empty($download_files) ? ['list' => 'cms_public_download_files'] : [];
+        $desktop_buttons = [
+            'windows' => [
+                'text' => $buttons['windows']['text'] ?? 'Windows App Download',
+                'link' => $buttons['windows']['link'] ?? '',
+                'title' => __('cms::lang.download_win_btn'),
+                'icon' => 'fab fa-windows',
+            ],
+            'windows_2' => [
+                'text' => $buttons['windows_2']['text'] ?? 'Windows App2 Download',
+                'link' => $buttons['windows_2']['link'] ?? '',
+                'title' => __('cms::lang.download_win_btn_2'),
+                'icon' => 'fab fa-windows',
+            ],
+            'linux' => [
+                'text' => $buttons['linux']['text'] ?? 'Linux App Download',
+                'link' => $buttons['linux']['link'] ?? '',
+                'title' => __('cms::lang.download_linux_btn'),
+                'icon' => 'fab fa-linux',
+            ],
+            'osx' => [
+                'text' => $buttons['osx']['text'] ?? 'OSX App Download',
+                'link' => $buttons['osx']['link'] ?? '',
+                'title' => __('cms::lang.download_osx_btn'),
+                'icon' => 'fab fa-apple',
+            ],
+        ];
     ?>
     <div class="mb-4">
         <h5 class="fw-bold text-dark mb-1">
@@ -127,9 +154,27 @@
             <i class="fas fa-desktop"></i>
             <h6><?php echo app('translator')->get('cms::lang.desktop_apps'); ?></h6>
         </div>
-        <p class="text-muted mb-3" style="font-size: 0.8125rem;">
-            <i class="fas fa-info-circle me-1"></i>
-            Desktop download URLs (Windows, Linux, macOS) are configured in the <strong>Buttons</strong> tab.
-        </p>
+        <div class="row">
+            <?php $__currentLoopData = $desktop_buttons; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $desktop_button): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <div class="col-md-6">
+                    <p class="fw-bold text-muted mb-2" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                        <i class="<?php echo e($desktop_button['icon'], false); ?> me-1"></i><?php echo e($desktop_button['title'], false); ?>
+
+                    </p>
+                    <div class="form-group mb-3">
+                        <?php echo Form::label('desktop_' . $key . '_text', __('cms::lang.button_text') . ':'); ?>
+
+                        <?php echo Form::text('btns[' . $key . '][text]', $desktop_button['text'], ['class' => 'form-control', 'id' => 'desktop_' . $key . '_text']); ?>
+
+                    </div>
+                    <div class="form-group mb-3">
+                        <?php echo Form::label('desktop_' . $key . '_link', __('cms::lang.button_link') . ':'); ?>
+
+                        <?php echo Form::url('btns[' . $key . '][link]', $desktop_button['link'], array_merge(['class' => 'form-control', 'id' => 'desktop_' . $key . '_link', 'placeholder' => 'https://example.com/download'], $download_file_input)); ?>
+
+                    </div>
+                </div>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        </div>
     </div>
 </div>

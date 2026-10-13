@@ -108,12 +108,13 @@ return [
 
     // Download buttons & modern UI
     'download_apps' => 'Download Applications',
-    'download_apps_desc' => 'Download our applications for mobile and desktop platforms. Manage URLs in CMS Settings > Download Buttons.',
+    'download_apps_desc' => 'Download our applications for mobile and desktop platforms.',
     'android_apps' => 'Android Applications',
     'ios_apps' => 'iOS Applications',
     'desktop_apps' => 'Desktop Applications',
     'android_app_primary' => 'Google Play',
     'android_app_secondary' => 'APK Download',
+    'android_pro_request_message' => 'If you need the Pro version, please email us from the registered email address associated with your Android device.',
     'ios_app_primary' => 'App Store',
     'ios_app_secondary' => 'TestFlight',
     'windows_app' => 'Windows',
@@ -124,7 +125,7 @@ return [
     'get_it_on' => 'Get it on',
     'download_for' => 'Download for',
     'download_buttons' => 'Download Buttons',
-    'download_buttons_help' => 'Configure download links for Android, iOS, and Desktop applications. These buttons will appear on the CMS index page.',
+    'download_buttons_help' => 'Configure Android, iOS, and desktop app download links here. These buttons appear on the public home page and the CMS Pages index.',
     'empty_state_hint' => 'Get started by clicking the Add button above.',
 
     // ── Sidebar & Navigation ─────────────────────────────────────────
@@ -179,6 +180,14 @@ return [
     'lead_details' => 'Lead Details',
     'lead_status_updated' => 'Lead status updated successfully',
     'lead_deleted' => 'Lead deleted successfully',
+    'reply_to_lead' => 'Reply to Lead',
+    'lead_reply_subject' => 'Subject',
+    'lead_reply_subject_default' => 'Re: :name',
+    'lead_reply_message' => 'Reply Message',
+    'lead_reply_invalid_email' => 'Lead email is required to send a reply.',
+    'lead_reply_required' => 'Reply message is required.',
+    'lead_replied' => 'Reply sent successfully.',
+    'send_reply' => 'Send Reply',
     'update_status' => 'Update Status',
     'export_leads' => 'Export Leads (CSV)',
     'all_leads' => 'All Leads',

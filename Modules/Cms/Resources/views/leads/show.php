@@ -145,6 +145,22 @@
                         <i class="fas fa-save"></i> <?php echo app('translator')->get('messages.save'); ?>
                     </button>
                 </div>
+
+                <hr>
+                <div class="mt-3">
+                    <label class="label"><?php echo app('translator')->get('cms::lang.reply_to_lead'); ?></label>
+                    <input type="text" class="form-control mt-1" id="lead_reply_subject" value="<?php echo e(__('cms::lang.lead_reply_subject_default', ['name' => $lead->name ?: __('cms::lang.lead_name')]), false); ?>" placeholder="<?php echo app('translator')->get('cms::lang.lead_reply_subject'); ?>">
+                    <textarea class="form-control mt-2" id="lead_reply_message" rows="5" placeholder="<?php echo app('translator')->get('cms::lang.lead_reply_message'); ?>..."></textarea>
+                    <button class="btn btn-sm btn-success mt-2 send-lead-reply"
+                        data-url="<?php echo e(route('cms.leads.reply', $lead->id), false); ?>"
+                        data-email="<?php echo e($lead->email ?? '', false); ?>"
+                        <?php echo e(empty($lead->email) ? 'disabled' : '', false); ?>>
+                        <i class="fas fa-paper-plane"></i> <?php echo app('translator')->get('cms::lang.send_reply'); ?>
+                    </button>
+                    <?php if(empty($lead->email)): ?>
+                        <div class="small text-muted mt-2"><?php echo app('translator')->get('cms::lang.lead_reply_invalid_email'); ?></div>
+                    <?php endif; ?>
+                </div>
                 <?php endif; ?>
 
                 <?php if($lead->handled_by): ?>
@@ -165,10 +181,80 @@
     </div>
 </section>
 
+<div id="cms-lead-footer-actions-template" class="d-none">
+    <?php if(auth()->user()->can('superadmin') || auth()->user()->can('cms.manage_leads')): ?>
+        <button class="btn btn-danger delete-cms-lead"
+            type="button"
+            data-url="<?php echo e(route('cms.leads.destroy', $lead->id), false); ?>"
+            data-next-url="<?php echo e($next_lead ? route('cms.leads.show', $next_lead->id) : '', false); ?>"
+            data-index-url="<?php echo e(route('cms.leads.index'), false); ?>">
+            <i class="fas fa-trash"></i> Delete
+        </button>
+    <?php endif; ?>
+    <?php if($previous_lead): ?>
+        <a class="btn btn-primary" href="<?php echo e(route('cms.leads.show', $previous_lead->id), false); ?>">
+            <i class="fas fa-arrow-left"></i> Previous
+        </a>
+    <?php else: ?>
+        <button class="btn btn-primary" type="button" disabled>
+            <i class="fas fa-arrow-left"></i> Previous
+        </button>
+    <?php endif; ?>
+    <?php if($next_lead): ?>
+        <a class="btn btn-primary" href="<?php echo e(route('cms.leads.show', $next_lead->id), false); ?>">
+            Next <i class="fas fa-arrow-right"></i>
+        </a>
+    <?php else: ?>
+        <button class="btn btn-primary" type="button" disabled>
+            Next <i class="fas fa-arrow-right"></i>
+        </button>
+    <?php endif; ?>
+</div>
+
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('javascript'); ?>
 <script>
+var deleteLeadErrorMessage = <?php echo json_encode(__('messages.something_went_wrong'), 15, 512) ?>;
+
+$(document).on('click', '.delete-cms-lead', function() {
+    var button = $(this);
+    var url = button.data('url');
+    var nextUrl = button.data('next-url');
+    var indexUrl = button.data('index-url');
+
+    swal({
+        title: LANG.sure,
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    }).then(function(confirmed) {
+        if (!confirmed) {
+            return;
+        }
+
+        button.prop('disabled', true);
+        $.ajax({
+            method: "DELETE",
+            url: url,
+            dataType: "json",
+            success: function(result) {
+                if (result.success) {
+                    toastr.success(result.msg);
+                    window.location.href = nextUrl || indexUrl;
+                } else {
+                    button.prop('disabled', false);
+                    toastr.error(result.msg || deleteLeadErrorMessage);
+                }
+            },
+            error: function() {
+                button.prop('disabled', false);
+                toastr.error(deleteLeadErrorMessage);
+            }
+        });
+    });
+});
+
 $(document).on('click', '.update-lead-status', function() {
     var url = $(this).data('url');
     var status = $(this).data('status');
@@ -206,6 +292,51 @@ $(document).on('click', '.save-notes-btn', function() {
             } else {
                 toastr.error(result.msg);
             }
+        }
+    });
+});
+
+$(document).on('click', '.send-lead-reply', function() {
+    var button = $(this);
+    var url = button.data('url');
+    var email = button.data('email');
+    var subject = $('#lead_reply_subject').val();
+    var message = $('#lead_reply_message').val();
+
+    if (!email) {
+        toastr.error(LANG.invalid_email || 'Lead email is required to send a reply.');
+        return;
+    }
+
+    if (!$.trim(message)) {
+        toastr.error(LANG.required_field || 'Message is required.');
+        return;
+    }
+
+    button.prop('disabled', true);
+
+    $.ajax({
+        method: "POST",
+        url: url,
+        data: {
+            email: email,
+            subject: subject,
+            message: message,
+        },
+        dataType: "json",
+        success: function(result) {
+            button.prop('disabled', false);
+            if (result.success) {
+                toastr.success(result.msg);
+                $('#lead_reply_message').val('');
+            } else {
+                toastr.error(result.msg);
+            }
+        },
+        error: function(xhr) {
+            button.prop('disabled', false);
+            var response = xhr.responseJSON || {};
+            toastr.error(response.msg || deleteLeadErrorMessage);
         }
     });
 });

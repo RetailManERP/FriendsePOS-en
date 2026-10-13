@@ -1,5 +1,8 @@
 
 <?php $__env->startSection('title', 'Home'); ?>
+<?php $__env->startSection('css'); ?>
+<link rel="stylesheet" href="<?php echo e(asset('modules/cms/css/cms-downloads.css?v=' . filemtime(public_path('modules/cms/css/cms-downloads.css'))), false); ?>">
+<?php $__env->stopSection(); ?>
 <?php $__env->startSection('preload'); ?>
 <?php
     $preload_hero_image = !empty(optional($page)->feature_image_url)
@@ -49,6 +52,7 @@
     $cta_btn['link'] = !empty($btns['cta']['link']) ? $btns['cta']['link'] : registration_url();
 ?>
 <?php if ($__env->exists('cms::frontend.layouts.home_header')) echo $__env->make('cms::frontend.layouts.home_header', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+<?php if ($__env->exists('cms::frontend.pages.partials.downloads')) echo $__env->make('cms::frontend.pages.partials.downloads', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 <?php
     $page_meta = !empty($page) && !empty($page->pageMeta) ? $page->pageMeta->keyBy('meta_key') : collect();
 ?>

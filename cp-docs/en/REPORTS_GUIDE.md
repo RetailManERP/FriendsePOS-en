@@ -66,13 +66,96 @@ See which products are selling and how much:
 
 ### Sell Payment Report
 
-Track all payments received from customers:
-- Payment date, amount, method, reference
-- Helpful for reconciling bank statements
+#### 1. Module Overview
+
+The Sell Payment Report shows payments linked to customer transactions, with Summary, Customer Summary, and Detail tabs.
+
+#### 2. Purpose of the Feature
+
+Use the report to review and reconcile customer payments, compare totals by payment method or customer, and narrow results to transactions created by a particular user.
+
+#### 3. User Access / Permissions
+
+Users need the **View Sell Payment Report** permission. Users with location restrictions only see payments from their permitted Business Locations.
+
+#### 4. Step-by-Step Usage Instructions
+
+1. Open **Reports** from the left sidebar.
+2. Select **Sell Payment Report**.
+3. Optionally choose a User, payment location, payment method, customer, transaction location, customer group, or date range. **All Users** is selected by default.
+4. Open **Summary**, **Customer Summary**, or **Detail** to view the results in the format you need.
+5. Use the print button on the active tab to print or export that tab with the same filters.
+
+#### 5. Field Descriptions
+
+| Field | Type | Explanation |
+|---|---|---|
+| User | Dropdown | Limits results to transactions created by the selected user. **All Users** includes transactions created by any user. |
+| Payment Location | Dropdown | Limits results to the Business Location where the payment was recorded. |
+| Payment Method | Dropdown | Limits results to a selected payment method. |
+| Customer | Dropdown | Limits results to a selected customer. |
+| Transaction Location | Dropdown | Limits results to transactions from a selected Business Location. |
+| Customer Group | Dropdown | Limits results to customers in a selected group. |
+| Date Range | Date range | Limits results to payments within the selected dates. |
+
+#### 6. Business Logic / Workflow
+
+The selected User is matched against the user who created the underlying transaction. The filter is applied consistently to the detail list, both summary tabs, and printed or exported reports. When **All Users** is selected, the report retains its existing unfiltered-by-user behavior.
+
+#### 7. Notes or Important Considerations
+
+- The User filter defaults to **All Users**.
+- Existing report access and permitted-location restrictions still apply.
 
 ### Sales Analysis
 
 Compare sales across time periods, products, or locations to spot trends.
+
+### Customer Sale by Categories
+
+#### 1. Module Overview
+
+The Customer Sale by Categories report shows each customer's sales grouped by product category, with one column for each month in the selected date range.
+
+#### 2. Purpose of the Feature
+
+Use the report to compare monthly category sales across customers and identify changes in buying patterns.
+
+#### 3. User Access / Permissions
+
+Users need the **Customer Sale by Categories Report** permission. Users with location restrictions only see sales from their permitted Business Locations.
+
+#### 4. Step-by-Step Usage Instructions
+
+1. Open **Reports** from the left sidebar.
+2. Under **Sales Reports**, select **Customer Sale by Categories**.
+3. Choose a start date and end date. The report creates one column for each month touched by this date range.
+4. Optionally select a Business Location, customer, or product category.
+5. Select **Apply Filters** to view the results.
+
+#### 5. Field Descriptions
+
+| Field | Type | Explanation |
+|---|---|---|
+| Start Date | Date | First date included in the report. |
+| End Date | Date | Last date included in the report. |
+| Business Location | Dropdown | Limits the report to a permitted Business Location. |
+| Customer | Dropdown | Limits the report to one customer. |
+| Category Filter | Dropdown | Limits the report to one product category. |
+| City | Text | City recorded on the customer contact. |
+| Shop Name | Text | Customer business name, or the contact name when no business name is set. |
+| Number | Text | Customer mobile number. |
+| Category | Text | Product category assigned to the sold item. |
+| Month columns | Amount | Net sales value for that category and customer during the month. |
+
+#### 6. Business Logic / Workflow
+
+Sales and linked sale returns are grouped by customer, product category, and transaction month. Sale returns reduce the amount for their month. The report uses the product's category and the customer's saved contact details.
+
+#### 7. Notes or Important Considerations
+
+- A date range that starts or ends partway through a month still displays the full month column, but only transactions inside the selected dates are included.
+- Negative monthly amounts are displayed in parentheses. A dash means there were no net sales for that month.
 
 ### Trending Products
 
@@ -169,12 +252,91 @@ If you're in India with GST enabled:
 
 ### Register Report
 
-Shows details for each cash register session:
-- Opening amount, sales totals, payments by method, closing amount
+#### Module Overview
+
+The Register Report lists cash register sessions and summarizes their opening cash, payments, and closing differences.
+
+#### Purpose of the Feature
+
+Use the report to review register activity and compare the counted cash, card, and bank transfer amounts with the amounts expected by the system.
+
+#### User Access / Permissions
+
+Users need the **Register Report** permission. Users with location restrictions only see register sessions from their permitted Business Locations.
+
+#### Step-by-Step Usage Instructions
+
+1. Open **Reports** from the left sidebar and select **Register Report**.
+2. Optionally filter by Business Location, User, register Status, or Date Range.
+3. Review each register session's opening cash and payment totals.
+4. For a closed register with cash denominations recorded, review **Net Difference** immediately after **Total**.
+
+#### Field Descriptions
+
+| Field | Type | Description |
+|---|---|---|
+| Business Location | Dropdown | Limits the report to one Business Location available to the user. |
+| User | Dropdown | Limits the report to registers opened by the selected user. |
+| Status | Dropdown | Limits the report to open or closed registers. |
+| Date Range | Date range | Limits results by the register's opening date. |
+| Advance Payments | Amount | Shows advance payments recorded for each register. |
+| Net Sales | Amount | Shows paid sales plus credit sales minus sales returns. |
+| Net Difference | Amount | Shows the difference between counted and expected cash, adjusted for card and bank transfer differences. |
+
+#### Business Logic / Workflow
+
+The report displays payment columns in the order configured on the Business Location page and only shows payment methods enabled for the selected location. **Cash Skimmed** appears when Cash Skim Protection is enabled in Business Settings. The footer totals opening cash, cash skimmed when enabled, payment methods, advance payments, Net Sales, and Net Difference for the displayed page. **Net Sales** is calculated as paid sales plus credit sales minus sales returns, matching Cash Register details. **Net Difference** follows the Cash Register details calculation: counted cash minus expected cash, plus any card and bank transfer differences.
+
+#### Notes or Important Considerations
+
+- **Net Difference** is blank until cash denomination counts are recorded for the register.
+- When no single Business Location is selected, payment columns appear if the method is enabled at any location the user can access.
 
 ### Sales Representative Report
 
-See sales performance by staff member — who's selling the most?
+#### Module Overview
+
+The Sales Representative Report shows sales performance by staff member, customer, and commission assignment. Its tabs include sales, sales with commission, and product summaries.
+
+#### Purpose of the Feature
+
+Use the report to review sales activity for a selected customer or customer group and to distinguish sales assigned to Commission Agent and Commission Agent 2.
+
+#### User Access / Permissions
+
+Users need the **Sales Representative Report** permission. Users with location restrictions only see activity from their permitted Business Locations.
+
+#### Step-by-Step Usage Instructions
+
+1. Open **Reports** from the left sidebar and select **Sales Representative Report**.
+2. Optionally choose a Business Location, user, date range, customer, customer group, Commission Agent, or Commission Agent 2.
+3. Optionally narrow the results by the product filters shown for your business.
+4. Review the Sales, Sales with Commission, Product Summary, or Product Detailed tab. The selected customer, group, and commission-agent filters are applied to the sales-related results.
+5. Clear a filter or choose **All** to include all values for that filter.
+
+#### Field Descriptions
+
+| Field | Type | Description |
+|---|---|---|
+| Business Location | Dropdown | Limits results to a Business Location the user can access. |
+| User | Dropdown | Limits results to sales created by or assigned to the selected representative. |
+| Date Range | Date range | Limits results to sales within the selected dates. |
+| Customer | Dropdown | Limits results to sales for one customer. |
+| Customer Group | Dropdown | Limits results to customers in one group. |
+| Commission Agent | Dropdown | Limits results to sales assigned to the selected Commission Agent field. |
+| Commission Agent 2 | Dropdown | Limits results to sales assigned to the Commission Agent 2 field. |
+| Category and related product filters | Dropdowns | When enabled, limits results by product category, brand, gender, or procurement source and their subcategories. |
+| City | Dropdown | Limits results to customers in the selected city. |
+
+#### Business Logic / Workflow
+
+Customer and customer-group filters use the customer on each sale. The Commission Agent filter matches the sale's first commission-agent assignment; Commission Agent 2 matches its second assignment. When more than one filter is selected, a sale must satisfy all selected filters. These filters update the sales totals and the Sales, Sales with Commission, Product Summary, and Product Detailed results.
+
+#### Notes or Important Considerations
+
+- The two commission-agent filters are independent; selecting both narrows results to sales matching both assignments.
+- Commission-agent choices include business users so they cover the commission assignment modes configured for the business.
+- Blank filters do not restrict results.
 
 ### Service Staff Report
 

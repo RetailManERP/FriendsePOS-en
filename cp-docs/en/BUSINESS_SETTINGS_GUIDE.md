@@ -41,7 +41,7 @@ Your core business information.
 | **Transaction Edit Days** | How many days after creation a transaction can be edited |
 | **Date Format** | How dates appear throughout the system (e.g., DD/MM/YYYY) |
 | **Time Format** | 12-hour or 24-hour clock |
-| **Time Zone** | Your business time zone |
+| **Time Zone** | Your business time zone. Search by city or time zone name to find it quickly. |
 | **Currency Precision** | Number of decimal places for money (usually 2) |
 | **Quantity Precision** | Number of decimal places for quantities (usually 2) |
 | **Discount Precision** | Number of decimal places for discounts |
@@ -115,6 +115,7 @@ Controls how sales work.
 | Setting | What It Does | Default |
 |---|---|---|
 | **Default Sale Status** | Whether new sales start as Final or Draft | Final |
+| **Sell Create Default Date** | Choose **None** to use the current time in the business time zone, or **Tomorrow at the same time**. This affects only the Sell Create page. | None |
 | **Sell Price Tax** | Are your selling prices inclusive or exclusive of tax? | Exclusive |
 | **Sales Item Addition Method** | How products are added to a sale (add row or increase qty) | Add Row |
 | **Allow Currency Change** | Let users make sales in different currencies | Off |
