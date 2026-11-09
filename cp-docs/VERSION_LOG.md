@@ -1,3 +1,8 @@
+## Product Catalogue - My Orders Customer Details (2026-11-09)
+
+- The public **My Orders** modal displays the customer's name and phone number above the order list.
+- Saved order details are preferred; browser-saved customer information is used if order details are unavailable.
+
 ## Domain-Aware Public Downloads (2026-11-09)
 
 - CMS Download Buttons accept full external URLs or a plain file name.

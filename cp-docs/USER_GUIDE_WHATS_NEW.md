@@ -1,6 +1,15 @@
 # What's New - User Guide
 **Updated:** 2026-11-09
 
+## Product Catalogue - Customer Details in My Orders - 2026-11-09
+
+What users can expect now:
+- The public Product Catalogue's **My Orders** modal shows the customer's name and contact number above the order list.
+- The modal uses customer details saved with the order, then falls back to the browser's saved customer information when needed.
+
+How to use or check it:
+- Enter customer name and phone when placing an order, then open **My Orders** to see those details above the order cards.
+
 ## Download App Files Across Domains - 2026-11-09
 
 What users can expect now:

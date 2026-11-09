@@ -1,5 +1,9 @@
 # Version Log
 
+## 9 November 2026 - Catalogue My Orders Customer Details
+
+The public Product Catalogue's **My Orders** modal now displays the order customer's name and contact number above the order list. Details saved with the order are used first, with the browser's saved customer details as a fallback.
+
 ## 9 November 2026 - Domain-Aware Public Downloads
 
 CMS Download Buttons now accept either an external URL or a file name such as `ActuaryPOS-Pro.apk`. File names resolve from the active installation's `public/downloads` folder when it exists; otherwise they resolve from the primary domain configured by the root `.env` `APP_URL`. The Hardware Setup installer button follows the same fallback. This supports separate domains and subdomains without hardcoding a product domain or hosting-panel directory.
