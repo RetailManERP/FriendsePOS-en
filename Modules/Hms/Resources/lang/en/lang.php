@@ -18,6 +18,7 @@ return
         'prices' => 'Prices',
         'rooms' => 'Rooms',
         'no_rooms_or_extras' => 'No Room/Extras added, Please add to continue',
+        'booking_amount_must_be_greater_than_zero' => 'Booking total must be greater than zero.',
         'set_price_for' => 'Set price for',
         'set_price_for_each_day' => 'Set different price for each day of the week',
         'monday' => 'Monday',
@@ -206,9 +207,11 @@ return
         'id_proof_label_1' => 'ID Proof Label 1',
         'id_proof_label_2' => 'ID Proof Label 2',
         'id_proof_label_3' => 'ID Proof Label 3',
+        'id_proof_label_4' => 'ID Proof Label 4',
         'id_proof_1' => 'ID Proof 1',
         'id_proof_2' => 'ID Proof 2',
         'id_proof_3' => 'ID Proof 3',
+        'id_proof_4' => 'ID Proof 4',
 
         // Dashboard KPI & Revenue
         'dashboard' => 'Dashboard',
@@ -303,4 +306,4 @@ return
         'payment_details' => 'Payment Details',
         'guest_details' => 'Guest Details',
         'no_bookings_found' => 'No bookings found',
-    ]; 
+    ];

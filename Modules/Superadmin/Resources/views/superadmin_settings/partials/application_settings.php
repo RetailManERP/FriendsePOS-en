@@ -68,6 +68,16 @@
         <div class="col-xs-6">
             <div class="form-group">
                 <label class="form-check-label">
+<?php echo Form::checkbox('disable_github_update', 1, !config('constants.software_sync_enabled'),
+                [ 'class' => 'form-check-input']); ?>
+
+                <?php echo app('translator')->get('superadmin::lang.disable_github_update'); ?>
+                </label>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <div class="form-group">
+                <label class="form-check-label">
 <?php echo Form::checkbox('is_email_required', 1, !empty($settings["is_email_required"]),
                 [ 'class' => 'form-check-input']); ?>
 

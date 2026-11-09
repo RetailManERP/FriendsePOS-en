@@ -906,9 +906,10 @@
                         <i class="fa-solid fa-paper-plane me-2"></i> Get a Quote
                     </a>
                     <p class="text-center text-muted mt-2 mb-0" style="font-size:.78rem;">No commitment &mdash; we'll email your custom quote</p>
+                </div>
 
-                    
-                    <div class="modal fade quote_customer_modal" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+                
+                <div class="modal fade quote_customer_modal" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -970,7 +971,6 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
                 </div>
             </div>
         </div>

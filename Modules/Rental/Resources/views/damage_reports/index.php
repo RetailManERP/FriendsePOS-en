@@ -65,7 +65,11 @@
                 data: function(d) {
                     d.severity = $('#damage_severity_filter').val();
                     d.resolution_status = $('#damage_resolution_filter').val();
-                    d.date_range = $('#damage_date_range').val();
+                    var date_range = $('#damage_date_range').data('daterangepicker');
+                    if (date_range && $('#damage_date_range').val()) {
+                        d.start_date = date_range.startDate.format('YYYY-MM-DD');
+                        d.end_date = date_range.endDate.format('YYYY-MM-DD');
+                    }
                 }
             },
             columns: [
@@ -85,8 +89,13 @@
         $('#damage_severity_filter, #damage_resolution_filter').change(function() {
             damage_table.ajax.reload();
         });
+        $('#damage_date_range').daterangepicker(dateRangeSettings);
         $('#damage_date_range').on('apply.daterangepicker cancel.daterangepicker', function(ev) {
-            if (ev.type == 'cancel') $(this).val('');
+            if (ev.type == 'cancel') {
+                $(this).val('');
+                $(this).data('daterangepicker').setStartDate(moment(business_start_date));
+                $(this).data('daterangepicker').setEndDate(moment());
+            }
             damage_table.ajax.reload();
         });
     });

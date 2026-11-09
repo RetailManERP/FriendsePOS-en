@@ -1,6 +1,36 @@
 
 <?php $__env->startSection('title', __('hms::lang.add_bookings')); ?>
 <?php $__env->startSection('content'); ?>
+    <?php
+        $settings = json_decode($busines->hms_settings ?? '{}') ?: (object) [];
+        $hms_time_format = session('business.time_format') == 12 ? 'h:i A' : 'H:i';
+        $default_check_in_time = \Carbon\Carbon::parse($settings->check_in_time ?? '12:00')->format($hms_time_format);
+        $default_check_out_time = \Carbon\Carbon::parse($settings->check_out_time ?? '12:00')->format($hms_time_format);
+        $checkout_grace_minutes = (int) ($settings->grace_before_checkout_minutes ?? 15);
+        $booking_arrival_default = request()->input('booking_date')
+            ? \Carbon\Carbon::parse(request()->input('booking_date'))
+            : \Carbon\Carbon::today();
+        $default_departure_date = old(
+            'departure_date',
+            $booking_arrival_default->copy()->addDay()->format(
+                session('business.date_format', config('constants.default_date_format', 'm/d/Y'))
+            )
+        );
+    ?>
+    <style>
+        .table.booking-rooms-table {
+            table-layout: auto !important;
+        }
+
+        .table.booking-rooms-table thead th {
+            white-space: normal !important;
+            overflow-wrap: anywhere;
+            text-align: center;
+            vertical-align: middle;
+            min-width: 0;
+            padding: 0.5rem 0.25rem;
+        }
+    </style>
     <?php echo $__env->make('hms::layouts.nav', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
     <!-- Main content -->
     <section class="content">
@@ -15,12 +45,19 @@
                             'files' => true,
                         ]); ?>
 
+                        <?php echo Form::hidden('location_id', $payment_location->id ?? null, [
+                            'id' => 'location_id',
+                            'data-default_payment_accounts' => $payment_location->default_payment_accounts ?? '{}',
+                        ]); ?>
+
                         <input type="hidden" name="total_booking_amount" id="final_total_input">
                         <input type="hidden" name="total_discount" id="total_discount">
                         <input type="hidden" name="coupon_id" id="coupon_id">
                         <input type="hidden" name="discount_type" id="discount_type">
+                        <input type="hidden" name="save_and_print" id="save_and_print" value="0">
 
-                        <div class="col-md-6">
+                        <div class="row">
+                        <div class="col-md-12">
                             <div class="form-group">
                                 <?php echo Form::label('contact_id', __('contact.customer') . ':*'); ?>
 
@@ -55,6 +92,8 @@
                                 <small class="text-danger hide contact_due_text"><strong><?php echo app('translator')->get('account.customer_due'); ?>:</strong>
                                     <span></span></small>
                             </div>
+                        </div>
+                        <div class="col-md-6">
                             <small>
                                 <strong>
                                     <?php echo app('translator')->get('lang_v1.billing_address'); ?>:
@@ -69,10 +108,9 @@
                             <div class="form-group">
                                 <?php echo Form::label('status', __('hms::lang.status') . ':*'); ?>
 
-                                <?php echo Form::select('status', $status, '', [
+                                <?php echo Form::select('status', $status, old('status', 'pending'), [
                                     'class' => 'form-control status',
                                     'required',
-                                    'placeholder' => __('hms::lang.status'),
                                 ]); ?>
 
                             </div>
@@ -99,7 +137,7 @@
                             <div class="form-group">
                                 <?php echo Form::label('arrival_time', __('hms::lang.arrival_time') . ':'); ?>
 
-                                <?php echo Form::text('arrival_time', null, [
+                                <?php echo Form::text('arrival_time', old('arrival_time', $default_check_in_time), [
                                     'class' => 'form-control time_picker',
                                     'placeholder' => __('hms::lang.arrival_time'),
                                     'readonly',
@@ -115,7 +153,7 @@
 
                                 <?php echo Form::text(
                                     'departure_date',
-                                    request()->input('booking_date') ? \Carbon::createFromTimestamp(strtotime(request()->input('booking_date')))->format(session('business.date_format')) : null,
+                                    $default_departure_date,
                                     [
                                         'class' => 'form-control departure_date',
                                         'placeholder' => __('hms::lang.departure_date'),
@@ -129,13 +167,10 @@
                             <p class="days_count text-success"> 1 days</p>
                         </div>
                         <div class="col-md-6">
-                            <?php
-                                $settings = json_decode($busines->hms_settings);
-                            ?>
                             <div class="form-group">
                                 <?php echo Form::label('departure_time', __('hms::lang.departure_time') . ':'); ?>
 
-                                <?php echo Form::text('departure_time', null, [
+                                <?php echo Form::text('departure_time', old('departure_time', $default_check_out_time), [
                                     'class' => 'form-control time_picker',
                                     'placeholder' => __('hms::lang.departure_time'),
                                     'readonly',
@@ -145,49 +180,28 @@
 
                             </div>
                         </div>
-                        <div class="clearfix"></div>
-                       <div class="col-md-6">
-                            <div class="form-group">
-                            <?php echo Form::label('id_proof', ($settings->id_proof_label_1 ?? __('hms::lang.id_proof_1')) . ':'); ?>
-
-
-                                <?php echo Form::file('id_proof_1[]', [
-                                    'id' => 'id_proof',
-                                    'accept' => 'image/*, application/pdf',
-                                    'multiple' => true,
-                                    'class' => 'upload-element',
-                                    'required' => $settings->is_id_proof_1_required ? 'required' : null,
-                                ]); ?>
-
-                            </div>
-                       </div>
-                       <div class="col-md-6">
-                            <div class="form-group">
-                                <?php echo Form::label('id_proof_2', ($settings->id_proof_label_2 ?? __('hms::lang.id_proof_2')) . ':'); ?>
-
-                                <?php echo Form::file('id_proof_2[]', [
-                                    'id' => 'id_proof_2',
-                                    'accept' => 'image/*, application/pdf',
-                                    'multiple' => true,
-                                    'class' => 'upload-element',
-                                    'required' => $settings->is_id_proof_2_required ? 'required' : null,
-                                ]); ?>
-
-                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <?php echo Form::label('id_proof_3', ($settings->id_proof_label_3 ?? __('hms::lang.id_proof_3')) . ':'); ?>
+                        <div class="clearfix"></div>
+                        <div class="row">
+                            <?php for($proof_number = 1; $proof_number <= 4; $proof_number++): ?>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <?php echo Form::label(
+                                            'id_proof_' . $proof_number,
+                                            ($settings->{'id_proof_label_' . $proof_number} ?? __('hms::lang.id_proof_' . $proof_number)) . ':',
+                                        ); ?>
 
-                                <?php echo Form::file('id_proof_3[]', [
-                                    'id' => 'id_proof_3',
-                                    'accept' => 'image/*, application/pdf',
-                                    'multiple' => true,
-                                    'class' => 'upload-element',
-                                    'required' => $settings->is_id_proof_3_required ? 'required' : null,
-                                ]); ?>
+                                        <?php echo Form::file('id_proof_' . $proof_number . '[]', [
+                                            'id' => 'id_proof_' . $proof_number,
+                                            'accept' => 'image/*, application/pdf',
+                                            'multiple' => true,
+                                            'class' => 'upload-element',
+                                            'required' => $settings->{'is_id_proof_' . $proof_number . '_required'} ?? false,
+                                        ]); ?>
 
-                            </div>
+                                    </div>
+                                </div>
+                            <?php endfor; ?>
                         </div>
                 
                         <div>
@@ -198,7 +212,7 @@
                         <div class="row">
                             <div class="col-md-8 booking_add_room">
                                 <div class="table-responsive">
-                                <table class="table table-bordered" style="table-layout: fixed;">
+                                <table class="table table-bordered booking-rooms-table">
                                     <thead>
                                         <tr class="bg-light-green">
                                          <th><?php echo app('translator')->get('hms::lang.type'); ?></th>
@@ -343,12 +357,31 @@
                 
                 <?php $__env->startComponent('components.widget'); ?>
                     <div class="row">
-                        <div class="box-body payment_row">
-                            <?php echo $__env->make('hms::partials.payment_row_form', [
-                                'row_index' => 0,
-                                'show_date' => true,
-                                'show_denomination' => true,
-                            ], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                        <div class="col-md-12">
+                            <strong><?php echo app('translator')->get('lang_v1.advance_balance'); ?>:</strong>
+                            <span id="advance_balance_text"><?php echo e(number_format(0, session('business.currency_precision', 2), session('currency')['decimal_separator'], session('currency')['thousand_separator']), false); ?></span>
+                            <?php echo Form::hidden('advance_balance', 0, [
+                                'id' => 'advance_balance',
+                                'data-error-msg' => __('lang_v1.required_advance_balance_not_available'),
+                            ]); ?>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div id="payment_rows_div" class="col-md-12">
+                            <div class="box-body payment_row">
+                                <?php echo $__env->make('hms::partials.payment_row_form', [
+                                    'row_index' => 0,
+                                    'show_date' => true,
+                                    'show_denomination' => true,
+                                ], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="payment_row_index" value="1">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-primary" id="add-payment-row" data-direct-sale-payment-row="1"><?php echo app('translator')->get('sale.add_payment_row'); ?></button>
                         </div>
                     </div>
                     <div class="payment_row">
@@ -446,8 +479,9 @@
 
     
     <div id="hms-booking-footer-actions-template" class="d-none">
-        <div>
+        <div class="d-flex gap-2">
             <button type="button" class="btn btn-primary" id="hms_booking_save_btn"><?php echo app('translator')->get('messages.save'); ?></button>
+            <button type="button" class="btn btn-success" id="hms_booking_save_print_btn"><i class="fa fa-print"></i> Save &amp; Print</button>
         </div>
     </div>
 <?php $__env->stopSection(); ?>
@@ -471,6 +505,8 @@
             var row = null;
             var coupon_id = null;
             var discount_type = null;
+            var checkoutGraceMinutes = <?php echo e($checkout_grace_minutes, false); ?>;
+            var configuredCheckoutTime = <?php echo json_encode($default_check_out_time, 15, 512) ?>;
 
             $('.add-room').on('click', function(e) {
                 e.preventDefault();
@@ -499,7 +535,9 @@
                         'no_of_child': $('#no_of_child').val(),
                         'no_of_adult': $('#no_of_adult').val(),
                         'arrival_date': $('#arrival_date').val(),
+                        'arrival_time': $('#arrival_time').val(),
                         'departure_date': $('#departure_date').val(),
+                        'departure_time': $('#departure_time').val(),
                     },
                     success: function(result) {
                         $('.booking_add_room table tbody').append(result);
@@ -524,7 +562,9 @@
                         'no_of_child': $('#no_of_child').val(),
                         'no_of_adult': $('#no_of_adult').val(),
                         'arrival_date': $('#arrival_date').val(),
+                        'arrival_time': $('#arrival_time').val(),
                         'departure_date': $('#departure_date').val(),
+                        'departure_time': $('#departure_time').val(),
                         'is_edit': true,
                     },
                     success: function(result) {
@@ -570,21 +610,31 @@
                 defaultDate: currentDateTime
             });
 
-            var bookingDate = "<?php echo e(request()->input('booking_date'), false); ?>";
+            var arrivalDateValue = $('#arrival_date').val();
+            var arrivalDateMoment = arrivalDateValue
+                ? moment(arrivalDateValue, moment_date_format)
+                : currentDateTime.clone().startOf('day');
+            var departureDateValue = $('#departure_date').val();
+            var departureDateMoment = departureDateValue
+                ? moment(departureDateValue, moment_date_format)
+                : arrivalDateMoment.clone().add(1, 'day');
 
-            if (!bookingDate) {
-                $('.departure_date').datetimepicker({
-                    format: moment_date_format,
-                    ignoreReadonly: true,
-                    defaultDate: currentDateTime,
-                    minDate: currentDateTime,
-                });
-            } else {
-                $('.departure_date').datetimepicker({
-                    format: moment_date_format,
-                    ignoreReadonly: true,
-                    defaultDate: currentDateTime,
-                });
+            $('.departure_date').datetimepicker({
+                format: moment_date_format,
+                ignoreReadonly: true,
+                defaultDate: departureDateMoment,
+                minDate: arrivalDateMoment.clone().startOf('day').add(1, 'day'),
+            });
+
+            function keepDepartureAfterArrival(arrivalDate) {
+                var minDepartureDate = arrivalDate.clone().startOf('day').add(1, 'day');
+                var departurePicker = $('.departure_date').data('DateTimePicker');
+                departurePicker.minDate(minDepartureDate);
+
+                var currentDepartureDate = departurePicker.date();
+                if (!currentDepartureDate || currentDepartureDate.isBefore(minDepartureDate, 'day')) {
+                    departurePicker.date(minDepartureDate);
+                }
             }
 
             var initialDate;
@@ -620,7 +670,7 @@
                             $(".booking_add_room table tbody tr").remove();
                             $('#coupon_code').val('');
                             initialDate = selectedDate;
-                            $('.departure_date').data('DateTimePicker').minDate(selectedDate);
+                            keepDepartureAfterArrival(selectedDate);
                             calculateAllPrice();
                         } else {
                             initialDate = previousDate;
@@ -629,7 +679,7 @@
                         changeEventBound = true;
                     });
                 } else {
-                    $('.departure_date').data('DateTimePicker').minDate(selectedDate);
+                    keepDepartureAfterArrival(selectedDate);
                     calculateAllPrice();
                 }
 
@@ -691,6 +741,9 @@
                 format: moment_time_format,
                 ignoreReadonly: true,
                 defaultDate: moment(),
+            });
+            $('.time_picker').on('dp.change', function() {
+                calculateAllPrice();
             });
 
             // Remove row functionality
@@ -797,6 +850,29 @@
 
 
 
+            function calculateRoomTotal(priceCell, fallbackPrice, days) {
+                let dailyPrices = {};
+                try {
+                    dailyPrices = JSON.parse(priceCell.attr('data-daily-prices') || '{}');
+                } catch (error) {
+                    dailyPrices = {};
+                }
+
+                const arrivalDate = moment($('#arrival_date').val(), moment_date_format, true);
+                if (!arrivalDate.isValid()) {
+                    return days * fallbackPrice;
+                }
+
+                let total = 0;
+                for (let day = 0; day < days; day++) {
+                    const dateKey = arrivalDate.clone().add(day, 'days').format('YYYY-MM-DD');
+                    const dailyPrice = parseFloat(dailyPrices[dateKey]);
+                    total += Number.isFinite(dailyPrice) ? dailyPrice : fallbackPrice;
+                }
+
+                return total;
+            }
+
             async function calculateAllPrice() {
                 calculateDays()
                 var extra_amount = 0;
@@ -810,9 +886,17 @@
                     $('.booking_add_room table tbody tr').map(async function() {
 
                         const tr = $(this);
-                        const price = parseFloat(tr.find('input[name^="rooms["][name$="][price]"]')
+                        const priceCell = tr.find('.price-td');
+                        let price = parseFloat(tr.find('input[name^="rooms["][name$="][price]"]')
                             .val());
-                        const type_id = tr.find('input[name^="rooms["][name$="][type_id]"]').val();
+                        if (!Number.isFinite(price)) {
+                            price = parseFloat(priceCell.data('unit-price'));
+                        }
+                        if (!Number.isFinite(price)) {
+                            price = 0;
+                        }
+                        const type_id = tr.find('input[name^="rooms["][name$="][type_id]"]').val() ||
+                            priceCell.data('room-type-id');
                         if ($('#coupon_code').val() != '') {
                             discount = await getCouponDiscount(price, type_id);
                             total_discount = total_discount + parseFloat(discount.discount);
@@ -821,9 +905,9 @@
 
 
 
-                        var total_price = calculateDays() * price;
+                        var total_price = calculateRoomTotal(priceCell, price, calculateDays());
                         // tr.find('.price-td').text(total_price.toFixed(0));
-                        tr.find('.price-td').text(__currency_trans_from_en(total_price.toFixed(2),
+                        priceCell.text(__currency_trans_from_en(total_price.toFixed(2),
                             true));
                         tr.find('input[name^="rooms["][name$="][total_price]"]').val(total_price);
                         room_price += total_price;
@@ -928,28 +1012,32 @@
 
 
             function calculateDays() {
-
-                // Assuming you have the start and end date strings in 'D-MM-YYYY' format
                 const startDateString = $('#arrival_date').val();
                 const endDateString = $('#departure_date').val();
-
-                // Convert the date strings to moment objects using the input format
                 const startDate = moment(startDateString, moment_date_format, true);
                 const endDate = moment(endDateString, moment_date_format, true);
+                const arrivalTime = moment($('#arrival_time').val(), moment_time_format, true);
+                const departureTime = moment($('#departure_time').val(), moment_time_format, true);
+                const configuredCheckout = moment(configuredCheckoutTime, moment_time_format, true);
 
-                // Check if the date strings are valid
-                if (startDate.isValid() && endDate.isValid()) {
-                    // Calculate the difference in days
-                    var daysDifference = endDate.diff(startDate,
-                    'days'); // Adding 1 to include both start and end days
-                    if (daysDifference <= 0) {
-                        ++daysDifference;
-                    }
+                if (startDate.isValid() && endDate.isValid() && arrivalTime.isValid() && departureTime.isValid() && configuredCheckout.isValid()) {
+                    startDate.hour(arrivalTime.hour()).minute(arrivalTime.minute()).second(0);
+                    endDate.hour(departureTime.hour()).minute(departureTime.minute()).second(0);
 
-                    $('.days_count').text(daysDifference + ' Days')
+                    const calendarDays = endDate.clone().startOf('day').diff(startDate.clone().startOf('day'), 'days');
+                    const checkoutDeadline = endDate.clone()
+                        .hour(configuredCheckout.hour())
+                        .minute(configuredCheckout.minute())
+                        .second(0)
+                        .add(checkoutGraceMinutes, 'minutes');
+                    const isLateCheckout = calendarDays > 0 && endDate.isSameOrAfter(checkoutDeadline);
+                    const daysDifference = Math.max(1, calendarDays + (isLateCheckout ? 1 : 0));
+                    $('.days_count').text(daysDifference + ' Days');
 
                     return daysDifference;
                 }
+
+                return 1;
             }
             //get customer
             $('select#customer_id').select2({
@@ -1021,8 +1109,7 @@
                 }
 
                 update_shipping_address(data);
-                $('#advance_balance_text').text(__currency_trans_from_en(data.balance), true);
-                $('#advance_balance').val(data.balance);
+                get_contact_advance(data.id);
 
                 if (data.price_calculation_type == 'selling_price_group') {
                     $('#price_group').val(data.selling_price_group_id);
@@ -1043,11 +1130,9 @@
                     if (data.supplier_business_name) {
                         address.push(data.supplier_business_name);
                     }
-                    if (data.name) {
-                        address.push('<br>' + data.name);
-                    }
-                    if (data.text) {
-                        address.push('<br>' + data.text);
+                    var contactName = data.text || data.name;
+                    if (contactName) {
+                        address.push('<br>' + contactName);
                     }
                     if (data.address_line_1) {
                         address.push('<br>' + data.address_line_1);
@@ -1076,17 +1161,69 @@
             function get_contact_due(id) {
                 $.ajax({
                     method: 'get',
-                    url: /get-contact-due/ + id,
-                    dataType: 'text',
+                    url: '/get-contact-due/' + encodeURIComponent(id),
+                    dataType: 'json',
                     success: function(result) {
-                        if (result != '') {
-                            $('.contact_due_text').find('span').text(result);
+                        if (result && result.due) {
+                            $('.contact_due_text').find('span').text(result.due);
                             $('.contact_due_text').removeClass('hide');
                         } else {
                             $('.contact_due_text').find('span').text('');
                             $('.contact_due_text').addClass('hide');
                         }
                     },
+                });
+            }
+
+            function get_contact_advance(id) {
+                $('#advance_balance').val(0);
+                $('#advance_balance_text').text(__currency_trans_from_en(0, true));
+                updateAdvancePaymentOptions(0);
+                if (!id) {
+                    return;
+                }
+
+                $.ajax({
+                    method: 'get',
+                    url: '/contacts/get-contact-advance',
+                    data: { id: id },
+                    dataType: 'json',
+                    success: function(result) {
+                        var deposit = parseFloat(result && result.advance_deposit) || 0;
+                        var paid = parseFloat(result && result.advance_deposit_paid) || 0;
+                        var available = Math.max(0, deposit - paid);
+                        $('#advance_balance').val(available);
+                        $('#advance_balance_text').text(__currency_trans_from_en(available, true));
+                        updateAdvancePaymentOptions(available);
+
+                        $('.payment_row').has('.payment_types_dropdown').each(function() {
+                            var row = $(this);
+                            var methodSelect = row.find('select.payment_types_dropdown').first();
+                            if (methodSelect.val() === 'advance' && !methodSelect.prop('disabled')) {
+                                __write_number(row.find('.payment-amount'), available);
+                                row.find('.payment-amount').trigger('change');
+                            }
+                        });
+                    },
+                });
+            }
+
+            function updateAdvancePaymentOptions(available) {
+                var hasAdvance = (parseFloat(available) || 0) > 0;
+                $('.payment_types_dropdown').filter('select').each(function() {
+                    var methodSelect = $(this);
+                    if (methodSelect.prop('disabled') && methodSelect.val() === 'advance') {
+                        return;
+                    }
+
+                    var advanceOption = methodSelect.find('option[value="advance"]');
+                    advanceOption.prop('hidden', !hasAdvance).prop('disabled', !hasAdvance);
+                    if (!hasAdvance && methodSelect.val() === 'advance') {
+                        var fallbackMethod = methodSelect.find('option').filter(function() {
+                            return this.value && this.value !== 'advance' && !this.disabled;
+                        }).first().val();
+                        methodSelect.val(fallbackMethod || '').trigger('change');
+                    }
                 });
             }
 
@@ -1107,8 +1244,7 @@
                         })
                     );
                 }
-                $('#advance_balance_text').text(__currency_trans_from_en(default_customer_balance), true);
-                $('#advance_balance').val(default_customer_balance);
+                get_contact_advance(default_customer_id);
 
                 if (default_customer_address) {
                     $('#shipping_address').val(default_customer_address);
@@ -1189,42 +1325,7 @@
                         },
                     },
                     submitHandler: function(form) {
-                        $.ajax({
-                            method: 'POST',
-                            url: base_path + '/check-mobile',
-                            dataType: 'json',
-                            data: {
-                                contact_id: function() {
-                                    return $('#hidden_id').val();
-                                },
-                                mobile_number: function() {
-                                    return $('#mobile').val();
-                                },
-                            },
-                            beforeSend: function(xhr) {
-                                __disable_submit_button($(form).find('button[type="submit"]'));
-                            },
-                            success: function(result) {
-                                if (result.is_mobile_exists == true) {
-                                    swal({
-                                        title: LANG.sure,
-                                        text: result.msg,
-                                        icon: 'warning',
-                                        buttons: true,
-                                        dangerMode: true,
-                                    }).then(willContinue => {
-                                        if (willContinue) {
-                                            submitQuickContactForm(form);
-                                        } else {
-                                            $('#mobile').select();
-                                        }
-                                    });
-
-                                } else {
-                                    submitQuickContactForm(form);
-                                }
-                            },
-                        });
+                        submitQuickContactForm(form);
                     },
                 });
             $('.contact_modal').on('hidden.bs.modal', function() {
@@ -1305,8 +1406,9 @@
                 var payment_type = $(this).val();
                 var payment_row = $(this).closest('.payment_row');
                 if (payment_type && payment_type != 'advance') {
-                    var default_account = default_accounts && default_accounts[payment_type]['account'] ?
-                        default_accounts[payment_type]['account'] : '';
+                    var payment_account_settings = default_accounts && default_accounts[payment_type];
+                    var default_account = payment_account_settings && payment_account_settings['account'] ?
+                        payment_account_settings['account'] : '';
                     var row_index = payment_row.find('.payment_row_index').val();
 
                     var account_dropdown = payment_row.find('select#account_' + row_index);
@@ -1322,6 +1424,8 @@
                 if (payment_type == 'advance') {
                     max_value = $('#advance_balance').val();
                     msg = $('#advance_balance').data('error-msg');
+                    __write_number(amount_element, parseFloat(max_value) || 0);
+                    amount_element.trigger('change');
                     amount_element.rules('add', {
                         'max-value': max_value,
                         messages: {
@@ -1339,6 +1443,53 @@
                         account_dropdown.closest('.form-group').removeClass('hide');
                     }
                 }
+            });
+
+            $('.account-dropdown[data-select-default-account="1"]')
+                .closest('.payment_row')
+                .find('.payment_types_dropdown')
+                .trigger('change');
+
+            $('#add-payment-row').on('click', function(e) {
+                // The shared POS script also listens on this ID. Keep this HMS
+                // payment row request exclusive so duplicate indexes are not added.
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                var row_index = parseInt($('#payment_row_index').val(), 10) || 1;
+                $.ajax({
+                    method: 'GET',
+                    url: '<?php echo e(action([Modules\Hms\Http\Controllers\HmsBookingController::class, 'paymentRow']), false); ?>',
+                    data: {
+                        row_index: row_index,
+                        location_id: $('#location_id').val(),
+                    },
+                    dataType: 'html',
+                    success: function(html) {
+                        var row = $('<div class="box-body payment_row"></div>').html(html).appendTo('#payment_rows_div');
+                        if (typeof __select2 === 'function') {
+                            __select2(row.find('.select2'));
+                        }
+                        updateAdvancePaymentOptions($('#advance_balance').val());
+                        row.find('.payment_types_dropdown').trigger('change');
+                        var total = __read_number($('#final_total_input')) || 0;
+                        var paid = 0;
+                        $('#payment_rows_div .payment-amount').not(row.find('.payment-amount')).each(function() {
+                            paid += __read_number($(this)) || 0;
+                        });
+                        var new_method = row.find('.payment_types_dropdown').val();
+                        var new_amount = new_method === 'advance'
+                            ? (parseFloat($('#advance_balance').val()) || 0)
+                            : Math.max(0, total - paid);
+                        __write_number(row.find('.payment-amount'), new_amount);
+                        row.find('.payment-amount').trigger('change').focus().select();
+                        $('#payment_row_index').val(row_index + 1);
+                    },
+                });
+            });
+
+            $(document).on('click', '.remove_payment_row', function() {
+                $(this).closest('.payment_row').remove();
+                calculate_balance_due();
             });
 
 

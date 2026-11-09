@@ -41,7 +41,7 @@
                             <td><?php echo e($note->customer_phone ?: '-', false); ?></td>
                             <td>
                                 <span class="label label-<?php echo e($note->order_type == 'delivery' ? 'warning' : ($note->order_type == 'takeaway' ? 'info' : 'success'), false); ?>">
-                                    <?php echo e($note->order_type_label, false); ?>
+                                    <?php echo e($note->order_type == 'dine_in' && !$is_tables_enabled ? 'Ordered' : $note->order_type_label, false); ?>
 
                                 </span>
                             </td>

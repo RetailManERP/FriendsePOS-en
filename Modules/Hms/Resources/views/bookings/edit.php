@@ -1,9 +1,37 @@
 
 <?php $__env->startSection('title', __('hms::lang.edit_booking')); ?>
 <?php $__env->startSection('content'); ?>
+    <?php
+        $settings = json_decode($busines->hms_settings ?? '{}') ?: (object) [];
+        $hms_time_format = session('business.time_format') == 12 ? 'h:i A' : 'H:i';
+        $default_check_in_time = \Carbon\Carbon::parse($settings->check_in_time ?? '12:00')->format($hms_time_format);
+        $configured_check_out_time = \Carbon\Carbon::parse($settings->check_out_time ?? '12:00')->format($hms_time_format);
+        $checkout_grace_minutes = (int) ($settings->grace_before_checkout_minutes ?? 15);
+    ?>
+    <style>
+        .table.booking-rooms-table {
+            table-layout: auto !important;
+        }
+
+        .table.booking-rooms-table thead th {
+            white-space: normal !important;
+            overflow-wrap: anywhere;
+            text-align: center;
+            vertical-align: middle;
+            min-width: 0;
+            padding: 0.5rem 0.25rem;
+        }
+    </style>
     <?php echo $__env->make('hms::layouts.nav', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
     <!-- Main content -->
     <section class="content">
+    <?php echo Form::open([
+        'url' => action([\Modules\Hms\Http\Controllers\HmsBookingController::class, 'update'],[$transaction->id]),
+        'method' => 'put',
+        'id' => 'edit_booking',
+        'files' => true
+    ]); ?>
+
     <div class="row">
        <div class="col-md-8">
         <div class="box box-solid">
@@ -11,11 +39,9 @@
                 <h3 class="box-title"> <?php echo app('translator')->get('hms::lang.edit_booking'); ?></h3>
             </div>
             <div class="box-body">
-                <?php echo Form::open([
-                    'url' => action([\Modules\Hms\Http\Controllers\HmsBookingController::class, 'update'],[$transaction->id]),
-                    'method' => 'put',
-                    'id' => 'edit_booking',
-                    'files' => true 
+                <?php echo Form::hidden('location_id', $payment_location->id ?? null, [
+                    'id' => 'location_id',
+                    'data-default_payment_accounts' => $payment_location->default_payment_accounts ?? '{}',
                 ]); ?>
 
 
@@ -23,112 +49,78 @@
                 <input type="hidden" name="total_discount" id="total_discount">
                 <input type="hidden" name="coupon_id" id="coupon_id">
                 <input type="hidden" name="discount_type" id="discount_type">
-                <div class="col-md-6">
-					<div class="form-group">
-						<?php echo Form::label('contact_id', __('contact.customer') . ':*'); ?>
+                <input type="hidden" name="save_and_print" id="save_and_print" value="0">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <?php echo Form::label('contact_id', __('contact.customer') . ':*'); ?>
 
-						<div class="input-group">
-							<span class="input-group-text">
-								<i class="fa fa-user"></i>
-							</span>
-							<input type="hidden" id="default_customer_id" 
-							value="<?php echo e($transaction->contact->id, false); ?>" >
-							<input type="hidden" id="default_customer_name" 
-							value="<?php echo e($transaction->contact->name, false); ?>" >
-							<?php echo Form::select('contact_id', 
-								[], null, ['class' => 'form-control mousetrap', 'id' => 'customer_id', 'placeholder' => 'Enter Customer name / phone', 'required']); ?>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                                <input type="hidden" id="default_customer_id" value="<?php echo e($transaction->contact->id, false); ?>">
+                                <input type="hidden" id="default_customer_name" value="<?php echo e($transaction->contact->name, false); ?>">
+                                <?php echo Form::select('contact_id', [], null, ['class' => 'form-control mousetrap', 'id' => 'customer_id', 'placeholder' => 'Enter Customer name / phone', 'required']); ?>
 
-							<span class="input-group-btn">
-								<button type="button" class="btn btn-default bg-white btn-flat add_new_customer" data-name=""><i class="fa fa-plus-circle text-primary fa-lg"></i></button>
-							</span>
-						</div>
-						<small class="text-danger <?php if(empty($customer_due)): ?> hide <?php endif; ?> contact_due_text"><strong><?php echo app('translator')->get('account.customer_due'); ?>:</strong> <span><?php echo e($customer_due ?? '', false); ?></span></small>
-					</div>
-					<small>
-						<strong>
-							<?php echo app('translator')->get('lang_v1.billing_address'); ?>:
-						</strong>
-						<div id="billing_address_div">
-							<?php echo $transaction->contact->contact_address ?? ''; ?>
-
-						</div>
-					</small>
-				</div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <?php echo Form::label('status', __('hms::lang.status') . '*'); ?>
-
-                        <?php echo Form::select('status', $status, $transaction->status, [
-                            'class' => 'form-control status',
-                            'required',
-                            'placeholder' => __('hms::lang.status'),
-                        ]); ?>
-
+                                <span class="input-group-btn"><button type="button" class="btn btn-default bg-white btn-flat add_new_customer" data-name=""><i class="fa fa-plus-circle text-primary fa-lg"></i></button></span>
+                            </div>
+                            <small class="text-danger <?php if(empty($customer_due)): ?> hide <?php endif; ?> contact_due_text"><strong><?php echo app('translator')->get('account.customer_due'); ?>:</strong> <span><?php echo e($customer_due ?? '', false); ?></span></small>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <?php echo Form::label('arrival_date', __('hms::lang.arrival_date') . ':'); ?>
+                <div class="row">
+                    <div class="col-md-6">
+                        <small><strong><?php echo app('translator')->get('lang_v1.billing_address'); ?>:</strong><div id="billing_address_div"><?php echo $transaction->contact->contact_address ?? ''; ?></div></small>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <?php echo Form::label('status', __('hms::lang.status') . ':*'); ?>
 
-                        <?php echo Form::text('arrival_date', \Carbon::createFromTimestamp(strtotime($transaction->hms_booking_arrival_date_time))->format(session('business.date_format')), [
-                            'class' => 'form-control date_picker',
-                            'placeholder' => __('hms::lang.arrival_date'),
-                            'readonly',
-                            'required',
-                            'id' => 'arrival_date',
-                        ]); ?>
+                            <?php echo Form::select('status', $status, $transaction->status, ['class' => 'form-control status', 'required', 'placeholder' => __('hms::lang.status')]); ?>
 
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <?php echo Form::label('arrival_time', __('hms::lang.arrival_time') . ':'); ?>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <?php echo Form::label('arrival_date', __('hms::lang.arrival_date') . ':'); ?>
 
-                        <?php echo Form::text('arrival_time', \Carbon::createFromTimestamp(strtotime($transaction->hms_booking_arrival_date_time))->format('h:i A'), [
-                            'class' => 'form-control time_picker',
-                            'placeholder' => __('hms::lang.arrival_time'),
-                            'readonly',
-                            'required',
-                            'id' => 'arrival_time',
-                        ]); ?>
+                            <?php echo Form::text('arrival_date', \Carbon::createFromTimestamp(strtotime($transaction->hms_booking_arrival_date_time))->format(session('business.date_format')), ['class' => 'form-control date_picker', 'placeholder' => __('hms::lang.arrival_date'), 'readonly', 'required', 'id' => 'arrival_date']); ?>
 
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <?php echo Form::label('arrival_time', __('hms::lang.arrival_time') . ':'); ?>
+
+                            <?php echo Form::text('arrival_time', \Carbon::createFromTimestamp(strtotime($transaction->hms_booking_arrival_date_time))->format('h:i A'), ['class' => 'form-control time_picker', 'placeholder' => __('hms::lang.arrival_time'), 'readonly', 'required', 'id' => 'arrival_time']); ?>
+
+                        </div>
                     </div>
                 </div>
-                 <div class="col-md-6">
-                    <div class="form-group">
-                        <?php echo Form::label('departure_date', __('hms::lang.departure_date') . ':'); ?>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <?php echo Form::label('departure_date', __('hms::lang.departure_date') . ':'); ?>
 
-                        <?php echo Form::text('departure_date', \Carbon::createFromTimestamp(strtotime($transaction->hms_booking_departure_date_time))->format(session('business.date_format')), [
-                            'class' => 'form-control departure_date',
-                            'placeholder' => __('hms::lang.departure_date'),
-                            'readonly',
-                            'required',
-                            'id' => 'departure_date',
-                        ]); ?>
+                            <?php echo Form::text('departure_date', \Carbon::createFromTimestamp(strtotime($transaction->hms_booking_departure_date_time))->format(session('business.date_format')), ['class' => 'form-control departure_date', 'placeholder' => __('hms::lang.departure_date'), 'readonly', 'required', 'id' => 'departure_date']); ?>
 
+                        </div>
+                        <p class="days_count text-success">1 Days</p>
                     </div>
-                    <p class="days_count text-success">1 Days</p>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <?php echo Form::label('departure_time', __('hms::lang.departure_time') . ':'); ?>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <?php echo Form::label('departure_time', __('hms::lang.departure_time') . ':'); ?>
 
-                        <?php echo Form::text('departure_time', \Carbon::createFromTimestamp(strtotime($transaction->hms_booking_departure_date_time))->format('h:i A'), [ 
-                            'class' => 'form-control time_picker',
-                            'placeholder' => __('hms::lang.departure_time'),
-                            'readonly',
-                            'required',
-                            'id' => 'departure_time',
-                        ]); ?>
+                            <?php echo Form::text('departure_time', \Carbon::createFromTimestamp(strtotime($transaction->hms_booking_departure_date_time))->format('h:i A'), ['class' => 'form-control time_picker', 'placeholder' => __('hms::lang.departure_time'), 'readonly', 'required', 'id' => 'departure_time']); ?>
 
+                        </div>
                     </div>
                 </div>
-
-                <div class="col-md-12">
-                    <hr>
+                <div class="row">
+                    <div class="col-md-12"><hr></div>
                 </div>
-                <div class="clearfix"></div>
-                <div class="col-md-12">
+                <div class="row">
                     <div class="col-md-6">
                             <?php
                                 $settings = json_decode($busines->hms_settings);
@@ -163,10 +155,11 @@
                             <?php echo Form::label('id_proof', ($settings->id_proof_label_1 ?? __('hms::lang.id_proof_1')) . ':'); ?>
 
                             <?php echo Form::file('id_proof_1[]', [
-                                'id' => 'id_proof',
+                            'id' => 'id_proof_1',
                                 'accept' => 'image/*, application/pdf',
                                 'multiple' => true,
                                 'class' => 'upload-element',
+                            'required' => $settings->is_id_proof_1_required ?? false,
                             ]); ?>
 
                         </div>
@@ -205,6 +198,7 @@
                                 'accept' => 'image/*, application/pdf',
                                 'multiple' => true,
                                 'class' => 'upload-element',
+                                'required' => $settings->is_id_proof_2_required ?? false,
                             ]); ?>
 
                         </div>
@@ -243,21 +237,60 @@
                                     'accept' => 'image/*, application/pdf',
                                     'multiple' => true,
                                     'class' => 'upload-element',
+                                    'required' => $settings->is_id_proof_3_required ?? false,
                                 ]); ?>
 
                             </div>
                         </div>
+                    <div class="col-md-6">
+                        <div class="d-flex flex-wrap gap-2">
+                            <?php $__currentLoopData = $transaction->media; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $media): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <?php if($media->model_media_type == 'id_proof_4'): ?>
+                                    <?php if(Str::endsWith(strtolower($media->file_name), '.pdf')): ?>
+                                        <div class="img-thumbnail position-relative" style="width: 100px; height: auto;">
+                                            <span class="badge bg-red position-absolute delete-media" style="z-index: 100;"
+                                                data-href="<?php echo e(action([Modules\Hms\Http\Controllers\HmsBookingController::class, 'deleteMedia'], ['media_id' => $media->id]), false); ?>">
+                                                <i class="fas fa-times"></i>
+                                            </span>
+                                            <a href="<?php echo e($media->display_url, false); ?>" target="_blank">
+                                                <i class="fas fa-file-pdf fa-3x text-danger d-block mx-auto my-3"></i>
+                                            </a>
+                                        </div>
+                                    <?php else: ?>
+                                        <div class="img-thumbnail position-relative" style="width: 100px; height: auto;">
+                                            <span class="badge bg-red position-absolute delete-media" style="z-index: 100;"
+                                                data-href="<?php echo e(action([Modules\Hms\Http\Controllers\HmsBookingController::class, 'deleteMedia'], ['media_id' => $media->id]), false); ?>">
+                                                <i class="fas fa-times"></i>
+                                            </span>
+                                            <img src="<?php echo e($media->display_url, false); ?>" style="width: 100%; height: 50px;" class="img-thumbnail">
+                                        </div>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </div>
+                        <div class="form-group">
+                            <?php echo Form::label('id_proof_4', ($settings->id_proof_label_4 ?? __('hms::lang.id_proof_4')) . ':'); ?>
+
+                            <?php echo Form::file('id_proof_4[]', [
+                                'id' => 'id_proof_4',
+                                'accept' => 'image/*, application/pdf',
+                                'multiple' => true,
+                                'class' => 'upload-element',
+                            ]); ?>
+
+                        </div>
                     </div>
-                <div>
-                <div class="col-md-12">
-                    <hr>
                 </div>
-                    <h3 class="col-md-12">
-                        <?php echo app('translator')->get('hms::lang.rooms_and_extras'); ?>
-                    </h3>
+                <div class="row">
+                    <div class="col-md-12">
+                        <hr>
+                        <h3><?php echo app('translator')->get('hms::lang.rooms_and_extras'); ?></h3>
+                    </div>
                 </div>
+                <div class="row">
                 <div class="col-md-8 booking_add_room">
-                    <table class="table table-bordered">
+                    <div class="table-responsive">
+                    <table class="table table-bordered booking-rooms-table">
                         <thead>
                             <tr class="bg-light-green">
                                 <th><?php echo app('translator')->get('hms::lang.type'); ?></th>
@@ -271,13 +304,13 @@
                         <tbody>
                             <?php $__currentLoopData = $booking_rooms; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $room): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <tr>
+                                    <td>
                                         <input type="hidden" value="<?php echo e($room->total_price, false); ?>" name="rooms[<?php echo e($index, false); ?>][total_price]">
                                         <input type="hidden" value="<?php echo e($room->price, false); ?>" name="rooms[<?php echo e($index, false); ?>][price]">
                                         <input type="hidden" value="<?php echo e($room->hms_room_type_id, false); ?>" name="rooms[<?php echo e($index, false); ?>][type_id]">
                                         <input type="hidden" class="room-id-input" value="<?php echo e($room->hms_room_id, false); ?>" name="rooms[<?php echo e($index, false); ?>][room_id]">
                                         <input type="hidden" value="<?php echo e($room->adults, false); ?>" name="rooms[<?php echo e($index, false); ?>][no_of_adult]">
                                         <input type="hidden" value="<?php echo e($room->childrens, false); ?>" name="rooms[<?php echo e($index, false); ?>][no_of_child]">
-                                    <td>
                                         <?php echo e($room->type, false); ?>
 
                                     
@@ -294,7 +327,7 @@
                                         <?php echo e($room->childrens, false); ?>
 
                                     </td>
-                                    <td class="price-td">
+                                    <td class="price-td" data-unit-price="<?php echo e($room->price, false); ?>" data-room-type-id="<?php echo e($room->hms_room_type_id, false); ?>" data-daily-prices="<?php echo e(json_encode($room->daily_prices), false); ?>">
                                         <?php echo e($room->total_price, false); ?>
 
                                     </td>
@@ -307,8 +340,11 @@
                         </tbody>
                     </table>
                     <button type="button" class="btn btn-primary add-room">  <?php echo app('translator')->get('messages.add'); ?> <?php echo app('translator')->get('hms::lang.rooms'); ?></button>
+                    </div>
                 </div>
+       </div>
                 <div class="col-md-4">
+                    <div class="table-responsive">
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -330,6 +366,7 @@
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </tbody>
                     </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -438,6 +475,17 @@
                 </div>
                 <div class="box-body">
                     <div class="row">
+                        <div class="col-md-12">
+                            <strong><?php echo app('translator')->get('lang_v1.advance_balance'); ?>:</strong>
+                            <span id="advance_balance_text"><?php echo e(number_format(0, session('business.currency_precision', 2), session('currency')['decimal_separator'], session('currency')['thousand_separator']), false); ?></span>
+                            <?php echo Form::hidden('advance_balance', 0, [
+                                'id' => 'advance_balance',
+                                'data-error-msg' => __('lang_v1.required_advance_balance_not_available'),
+                            ]); ?>
+
+                        </div>
+                    </div>
+                    <div class="row" id="payment_rows_div">
                             <?php $__currentLoopData = $payment_lines; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $payment_line): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>			
                                 <?php if($payment_line['is_return'] == 1): ?>
                                     <?php
@@ -455,6 +503,13 @@
                                     <?php echo $__env->make('hms::partials.payment_row_form', ['row_index' => $loop->index, 'show_date' => true, 'payment_lines' => $payment_line, 'show_denomination' => true], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                 </div>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </div>
+                    <input type="hidden" id="payment_row_index" value="<?php echo e(count($payment_lines), false); ?>">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-primary" id="add-payment-row"><?php echo app('translator')->get('sale.add_payment_row'); ?></button>
+                        </div>
+                    </div>
                         <div class="payment_row">
                             <div class="row">
                                 <div class="col-md-12">
@@ -523,13 +578,17 @@
             </div>
         </div>
     </div>
-    <div class="col-md-12 text-center">
-    <button type="submit" name="submit_action" value="save" id="submit_action" class="btn btn-lg btn-primary"><?php echo app('translator')->get('messages.save'); ?></button>
-    </div>
        <?php echo Form::close(); ?>
 
     </section>
     <!-- /.content -->
+
+    <div id="hms-booking-edit-footer-actions-template" class="d-none">
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-primary" id="hms_booking_update_btn"><?php echo app('translator')->get('messages.update'); ?></button>
+            <button type="button" class="btn btn-success" id="hms_booking_update_print_btn"><i class="fa fa-print"></i> <?php echo app('translator')->get('lang_v1.update_and_print'); ?></button>
+        </div>
+    </div>
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('modals'); ?>
@@ -547,6 +606,8 @@
             var row = null;
             var coupon_id = null;
             var discount_type = null;
+            var checkoutGraceMinutes = <?php echo e($checkout_grace_minutes, false); ?>;
+            var configuredCheckoutTime = <?php echo json_encode($configured_check_out_time, 15, 512) ?>;
 
             $('.add-room').on('click', function(e) {
                 e.preventDefault();
@@ -575,7 +636,9 @@
                         'no_of_child': $('#no_of_child').val(),
                         'no_of_adult': $('#no_of_adult').val(),
                         'arrival_date': $('#arrival_date').val(),
+                        'arrival_time': $('#arrival_time').val(),
                         'departure_date': $('#departure_date').val(),
+                        'departure_time': $('#departure_time').val(),
                     },
                     success: function(result) {
                         $('.booking_add_room table tbody').append(result);
@@ -600,7 +663,9 @@
                         'no_of_child': $('#no_of_child').val(),
                         'no_of_adult': $('#no_of_adult').val(),
                         'arrival_date': $('#arrival_date').val(),
+                        'arrival_time': $('#arrival_time').val(),
                         'departure_date': $('#departure_date').val(),
+                        'departure_time': $('#departure_time').val(),
                         'is_edit': true,
                     },
                     success: function(result) {
@@ -751,6 +816,9 @@
                 format: moment_time_format,
                 ignoreReadonly: true,
             });
+            $('.time_picker').on('dp.change', function() {
+                calculateAllPrice();
+            });
 
             // Remove row functionality
             $(document).on('click', '.remove', function(e) {
@@ -867,6 +935,29 @@
                 };
             }
 
+            function calculateRoomTotal(priceCell, fallbackPrice, days) {
+                let dailyPrices = {};
+                try {
+                    dailyPrices = JSON.parse(priceCell.attr('data-daily-prices') || '{}');
+                } catch (error) {
+                    dailyPrices = {};
+                }
+
+                const arrivalDate = moment($('#arrival_date').val(), moment_date_format, true);
+                if (!arrivalDate.isValid()) {
+                    return days * fallbackPrice;
+                }
+
+                let total = 0;
+                for (let day = 0; day < days; day++) {
+                    const dateKey = arrivalDate.clone().add(day, 'days').format('YYYY-MM-DD');
+                    const dailyPrice = parseFloat(dailyPrices[dateKey]);
+                    total += Number.isFinite(dailyPrice) ? dailyPrice : fallbackPrice;
+                }
+
+                return total;
+            }
+
             async function calculateAllPrice() {
                     var extra_amount = 0;
                     var person = 0;
@@ -879,16 +970,24 @@
                     await Promise.all(
                         $('.booking_add_room table tbody tr').map(async function() {
                             const tr = $(this);
-                            const price = parseFloat(tr.find('input[name^="rooms["][name$="][price]"]').val());
-                            const type_id = tr.find('input[name^="rooms["][name$="][type_id]"]').val();
+                            const priceCell = tr.find('.price-td');
+                            let price = parseFloat(tr.find('input[name^="rooms["][name$="][price]"]').val());
+                            if (!Number.isFinite(price)) {
+                                price = parseFloat(priceCell.data('unit-price'));
+                            }
+                            if (!Number.isFinite(price)) {
+                                price = 0;
+                            }
+                            const type_id = tr.find('input[name^="rooms["][name$="][type_id]"]').val() ||
+                                priceCell.data('room-type-id');
                             if($('#coupon_code').val() != ''){
                                 discount = await getCouponDiscount(price, type_id);
                                 total_discount = total_discount + parseFloat(discount.discount);
                                 coupon_id = discount.coupon_id;
                                 discount_type  = discount.discount_type
                             }
-                            var total_price = calculateDays() * price;
-                            tr.find('.price-td').text(__currency_trans_from_en(total_price.toFixed(2) , true));
+                            var total_price = calculateRoomTotal(priceCell, price, calculateDays());
+                            priceCell.text(__currency_trans_from_en(total_price.toFixed(2) , true));
                             tr.find('input[name^="rooms["][name$="][total_price]"]').val(total_price);
                             room_price += total_price;
                             person += parseFloat(tr.find('input[name^="rooms["][name$="][no_of_adult]"]').val()) +
@@ -974,27 +1073,32 @@
 
 
              function calculateDays() {
-                // Assuming you have the start and end date strings in 'D-MM-YYYY' format
                 const startDateString = $('#arrival_date').val();
                 const endDateString = $('#departure_date').val();
-
-                // Convert the date strings to moment objects using the input format
                 const startDate = moment(startDateString, moment_date_format, true);
                 const endDate = moment(endDateString, moment_date_format, true);
+                const arrivalTime = moment($('#arrival_time').val(), moment_time_format, true);
+                const departureTime = moment($('#departure_time').val(), moment_time_format, true);
+                const configuredCheckout = moment(configuredCheckoutTime, moment_time_format, true);
 
-                // Check if the date strings are valid
-                if (startDate.isValid() && endDate.isValid()) {
-                // Calculate the difference in days
-                var daysDifference = endDate.diff(startDate, 'days'); // Adding 1 to include both start and end days
+                if (startDate.isValid() && endDate.isValid() && arrivalTime.isValid() && departureTime.isValid() && configuredCheckout.isValid()) {
+                    startDate.hour(arrivalTime.hour()).minute(arrivalTime.minute()).second(0);
+                    endDate.hour(departureTime.hour()).minute(departureTime.minute()).second(0);
 
-                if(daysDifference <= 0){
-                        ++daysDifference;
-                    }
-
-                    $('.days_count').text(daysDifference + ' Days')
+                    const calendarDays = endDate.clone().startOf('day').diff(startDate.clone().startOf('day'), 'days');
+                    const checkoutDeadline = endDate.clone()
+                        .hour(configuredCheckout.hour())
+                        .minute(configuredCheckout.minute())
+                        .second(0)
+                        .add(checkoutGraceMinutes, 'minutes');
+                    const isLateCheckout = calendarDays > 0 && endDate.isSameOrAfter(checkoutDeadline);
+                    const daysDifference = Math.max(1, calendarDays + (isLateCheckout ? 1 : 0));
+                    $('.days_count').text(daysDifference + ' Days');
 
                     return daysDifference;
                 }
+
+                return 1;
             }
             calculateAllPrice();
 
@@ -1067,8 +1171,7 @@
                 }
                 
                 update_shipping_address(data);
-                $('#advance_balance_text').text(__currency_trans_from_en(data.balance), true);
-                $('#advance_balance').val(data.balance);
+                get_contact_advance(data.id);
 
                 if (data.price_calculation_type == 'selling_price_group') {
                     $('#price_group').val(data.selling_price_group_id);
@@ -1088,11 +1191,9 @@
                     if (data.supplier_business_name) {
                         address.push(data.supplier_business_name);
                     }
-                    if (data.name) {
-                        address.push('<br>' + data.name);
-                    }
-                    if (data.text) {
-                        address.push('<br>' + data.text);
+                    var contactName = data.text || data.name;
+                    if (contactName) {
+                        address.push('<br>' + contactName);
                     }
                     if (data.address_line_1) {
                         address.push('<br>' + data.address_line_1);
@@ -1121,17 +1222,69 @@
             function get_contact_due(id) {
                 $.ajax({
                     method: 'get',
-                    url: /get-contact-due/ + id,
-                    dataType: 'text',
+                    url: '/get-contact-due/' + encodeURIComponent(id),
+                    dataType: 'json',
                     success: function(result) {
-                        if (result != '') {
-                            $('.contact_due_text').find('span').text(result);
+                        if (result && result.due) {
+                            $('.contact_due_text').find('span').text(result.due);
                             $('.contact_due_text').removeClass('hide');
                         } else {
                             $('.contact_due_text').find('span').text('');
                             $('.contact_due_text').addClass('hide');
                         }
                     },
+                });
+            }
+
+            function get_contact_advance(id) {
+                $('#advance_balance').val(0);
+                $('#advance_balance_text').text(__currency_trans_from_en(0, true));
+                updateAdvancePaymentOptions(0);
+                if (!id) {
+                    return;
+                }
+
+                $.ajax({
+                    method: 'get',
+                    url: '/contacts/get-contact-advance',
+                    data: { id: id },
+                    dataType: 'json',
+                    success: function(result) {
+                        var deposit = parseFloat(result && result.advance_deposit) || 0;
+                        var paid = parseFloat(result && result.advance_deposit_paid) || 0;
+                        var available = Math.max(0, deposit - paid);
+                        $('#advance_balance').val(available);
+                        $('#advance_balance_text').text(__currency_trans_from_en(available, true));
+                        updateAdvancePaymentOptions(available);
+
+                        $('.payment_row').has('.payment_types_dropdown').each(function() {
+                            var row = $(this);
+                            var methodSelect = row.find('select.payment_types_dropdown').first();
+                            if (methodSelect.val() === 'advance' && !methodSelect.prop('disabled')) {
+                                __write_number(row.find('.payment-amount'), available);
+                                row.find('.payment-amount').trigger('change');
+                            }
+                        });
+                    },
+                });
+            }
+
+            function updateAdvancePaymentOptions(available) {
+                var hasAdvance = (parseFloat(available) || 0) > 0;
+                $('.payment_types_dropdown').filter('select').each(function() {
+                    var methodSelect = $(this);
+                    if (methodSelect.prop('disabled') && methodSelect.val() === 'advance') {
+                        return;
+                    }
+
+                    var advanceOption = methodSelect.find('option[value="advance"]');
+                    advanceOption.prop('hidden', !hasAdvance).prop('disabled', !hasAdvance);
+                    if (!hasAdvance && methodSelect.val() === 'advance') {
+                        var fallbackMethod = methodSelect.find('option').filter(function() {
+                            return this.value && this.value !== 'advance' && !this.disabled;
+                        }).first().val();
+                        methodSelect.val(fallbackMethod || '').trigger('change');
+                    }
                 });
             }
 
@@ -1148,8 +1301,7 @@
                         $('<option>', { value: default_customer_id, text: default_customer_name })
                     );
                 }
-                $('#advance_balance_text').text(__currency_trans_from_en(default_customer_balance), true);
-                $('#advance_balance').val(default_customer_balance);
+                get_contact_advance(default_customer_id);
                 if (default_customer_address) {
                     $('#shipping_address').val(default_customer_address);
                 }
@@ -1336,6 +1488,42 @@
            
             $(document).on('change', '.payment_types_dropdown', function() {
                 var payment_type = $(this).val();
+                var default_accounts = $('#location_id').data('default_payment_accounts');
+                var payment_row = $(this).closest('.payment_row');
+                var amount_element = payment_row.find('.payment-amount');
+                var account_dropdown = payment_row.find('.account-dropdown');
+
+                if (payment_type && payment_type != 'advance') {
+                    var payment_account_settings = default_accounts && default_accounts[payment_type];
+                    var default_account = payment_account_settings && payment_account_settings.account
+                        ? payment_account_settings.account
+                        : '';
+                    var row_index = payment_row.find('.payment_row_index').val();
+                    account_dropdown = payment_row.find('select#account_' + row_index);
+
+                    if (account_dropdown.length && default_accounts) {
+                        account_dropdown.val(default_account).trigger('change');
+                    }
+                }
+
+                if (payment_type === 'advance') {
+                    var advance_balance = parseFloat($('#advance_balance').val()) || 0;
+                    __write_number(amount_element, advance_balance);
+                    amount_element.trigger('change');
+                    if (typeof amount_element.rules === 'function') {
+                        amount_element.rules('add', {
+                            'max-value': advance_balance,
+                            messages: { 'max-value': $('#advance_balance').data('error-msg') },
+                        });
+                    }
+                    account_dropdown.prop('disabled', true).closest('.form-group').addClass('hide');
+                } else {
+                    if (typeof amount_element.rules === 'function') {
+                        amount_element.rules('remove', 'max-value');
+                    }
+                    account_dropdown.prop('disabled', false).closest('.form-group').removeClass('hide');
+                }
+
                 var to_show = null;
                 $(this)
                     .closest('.payment_row')
@@ -1366,6 +1554,45 @@
                         $(this).closest('.payment_row').find('.cash_denomination_div').addClass('hide');
                     }
                 }
+            });
+
+            $('.account-dropdown[data-select-default-account="1"]')
+                .closest('.payment_row')
+                .find('.payment_types_dropdown')
+                .trigger('change');
+
+            $('#add-payment-row').on('click', function() {
+                var row_index = parseInt($('#payment_row_index').val(), 10) || 1;
+                $.ajax({
+                    method: 'GET',
+                    url: '<?php echo e(action([Modules\Hms\Http\Controllers\HmsBookingController::class, 'paymentRow']), false); ?>',
+                    data: {
+                        row_index: row_index,
+                        location_id: $('#location_id').val(),
+                    },
+                    dataType: 'html',
+                    success: function(html) {
+                        var row = $('<div class="box-body payment_row"></div>').html(html).appendTo('#payment_rows_div');
+                        if (typeof __select2 === 'function') {
+                            __select2(row.find('.select2'));
+                        }
+                        updateAdvancePaymentOptions($('#advance_balance').val());
+                        row.find('.payment_types_dropdown').trigger('change');
+                        var total = __read_number($('#total_booking_amount')) || 0;
+                        var paid = 0;
+                        $('#payment_rows_div .payment-amount').not(row.find('.payment-amount')).each(function() {
+                            paid += __read_number($(this)) || 0;
+                        });
+                        __write_number(row.find('.payment-amount'), Math.max(0, total - paid));
+                        row.find('.payment-amount').trigger('change').focus().select();
+                        $('#payment_row_index').val(row_index + 1);
+                    },
+                });
+            });
+
+            $(document).on('click', '.remove_payment_row', function() {
+                $(this).closest('.payment_row').remove();
+                calculate_balance_due();
             });
             
 
@@ -1414,12 +1641,6 @@
                 __highlight(change_return * -1, $('span.change_return_span'));
             }
 
-            $(document).on('click', 'button#submit_action', function(e){
-                if($('.booking_add_room table tbody tr').length == 0 && $('input[type="checkbox"][name^="extras["][name$="][id]"]:checked').length == 0){
-                    toastr.warning("<?php echo e(__('hms::lang.no_rooms_or_extras'), false); ?>");
-                    return false;
-                }
-            });
         });
     </script>
 <?php $__env->stopSection(); ?>

@@ -405,7 +405,7 @@
             /* if (session("business.currency_symbol_placement") == "before") {
                  $formated_number .= session("currency")["symbol"] . " ";
             }*/ 
-            $formated_number .= number_format((float) $transaction->final_total - $transaction->total_paid, session("business.currency_precision", 2) , session("currency")["decimal_separator"], session("currency")["thousand_separator"]);
+            $formated_number .= number_format((float) max(0, (float) $transaction->final_total - (float) $transaction->total_paid), session("business.currency_precision", 2) , session("currency")["decimal_separator"], session("currency")["thousand_separator"]);
 
             /* if (session("business.currency_symbol_placement") == "after") {
                  $formated_number .= " " . session("currency")["symbol"];

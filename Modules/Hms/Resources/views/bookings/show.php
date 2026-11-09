@@ -304,6 +304,31 @@
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </div>
                     </div>
+                    <div class="col-sm-12">
+                        <h4><?php echo e($settings->id_proof_label_4 ?? __('hms::lang.id_proof_4'), false); ?></h4>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="row">
+                            <?php $__currentLoopData = $transaction->media; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $media): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <?php if($media->model_media_type == 'id_proof_4'): ?>
+                                    <div class="col-md-2 card">
+                                        <div class="position-relative" style="height: 150px;">
+                                            <?php if(Str::endsWith(strtolower($media->file_name), '.pdf')): ?>
+                                                <a href="<?php echo e($media->display_url, false); ?>" target="_blank" title="View PDF" class="d-flex">
+                                                    <i class="fas fa-file-pdf fa-6x text-danger"></i>
+                                                </a>
+                                            <?php else: ?>
+                                                <img src="<?php echo e($media->display_url, false); ?>" class="img-fluid rounded" style="object-fit: cover; height: 50%;">
+                                            <?php endif; ?>
+                                            <a href="<?php echo e($media->display_url, false); ?>" download class="position-absolute btn btn-sm btn-primary p-2" style="z-index: 2;" title="<?php echo e(__('lang_v1.download'), false); ?>">
+                                                <i class="fas fa-download fa-sm"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </div>
+                    </div>
                 
                 </div>
             </div>

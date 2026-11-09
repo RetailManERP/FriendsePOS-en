@@ -376,7 +376,7 @@
                                 </div>
                                 <div class="small text-muted"><?php echo e($note->special_instructions ?: '-', false); ?></div>
                                 <div class="small">
-                                    <span class="badge bg-<?php echo e($note->order_type == 'delivery' ? 'warning text-dark' : ($note->order_type == 'takeaway' ? 'info' : 'success'), false); ?>"><?php echo e($note->order_type_label, false); ?></span>
+                                    <span class="badge bg-<?php echo e($note->order_type == 'delivery' ? 'warning text-dark' : ($note->order_type == 'takeaway' ? 'info' : 'success'), false); ?>"><?php echo e($note->order_type == 'dine_in' && !$is_tables_enabled ? 'Ordered' : $note->order_type_label, false); ?></span>
                                     <?php if($note->transaction): ?>
                                         <span class="ms-1 text-muted"><?php echo e($note->transaction->invoice_no ?: $note->transaction->ref_no, false); ?></span>
                                     <?php endif; ?>

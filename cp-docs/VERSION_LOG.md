@@ -1,6 +1,994 @@
+## Domain-Aware Public Downloads (2026-11-09)
+
+- CMS Download Buttons accept full external URLs or a plain file name.
+- A plain file name uses the active installation's `public/downloads` directory when present; otherwise it uses the primary domain from the root `.env` `APP_URL`.
+- The Hardware Setup installer uses the same local-folder-first and primary-domain fallback.
+- Domain and folder resolution does not depend on a specific hosting-panel path.
+
+## Version 8.99.9 - Recent Workflow and Pricing Updates (2026-11-06)
+
+### Module: Selling Price Groups
+
+#### New Features
+- Added fixed, percentage increase, and percentage decrease pricing rules. Percentage adjustments use each variation's default selling price including tax and are calculated dynamically wherever group prices are consumed.
+
+#### Improvements
+- Product views, POS pricing, and purchase create/edit rows now display calculated percentage group prices. Dynamic prices are not written back as fixed group prices during purchase editing. Percentage decreases are restricted to less than 100%.
+
+### Module: Purchase Returns
+
+#### Improvements
+- Restored the transaction number in the edit form, aligned the edit product table with create, centered the form action buttons, and enabled inline tax selection and expiry-date picking.
+
+### Module: Expenses
+
+#### Improvements
+- Renamed the **Final** status caption to **Approved**, added **Rejected**, and added a second expense note field on create/edit.
+
+### Module: Delivery Notes
+
+#### Improvements
+- Added transaction-date selection to create/edit and user-level Sales settings for allowing delivery-note transaction date and number edits. The date permission defaults on for newly registered businesses.
+
+### Module: Purchase Entry
+
+#### New Features
+- Purchase create/edit rows can show configured selling-price group values. The Unit Cost heading opens a group selector that applies available prices to product rows.
+
+### Module: Public Quotations
+
+#### Improvements
+- Public pricing-page quotations show deployed-site Home, Pricing, and Demo links, while authenticated quotation views omit those public navigation buttons. Quotation numbering uses the location's configured prefix; new businesses default to **QU**, and an existing-business migration is available.
+
+### Module: POS
+
+#### Improvements
+- POS type-button and suggestion-product views display configured product images.
+
+### Module: Payments
+
+#### Improvements
+- Payroll payment forms default to the location's configured payment account. Contact is excluded from supplier and purchase payment method choices and remains available for contact-to-contact payments.
+
+## Version 8.99.8
+
+### Module: Contacts - Zero Balance Filtering (2026-10-31)
+
+#### Bug Fixes
+- The customer list's Hide Zero Balance filter now checks the rounded final net balance, so offsetting amounts and fractions below the displayed currency precision do not leave zero-balance customers in the list. Row colors also use that rounded balance.
+
+### Module: Contacts - Ledger Duplicate Payment References (2026-10-31)
+
+#### Bug Fixes
+- Ledger payment rows are grouped only when transaction, return direction, and contact direction match. Reused reference numbers across separate transactions no longer distort the running balance.
+
+### Module: Reports - Monthly Deliveries V/S Stock Closing Alternating Date Pair Colors (2026-10-31)
+
+#### UI / UX Changes
+- Applied the same pale green to both columns in odd-numbered date pairs and pale blue to both columns in even-numbered date pairs, including headers, data, and totals.
+
+### Module: Reports - Monthly Deliveries V/S Stock Closing Row-Level Tooltips (2026-10-31)
+
+#### UI / UX Changes
+- Daily stock-balance cell tooltips now show that product's **On Hand**, **Held Quantity**, and **Balance** values.
+
+### Module: Reports - Monthly Deliveries V/S Stock Closing Column Colors (2026-10-31)
+
+#### UI / UX Changes
+- Applied distinct, consistent background colors to daily **Delivery Qty** columns and date stock-balance columns across the table headings, rows, and totals.
+
+### Module: Reports - Monthly Deliveries V/S Stock Closing Formula Tooltip (2026-10-31)
+
+#### UI / UX Changes
+- Added a tooltip to each daily stock column heading that explains **On Hand + Held Quantity = Balance**.
+
+### Module: Reports - Monthly Deliveries V/S Stock Closing Daily Date (2026-10-31)
+
+#### Bug Fixes
+- Attribute Delivery Qty and the corresponding held-stock reduction to the delivery note's creation date consistently, so later status updates do not move a delivery to a different report day.
+
+### Module: Cash Register - Sale Payment Edits and Change Returns (2026-10-29)
+
+#### Bug Fixes
+- Rebuild a finalized sale's payment entries from its active payment rows when an administrator edits a payment, so the associated **open** register reflects the changes.
+- Reconcile sale payment entries when an **open** register is viewed, repairing stale rows in existing open registers.
+- Match change-return payments by their signed negative register amount when deleting them, preventing stale return rows from distorting cash totals.
+- Keep closed register records unchanged.
+
+### Module: Reports - Register Report Availability (2026-10-29)
+
+#### Bug Fixes
+- Removed the unrelated **Enable Delivery Notes** check that caused Register Report to return 404 when delivery notes were disabled. Access remains controlled by the Register Report permission.
+
+### Module: ZATCA - Invoices Index (2026-10-29)
+
+#### Improvements
+- Added page-length choices, including **All**, global search, and CSV, Excel, Print, column-visibility, and PDF controls to the ZATCA Invoices list.
+
+#### UI / UX Changes
+- Adjusted spacing around the filters, table controls, and invoice table for consistent margins.
+
+### Module: Projects - Expense Status Dialog (2026-10-29)
+
+#### Bug Fixes
+- Fixed the Update Status dialog stacking order so the modal remains visible and usable above its backdrop.
+
+### Module: Reports - Monthly Deliveries V/S Stock Closing Report (2026-10-27)
+
+#### New Features
+- Added a monthly delivery-note report under **Reports → Stock Reports**, shown only when **Enable Delivery Notes** is enabled.
+- The report reuses the monthly sales report filters and design, replaces Sale Qty with Delivery Qty, and shows each date's **On Hand + Held = Balance** quantities.
+- Added an unchecked **Show 0 Delivery** filter. When it is off, products with no delivery quantity in the selected month are hidden.
+
+### Module: Reports - Monthly Sales V/S Stock Closing Report (2026-10-27)
+
+#### Improvements
+- Added an unchecked **Show 0 Sales** filter. When it is off, products with no sales in the selected month are hidden.
+
+
+**Release Date:** 2026-10-24
+
+### Module: Reports - Monthly Sales V/S Stock Closing Report Name (2026-10-27)
+
+#### Improvements
+- Rename the report and place it under **Reports → Sales Reports**. Update its route, menu label, page title, controller method, and view; the previous URL redirects to the new report link.
+
+### Module: Sales - Classic Invoice Layout
+
+#### New Features
+- None.
+
+#### Improvements
+- None.
+
+#### Bug Fixes
+- Hide the unit next to Scheme Quantity on Classic sale receipts when the invoice layout is configured to hide units.
+
+#### UI / UX Changes
+- None.
+
+#### Technical Updates
+- None.
+
+### Module: Cash Register
+
+#### New Features
+- None.
+
+#### Improvements
+- None.
+
+#### Bug Fixes
+- Apply sale/payment edits, deletions, and restorations to a register only while it is open; preserve the saved totals and entries after closure.
+- Keep all closed-register totals, payment breakdowns, and report details fixed at their values when the register was closed, even if an invoice is later changed or deleted.
+
+#### UI / UX Changes
+- Right-align numeric values in register opening, closing, and detail printouts, format payment amounts using the business currency decimal setting, and place card slip/cheque totals on the next line after Total Cash.
+
+#### Technical Updates
+- Save a full close-time report snapshot in a dedicated long-text cash-register field and use it to display closed-register details.
+
+### Module: POS
+
+#### New Features
+- None.
+
+#### Improvements
+- None.
+
+#### Bug Fixes
+- Gate receipt preview on the explicit Save and print choice so the POS Save action never opens it.
+
+#### UI / UX Changes
+- None.
+
+#### Technical Updates
+- None.
+
+### Module: Delivery Notes
+
+#### New Features
+- None.
+
+#### Improvements
+- None.
+
+#### Bug Fixes
+- Display Invoice No. below the business address instead of in the top-right delivery details in both preview and print output.
+- Make the print-preview Close button work when optional page-navigation controls are absent, with a fallback to the Delivery Notes list when the browser cannot close the tab.
+- Allow customer and product tables to flow continuously across A4 pages, using available page space instead of fixed-size row groups.
+- Show the business currency symbol before each invoice total in delivery-note preview and print output.
+
+#### UI / UX Changes
+- Wrap the Invoice No. list across the full page width below the delivery-note header.
+- Remove the shaded details table on the right and display delivery-note details as plain text, consistent with the business and address information.
+- Make the print-preview font-size controls adjust all text throughout the delivery note.
+
+#### Technical Updates
+- None.
+
+### Module: Sales - Customer Quick Add
+
+#### New Features
+- None.
+
+#### Improvements
+- Copy the selected Sell Customer Group into the quick-add contact form so new customers are assigned to that group.
+
+#### Bug Fixes
+- Prefill the Business Name field with the customer search text when adding a new business customer from Sell.
+
+#### UI / UX Changes
+- None.
+
+#### Technical Updates
+- None.
+
+### Module: Sales - Invoice Maintenance
+
+#### New Features
+- Add bulk Update Commission Agent and Update Commission Agent 2 actions for selected final sales invoices.
+
+#### Improvements
+- Validate the full selection and user permissions before maintenance updates; apply changes to eligible invoices and report restricted invoices that were skipped.
+
+#### Bug Fixes
+- None.
+
+#### UI / UX Changes
+- Rename the maintenance option to Update Transaction Date and add commission-agent selectors with an Apply action.
+- Keep the date picker visible above the Invoice Maintenance modal.
+
+#### Technical Updates
+- Preserve each invoice's time-of-day during date updates and record maintenance changes in the Activity Log report with the chosen operation and value.
+
+### Module: Sales - Sell List Bulk Actions
+
+#### New Features
+- None.
+
+#### Improvements
+- Record successful bulk invoice reprints and delivery-note creation against each source invoice in the Activity Log report.
+
+#### Bug Fixes
+- None.
+
+#### UI / UX Changes
+- Show the new bulk-action entries with clear action names in the Activity Log report and its print view.
+
+#### Technical Updates
+- Add filterable activity types for invoice maintenance, invoice reprints, and delivery-note creation.
+
+### Module: Sales - Create Defaults
+
+#### New Features
+- None.
+
+#### Improvements
+- Let users save and reset per-user defaults for commonly reused Direct Sale header choices, excluding the transaction-specific Customer field.
+
+#### Bug Fixes
+- None.
+
+#### UI / UX Changes
+- Add Set Default and Reset buttons to the Direct Sale create page.
+
+#### Technical Updates
+- None.
+
+## Version 8.99.6
+
+### Module: Products - Group Selling Price Filter (2026-10-24)
+
+#### Improvements
+- Add an authorized selling price group filter to Product Index and apply it to product listings, variable product cards, and the stock tab.
+
+### Module: Installment - Edit Button Caption (2026-10-24)
+
+#### Improvements
+- Label the Edit Installment Plan submit button **Update**.
+
+### Module: Installment - Save Error Feedback (2026-10-24)
+
+#### Fixes
+- Show validation/server errors when saving an installment plan fails and re-enable Save for another attempt.
+
+### Module: Installment - Interest Rate Default (2026-10-24)
+
+#### Improvements
+- Default the Interest Rate field to 0 when adding a plan and display 0 when an existing plan has no saved rate.
+
+### Module: Installment - Wider Sticky Plan Dialog (2026-10-24)
+
+#### Improvements
+- Widen the installment plan Add/Edit modal and keep its heading and buttons visible while the body scrolls vertically or horizontally.
+
+### Module: Installment - Modal Layering (2026-10-24)
+
+#### Fixes
+- Use the shared modal z-index rules for installment plan dialogs so the backdrop no longer covers the dialog.
+
+### Module: Products - Warehouse Subscription Gate in Stock History (2026-10-24)
+
+#### Fixes
+- Hide Warehouse Transfer in/out history and summary rows, plus Type filter options, when the business package does not include `warehouse_module`.
+
+### Module: Products - Restore FIFO Stock History Cost (2026-10-24)
+
+#### Fixes
+- Keep the FIFO-linked purchase cost for each sale and sale return in stock history instead of replacing it with the product's latest default purchase price. FIFO cost remains normalized exclusive of GST.
+
+### Module: Bookings - Reminder Button Caption (2026-10-24)
+
+#### Improvements
+- Change the booking reminder button caption from Close to Completed.
+
+### Module: Bookings - Preserve Blank End Time (2026-10-24)
+
+#### Fixes
+- Store an omitted booking end time as blank and allow the database field to be null, so editing does not populate it with the start time.
+- Trigger in-app reminders for no-end bookings from their start time, including recurring bookings.
+
+### Module: Bookings - Recurrence and In-App Alarms (2026-10-24)
+
+#### Improvements
+- Add a repeat checkbox and period choices to booking create/edit forms. Repeating appointments appear on the calendar according to the selected cadence.
+- Add a per-booking in-app alarm checkbox; recurring appointments can also trigger booking reminders.
+
+### Module: Sales - Slim Invoice Layout (2026-10-24)
+
+#### Fixes
+- Hide Previous Balance and Total Due rows on Slim receipts when the amount rounds to zero using the business currency precision.
+
+### Module: Reports - Purchase Invoices Report (2026-10-24)
+
+#### Improvements
+- Add **Purchase Order** to the Type filter and support it across totals, summary, detailed rows, and print output.
+
+### Module: Reports - Past Period Reorder Report (2026-10-24)
+
+#### Improvements
+- Add the report under Stock Reports with location, supplier, category, brand, SKU range, date range, and days-of-cover filters (7 days by default).
+- Show current stock, net quantity sold, number of days, 30-day average demand, on-order quantity, and suggested reorder quantity alongside SKU, product name, and rack information.
+- Display the selected Days of Cover value in the No of Days column.
+- Match the average-demand calculation and its column heading to the selected Days of Cover value.
+- Add an unchecked Show Zero Sold Qty filter; products with no net sales are hidden by default.
+- Use the standard date-range picker with preset periods and custom date selection.
+- Initialize the picker to **Last 30 Days** and load the shared picker script so the selected dates display and submit correctly.
+- Format all quantity columns according to the business's Quantity decimal setting.
+- Right-align the numeric quantity columns for easier comparison.
+- Prevent server-side search errors by excluding the calculated Qty Sold column from DataTables text matching.
+- Round the suggested Reorder Qty to a whole unit after subtracting on-order quantity.
+- Calculate suggested reorder quantity as cover-period demand less outstanding purchase-order quantity, with a minimum of zero. On-hand stock remains informational and does not reduce this value.
+- Fix a Blade namespace escaping error that caused a server error when opening the report.
+
+**Release Date:** 2026-10-18
+
+### Module: Sales - Delivery Note Quantity Footer (2026-10-24)
+
+#### Fixes
+- Render the total quantity footer as formatted values with unit captions.
+
+#### Improvements
+- Show each product or variation SKU in a dedicated column before Product Name on the Delivery Note.
+
+### Module: Dashboard - Account Balances (2026-10-22)
+
+#### Improvements
+- Add a Payment Accounts dashboard section showing active account names and balances, a total balance footer, and a link to the Accounts page for users with account access.
+- Move the Accounts card into the former WooCommerce Orders position beside Income Summary, and move WooCommerce Orders to the Accounts card's former position. WooCommerce Orders remains available only when the business package or subscription includes the module.
+- Use the translated **Payment Accounts** caption for the dashboard card heading.
+
+### Module: POS - Multi-Payment Keyboard Entry (2026-10-22)
+
+#### Improvements
+- Allow direct keyboard entry into multi-payment amount fields.
+- Focus and select the first amount field when opening the payment dialog with the POS payment shortcut; keep the on-screen keypad available.
+
+### Module: Reports - Monthly Sales V/S Stock Closing (2026-10-22)
+
+#### Improvements
+- Add a monthly stock report with business location, category, subcategory, and subcategory 2 filters.
+- Add a daily sale quantity column alongside each daily stock column while retaining the existing stock columns and final Closing Stock label.
+- Show Opening Stock after Unit, using the stock balance carried forward from the prior month.
+- Add footer totals for opening stock, daily sale quantities, and daily stock balances.
+- Add table search, page-size, export, print, and column visibility controls.
+
+### Module: Rental - Agreement Form and Editing (2026-10-22)
+
+#### Improvements
+- Default the agreement's business location from the signed-in user's default location when available.
+- Use the contact search control and contact-creation modal for selecting or adding a customer.
+- Show the rental duration calculated from the selected start and end dates, and use it for rental item durations.
+- Restore saved location, dates, item names, prices, deposits, and calculated values when editing an agreement.
+- Return to the Agreements list after a successful draft save or agreement update; keep the action column visible and first in the list.
+- Source invoice tax options from configured tax rates.
+- Add rental settings tabs and use **RD** as the Damage Report Prefix.
+
+### Module: Reports - GST-exclusive Product Profit (2026-10-22)
+
+#### Improvements
+- Calculate product profit in Profit & Loss, Product Sell Report, and Product Stock History from tax-exclusive selling and cost values.
+- Use tax-exclusive selling values and the product's Default Purchase Price (Exc. tax) for sale and return costs across all Product Sell Report tabs, the Profit & Loss **Profit by** section, and Product Stock History.
+- Keep sale tax separate in Product Sell Report tabs and Stock History; reverse the sale tax on sale-return rows in Stock History.
+- Preserve existing amounts for transactions without tax.
+- Render tax totals correctly in the Product Sell Report Summary and Summary (Combo) tables.
+
+### Module: Reports - Sales Analysis Hourly View (2026-10-22)
+
+#### Bug Fixes
+- Prevent the Sales Analysis page from failing when the hourly report has no submitted weekday filters.
+- Use all weekdays by default while retaining explicitly selected weekdays.
+
+### Module: Rental - Category Status Editing (2026-10-21)
+
+#### Improvements
+- Add an Active/Inactive selector when editing a rental category.
+- Preserve category status when an update does not submit a status value.
+
+### Module: Rental - Rental SKU Uniqueness (2026-10-21)
+
+#### Bug Fixes
+- Validate rental SKUs as unique within the current business when creating or changing a rental item.
+- Show the duplicate SKU validation error beside the field and preserve the entered value.
+
+### Module: Rental - Agreement Date Filter (2026-10-21)
+
+#### Bug Fixes
+- Initialize the Agreements list date picker and send normalized date bounds to the table request.
+- Filter agreements by rental start date within the selected inclusive range.
+- Match the agreement create form's date field names to the fields persisted by the controller.
+
+### Module: Rental - Agreement Line Totals (2026-10-21)
+
+#### Bug Fixes
+- Recalculate rental line totals and agreement summaries using locale-aware number parsing and currency formatting.
+- Include the selected tax rate in the live summary.
+- Submit new agreement line fields with the names expected by the agreement controller so the server saves the calculated lines and totals.
+
+### Module: Rental - Returns Filters (2026-10-21)
+
+#### Bug Fixes
+- Populate the Returns business location selector and filter returns by their agreement location.
+- Initialize the date range picker and filter return records by return date; clearing it removes the date constraint.
+- Apply the selected return condition to the table query.
+
+### Module: Rental - Payments Date Filter (2026-10-21)
+
+#### Bug Fixes
+- Initialize the payment date range picker and send normalized dates to the payment list request.
+- Filter payments by paid_at for the selected inclusive date range; clearing the picker removes the constraint.
+
+### Module: Rental - Damage Reports Date Filter (2026-10-21)
+
+#### Bug Fixes
+- Initialize the damage report date range picker and send normalized start/end dates with the DataTable request.
+- Filter damage reports by their report creation date; clearing the range removes the date constraint.
+
+### Module: Rental - Maintenance Vendor Selection (2026-10-21)
+
+#### Improvements
+- Choose a supplier contact from the business supplier list when creating or editing a maintenance record.
+- Save the selected supplier name in the existing maintenance vendor field without changing stored records or requiring a database migration.
+
+### Module: Rental - Reports Filters (2026-10-21)
+
+#### Bug Fixes
+- Populate the report location filter from the business locations supplied to the view.
+- Generate reports through the report data endpoint with the selected location and date range.
+- Apply location and date constraints to the corresponding report queries.
+
+### Module: Rental - Agreement Creation (2026-10-21)
+
+#### Bug Fixes
+- Use the business locations collection provided by the controller in the agreement form.
+- Return available rental items in the Select2 format expected by the agreement form's AJAX search, scoped to the current business and selected location.
+
+### Module: Rental - Rental Items List (2026-10-21)
+
+#### Improvements
+- Sort the Rental Items list by newest item first so a newly saved item appears at the top of the first page after returning from the create form.
+- Do not restore saved DataTable state for this list, avoiding stale search or page state that can hide newly saved rows.
+- Ignore non-ID "All" filter values so they cannot accidentally exclude every item.
+
+### Module: POS - Payment Modal Scanner Protection (2026-10-21)
+
+#### Bug Fixes
+- Made payment amount fields read-only so barcode scanners cannot write values into them; continue to support the on-screen keypad and payment buttons.
+- Reject scanner suffix Enter/Tab in the payment modal so scanning does not finalize the sale, and show a warning when rapid scanner input is detected.
+
+### Module: Offline Sync - Sales (2026-10-21)
+
+#### Bug Fixes
+- Preserved embedded line tax and inclusive unit prices when updating already-synced offline sales, preventing the cloud connector from adding tax a second time.
+- Sent active offline payment rows as explicit payload data for both new sales and updates so split payments can be synchronized with the invoice.
+- Excluded locally soft-deleted payment rows from the outgoing active payment list.
+
+### Module: POS - Cash Register Payment Corrections (2026-10-21)
+
+#### Bug Fixes
+- When an edited finalized sale has an extreme payment outlier in the active register, replace that sale's active register entries with the corrected payment allocation. Keep the old entries soft-deleted for audit history.
+- Normal payment edits retain their existing refund adjustment behavior.
+
+### Module: Reports - Sales Representative Report (2026-10-21)
+
+#### Improvements
+- The Sales Representative report filters now use the custom Sales Commission Agent and Sales Commission Agent 2 labels from Business Settings > Sales.
+- Each agent filter appears only when its corresponding setting is enabled and continues to filter its own agent assignment independently.
+
+### Module: Products - Product List (2026-10-20)
+
+#### Improvements
+- Replaced the unbounded **All** page-size option with bounded page sizes up to 1,000 to prevent product-list requests from exhausting PHP memory. Search and pagination remain available across the full catalogue.
+- Aligned the Row density selector and product-list toolbar actions on one row.
+
+#### UI / UX Changes
+- Removed **Sync Product Quantities** from the Products list toolbar.
+
+### Module: HMS - Booking and Payment Improvements (2026-10-20)
+
+#### New Features
+- Added multiple payment rows to booking creation and editing, with customer advance deposits available as a payment method when a deposit exists.
+- Added **Save & Print** and **Update & Print** actions for booking reports.
+
+#### Improvements
+- Improved alignment of booking forms, settings fields, and HMS index action controls.
+- Defaulted new bookings to depart the day after arrival and added a fourth ID proof field.
+- Made booking totals, paid amounts, and due balances account for all payment rows.
+- Added an overdue customer-balance warning and removed the duplicated customer name from the booking form.
+- Applied booking income and payment activity to the business dashboard's sales figures and transaction information.
+- Added check-in actions for bookings arriving today, including pending bookings.
+- Automatically marked assigned rooms as occupied at check-in and reflected current checked-in stays in Housekeeping.
+- Applied the customer advance availability check to the Sell create page.
+
+#### Bug Fixes
+- Prevented booking saves without a positive total or a selected room or extra, and blocked saves that exceed the customer's credit limit.
+- Fixed booking payment actions, print date formatting, and print-dialog return navigation.
+- Expanded the booking print layout to use more of the A4 page width.
+- Prevented due balances from displaying as negative after overpayment, while retaining the full paid total.
+- Redirected successful booking edits to the booking list after update or after the print preview closes.
+
+#### UI / UX Changes
+- Added a compact **Actions** menu to booking, room, extra, unavailable, and coupon lists.
+- Added clearer customer balance messaging and payment edit/delete actions in booking receipts.
+
+#### Technical Updates
+- None.
+
+### Module: Sales - Sales List and Reprinting (2026-10-20)
+
+#### Improvements
+- Added checkbox selection to the Sales list and ensured selecting a row does not open the sale details modal.
+- Added **Reprint Invoices** for sending all selected invoices to print sequentially in one operation.
+- Rendered each bulk reprint in an isolated frame using the same invoice view as individual printing, preventing receipt styles from affecting one another.
+
+#### Bug Fixes
+- Fixed inconsistent bulk reprint layouts by rendering every selected invoice through the full invoice page, including sales without a public invoice token.
+- Matched each bulk print frame to the usable A4 page height so invoice totals and footer spacing align with individual A4 prints.
+- Made bulk invoice content fit the selected paper width, including A5, without clipping right-side totals.
+
+#### New Features
+- Added **Create Delivery Note** to the Sales list bulk action bar when delivery notes are enabled and the user has create permission. One consolidated delivery note links all selected eligible invoices, shows combined product quantities, and retains source invoice lines for traceability. Existing sales are not modified.
+- Added an HTML Crystal style preview for printing a Delivery Note from its view modal, with zoom, font-size, A4 print, and close controls.
+- Removed duplicate invoice numbers and customer names from the delivery details column, added customer group and address fields, tightened entry spacing, suppressed empty-address placeholders, aligned each delivery detail beside its matching customer, added row numbers to customer/delivery pairs, placed the customer name and invoice details on one line, refined customer/group label typography, added invoice-level commission agents and invoice value, and removed bold styling from product names and delivered quantities.
+- Added a configurable Customer Group label under Business Settings > Merchant, defaulting to **Customer Group**, and applied it to Delivery Note details.
+
+### Module: Dashboard - HMS Sales Activity (2026-10-20)
+
+#### Improvements
+- Included HMS bookings and their payment activity in dashboard sales and payment information so they appear with other sales transactions.
+
+### Module: POS - Product Stock History (2026-10-20)
+
+#### Improvements
+- Loaded the selected product variation's initial stock history in the F10 product search history window.
+- Loaded each additional location's stock history when its tab is selected.
+- Kept stock history requests within the configured application path.
+
+### Module: System - Backups (2026-10-21)
+
+#### Bug Fixes
+- Checked the backup disk's test-write result and logged the configured destination path, writability, and free space when an archive write fails.
+- Clarified generic archive write errors so they direct administrators to check both filesystem permissions and disk quota/space.
+
+### Module: Sales - Commission Agent Filters (2026-10-21)
+
+#### Improvements
+- Used the custom Sales Commission Agent and Sales Commission Agent 2 labels from Business Settings on the Sales list filters.
+- Added an independent second-agent filter and bound each filter to its matching sale transaction field.
+
+### Module: Sales - Commission Agent Permissions
+
+#### New Features
+- Added separate per-user read-only settings for Sales Commission Agent and Sales Commission Agent 2.
+
+#### Improvements
+- Applied the second-agent read-only setting across Direct Sale and POS create/edit forms.
+- Added the missing second Sales Commission Agent field to POS sale editing.
+
+#### Bug Fixes
+- None.
+
+#### UI / UX Changes
+- Clarified the user settings labels to identify both Sales Commission Agent fields.
+
+#### Technical Updates
+- New users default to having both commission-agent fields editable.
+
+### Module: Merchants - Contact ID Auto Generator
+
+#### New Features
+- Added business-specific Contact ID generators with configurable prefixes, number lengths, and starting numbers.
+- Added the Contact ID generator selector to new customer and supplier forms.
+
+#### Improvements
+- Contact ID generation skips IDs already used by contacts and reserves the next available ID when saving.
+- Added a Contact ID Auto Generate management link under the Merchants sidebar menu.
+
+#### Bug Fixes
+- None.
+
+#### UI / UX Changes
+- Added a live Contact ID preview when a generator is selected on the contact form.
+
+#### Technical Updates
+- Added a per-business generator table and business-scoped CRUD and preview routes.
+
+## Version 8.99.6
+
+**Release Date:** 2026-10-18
+
+### Module: Products - Stock History
+
+#### New Features
+- None.
+
+#### Improvements
+- None.
+
+#### Bug Fixes
+- Fixed stock history requests failing on installations hosted under a subdirectory by keeping AJAX URLs within the application path.
+- Fixed HTTP 500 errors from memory exhaustion by loading location histories on demand and paginating entries.
+- Fixed the stock-history **Reindex Stock Quantities** button so it targets the application URL when hosted in a subdirectory.
+- Fixed stock-history reindex requests exhausting PHP memory on products with large transaction histories.
+
+#### UI / UX Changes
+- None.
+
+#### Technical Updates
+- Generated product search and stock history AJAX URLs with Laravel's URL helper so subdirectory installations use the correct application base path.
+- “All” locations now loads each location’s history when its tab is opened, with Older/Newer pagination through the full history while preserving running stock and profit totals.
+- Stock reindexing now remaps transactions in bounded batches and uses aggregate stock calculations instead of loading the full history into memory.
+- Stock history request errors now include the HTTP status code when the server returns one.
+- Extended the stock history request timeout to five minutes to match the configured PHP execution limit.
+
+### Module: Customer Sale by Categories Report
+
+#### New Features
+- None.
+
+#### Improvements
+- Displays all 12 calendar-month columns for the selected year, including months without sales.
+- Replaced the start and end date inputs with a Year selector for viewing one complete calendar year at a time.
+- Added the standard DataTables page-length, search, and permission-controlled export controls above the report.
+- Set the report table to show 25 rows by default, with options for 25, 50, 100, 200, 500, 1,000, or All.
+- Added direct PDF download from the preview toolbar, matching the Customer List Report.
+
+#### Bug Fixes
+- Fixed the Customer Name column so business customers display their business name, with the contact name as a fallback.
+- Fixed the **Print A4** action so it finds and submits the report filters after the button was moved above the table.
+
+#### UI / UX Changes
+- Renamed the customer detail columns to **Address**, **Customer Name**, and **Contact ID** in the report and print preview.
+
+#### Technical Updates
+- The selected year now sets the report query range from January 1 through December 31, and the Year selector lists years with sales plus the current year.
+- The A4 preview applies the DataTables search text as well as the report filters.
+- The table explicitly configures the standard export controls when the user has the required permission.
+- The Address, Customer Name, and Contact ID columns now use the corresponding customer contact record values.
+- Customer Name resolves to the saved business name first for business contacts.
+
+## Version 8.99.5
+
+**Release Date:** 2026-10-14
+
+### Module: Accounting - Journal Entry
+
+#### New Features
+- None.
+
+#### Improvements
+- Journal Entry amount fields and footer totals now display the decimal places configured under Business Settings > Business > Currency decimal.
+
+#### Bug Fixes
+- Fixed the Journal Entry debit and credit footer totals so they recalculate as amounts are typed, including on newly added rows.
+- Fixed saving comma-formatted debit and credit amounts so the full value, rather than only the digits before the comma, is stored.
+- Fixed journal list and detail totals to ignore transaction lines removed by editing a Journal Entry to zero; entries with no remaining lines now show a zero amount.
+
+#### UI / UX Changes
+- None.
+
+#### Technical Updates
+- Journal Entry amount formatting and footer totals use the configured currency precision across create, edit, and Job Sheet voucher screens.
+- Updated the Journal Entry form and Job Sheet journal voucher to recalculate totals on input and change events, and parse localized amounts before saving.
+- Applied the accounting transaction soft-delete filter to raw Journal Entry list, detail, and print queries.
+
+### Module: Accounting - Chart of Accounts
+
+#### New Features
+- None.
+
+#### Improvements
+- None.
+
+#### Bug Fixes
+- Fixed the default Sale Returns account so it appears directly under Income instead of being nested under Sales.
+
+#### UI / UX Changes
+- None.
+
+#### Technical Updates
+- None.
+
+### Module: Sales Representative Report
+
+#### New Features
+- Added a separate **Print A4** action to each report tab, opening a preview with the selected tab's complete filtered results.
+
+#### Improvements
+- Print previews now support A4 page navigation and include actions to print, save as PDF, or export to Excel.
+
+#### Bug Fixes
+- None.
+
+#### UI / UX Changes
+- Added a branded, paginated print preview for Sales, Sales with Commission, Product Summary, Product Detailed, Expenses, and Payments with Commission when available.
+
+#### Technical Updates
+- Print previews retrieve all report rows in pages from the existing report data endpoints and preserve the report's selected filters.
+
+### Module: Register Report
+
+#### New Features
+- Added a **Print A4** preview for the filtered Register Report.
+
+#### Improvements
+- The print preview includes all matching register sessions and the visible payment columns and labels for the selected location.
+
+#### Bug Fixes
+- None.
+
+#### UI / UX Changes
+- Added a branded landscape A4 preview with page navigation and print, PDF, and Excel actions.
+
+#### Technical Updates
+- The preview retrieves all filtered rows from the existing report data endpoint and calculates totals for the printed results.
+
+### Module: Cash Skim Report
+
+#### New Features
+- Added a **Print A4** preview for filtered cash skim records.
+
+#### Improvements
+- The preview includes all matching records and follows the visible report columns.
+
+#### Bug Fixes
+- None.
+
+#### UI / UX Changes
+- Added a branded landscape A4 preview with page navigation and print, PDF, and Excel actions.
+
+#### Technical Updates
+- The preview retrieves all filtered rows from the existing report data endpoint and calculates the cash skim total across pages.
+
+### Module: Summary Income Report
+
+#### New Features
+- Added a branded A4 preview for the filtered Summary Income Report.
+
+#### Improvements
+- The preview presents sales totals, cash details, and available service sales analysis, with print, PDF, and Excel actions.
+
+#### Bug Fixes
+- None.
+
+#### UI / UX Changes
+- Changed **Print A4** to open the report preview while retaining the separate 80mm thermal-print action.
+
+#### Technical Updates
+- The preview reuses the report's calculated values and filters rather than running separate summary calculations.
+
+### Module: Customer Sale by Categories Report
+
+#### New Features
+- Added a **Print A4** preview for the filtered Customer Sale by Categories report.
+
+#### Improvements
+- The preview includes all customer/category rows, monthly values, and monthly totals.
+
+#### Bug Fixes
+- None.
+
+#### UI / UX Changes
+- Added landscape A4 page navigation with print, PDF, and Excel actions.
+
+#### Technical Updates
+- The preview reuses the report's existing monthly aggregation and selected filters.
+
+### Module: Product List Report
+
+#### New Features
+- Added a **Print A4** preview for the filtered Product List Report.
+
+#### Improvements
+- The preview loads every matching product, preserves the table search and filters, and follows existing product-price visibility permissions.
+
+#### Bug Fixes
+- None.
+
+#### UI / UX Changes
+- Added a landscape A4 preview with page navigation and print, PDF, and Excel actions.
+
+#### Technical Updates
+- Preview data is retrieved in pages from the existing server-side report endpoint.
+
+### Module: Held Quantity Report
+
+#### New Features
+- Added a **Print A4** preview for the filtered Held Quantity Report.
+
+#### Improvements
+- The preview includes all matching rows and totals quantity columns across the full result set.
+
+#### Bug Fixes
+- None.
+
+#### UI / UX Changes
+- Added a landscape preview with page navigation and print, PDF, and Excel actions.
+- Matched the filter-panel **Print A4** button placement to the Product List Report.
+
+#### Technical Updates
+- Preview rows are loaded in pages from the existing report endpoint while preserving location, held-status, and table-search filters.
+
+### Module: Stock Value Report
+
+#### New Features
+- None.
+
+#### Improvements
+- None.
+
+#### Bug Fixes
+- Made the **Print A4** action available from the report filter panel for every tab.
+
+#### UI / UX Changes
+- Matched the filter-panel **Print A4** button placement to the Product List Report; it previews the currently selected tab.
+
+#### Technical Updates
+- Print actions continue to use the existing tab-specific A4 preview and selected report filters.
+
+### Module: Superadmin - Application Settings
+
+#### New Features
+- Added a **Disable GitHub Update** option to control GitHub software updates.
+
+#### Improvements
+- None.
+
+#### Bug Fixes
+- None.
+
+#### UI / UX Changes
+- Added an unchecked-by-default **Disable GitHub Update** checkbox to Application Settings.
+
+#### Technical Updates
+- Saving the option writes the inverse value to `SOFTWARE_SYNC_ENABLED` in the environment file.
+
+### Module: Reports - Sales Representative Report
+
+#### New Features
+- None.
+
+#### Improvements
+- Added separate normal and damage sale-return quantity columns to the Product Summary tab and renamed the sales quantity caption to SALES.
+
+#### Bug Fixes
+- None.
+
+#### UI / UX Changes
+- Added a UNIT column before SALES, removed repeated unit labels from quantity values, and right-aligned numeric columns.
+
+#### Technical Updates
+- None.
+
+### Module: Sales & POS - Sale Returns
+
+#### New Features
+- None.
+
+#### Improvements
+- None.
+
+#### Bug Fixes
+- Standard browser use no longer shows a Windows Hardware Service connection warning when saving a sale return without a connected desktop hardware service. Existing drawer requests and wrapper-app warnings are preserved.
+
+#### UI / UX Changes
+- None.
+
+#### Technical Updates
+- None.
+
+### Module: Sales & POS - Mobile App Sales
+
+#### New Features
+- None.
+
+#### Improvements
+- Added a **Mobile App** option to the Sources filter on the Sales list and POS Sales list, grouping API-created sales from all app installations.
+
+#### Bug Fixes
+- None.
+
+#### UI / UX Changes
+- None.
+
+#### Technical Updates
+- None.
+
+### Module: Superadmin - Mobile App Sales Reset
+
+#### New Features
+- Added a separate **Reset MobileApp Sales** option to a business's Hard Reset Options.
+
+#### Improvements
+- None.
+
+#### Bug Fixes
+- None.
+
+#### UI / UX Changes
+- None.
+
+#### Technical Updates
+- The reset permanently deletes API-created sale transactions and their dependent records, then recalculates product stock.
+
+### Module: Products
+
+#### New Features
+- None.
+
+#### Improvements
+- None.
+
+#### Bug Fixes
+- Opening the product creation or edit page no longer fails when the Accounting module is not installed. Accounting-specific product options remain available when the module is installed and permitted.
+
+#### UI / UX Changes
+- None.
+
+#### Technical Updates
+- Accounting product-account operations now run only when the Accounting module is installed.
+
 ## Version 8.99.4
 
 **Release Date:** 2026-10-12
+
+### Module: Contacts - Contact Payment
+
+#### New Features
+- None.
+
+#### Improvements
+- None.
+
+#### Bug Fixes
+- Increased the Today Pay column width in the contact payment outstanding invoices modal so payment amounts are fully visible and easier to edit without truncation.
+
+#### UI / UX Changes
+- Expanded the payment input column in the contact payment modal for clearer entry and better alignment with the invoice data.
+
+#### Technical Updates
+- None.
 
 ### Module: Sell - Product Discounts
 
@@ -15,6 +1003,58 @@
 
 #### UI / UX Changes
 - Added a unit selector to choose percentage or fixed-amount entry in the bulk product discount dialog.
+
+#### Technical Updates
+- None.
+
+### Module: Purchase
+
+#### New Features
+- None.
+
+#### Improvements
+- None.
+
+#### Bug Fixes
+- Fixed the Purchase index Updated At timestamp displaying HTML markup instead of rendering the date/time line break.
+
+#### UI / UX Changes
+- Added a total row to the Purchase Details modal's Payment info table so users can see the sum of all recorded payments.
+- Added an Updated At timestamp column immediately before Created At in the Purchase index.
+
+#### Technical Updates
+- None.
+
+### Module: FBR Digital Invoicing
+
+#### New Features
+- None.
+
+#### Improvements
+- None.
+
+#### Bug Fixes
+- Fixed FBR DI buyer province validation by mapping Islamabad aliases to FBR's valid **CAPITAL TERRITORY** province description.
+
+#### UI / UX Changes
+- None.
+
+#### Technical Updates
+- Increased the default FBR DI API connection and response time limits to accommodate temporary DNS or network delays.
+
+### Module: Sell Payment Report
+
+#### New Features
+- Added separate Customer (Payment) and Customer (Sale No.) columns to the Sell Payment Report detail table so users can compare the customer assigned to a payment with the customer assigned to its sale.
+
+#### Improvements
+- Added a **SHOW ONLY MISMATCH CUSTOMER** filter to the Detail tab to find payment references where the payment and a linked sale have different assigned customers.
+
+#### Bug Fixes
+- None.
+
+#### UI / UX Changes
+- None.
 
 #### Technical Updates
 - None.
@@ -11343,3 +12383,13 @@
 #### What Users Can Do Now
 - **Chart of Account Report added under Accounting > Reports.** Lists all accounts organised by type (Asset, Liability, Equity, Income, Expenses) with columns for GL Code, Account Name, Account Sub Type, and Status.
 - **"Show Balances" option.** Tick the Show Balances checkbox and click Apply Filters to add a live balance column showing the current balance for each account, plus totals grouped by sub-type and account type.
+
+---
+
+### Module: Home Dashboard - HMS Booking Income
+
+#### What Users Can Do Now
+- **Active HMS bookings are included in Home Dashboard sales totals and charts.** Pending and confirmed bookings count as sales; cancelled bookings are excluded.
+- **Booking payments are included in sales payment method totals and the Income Summary.** Active bookings also appear in recent transactions, user sales totals, and outstanding sales payments.
+- **Existing bookings with a missing transaction date use their creation date for dashboard reporting.** New bookings receive a transaction date when saved.
+- **Date and location filters apply to HMS booking totals.** Dashboard sales can be reviewed consistently across selected periods and locations.

@@ -41,7 +41,7 @@
                                 <?php
                                     $settings = json_decode($busines->hms_settings);
                                 ?>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <?php echo Form::label('booking_prefix', __('hms::lang.booking_prefix') . '*'); ?>
 
@@ -51,6 +51,42 @@
                                             'placeholder' => __('hms::lang.booking_prefix'),
                                         ]); ?>
 
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <?php echo Form::label('check_in_time', 'Check-in time'); ?>
+
+                                        <?php echo Form::input('time', 'check_in_time', $settings->check_in_time ?? '12:00', [
+                                            'class' => 'form-control',
+                                            'required',
+                                        ]); ?>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <?php echo Form::label('check_out_time', 'Check-out time'); ?>
+
+                                        <?php echo Form::input('time', 'check_out_time', $settings->check_out_time ?? '12:00', [
+                                            'class' => 'form-control',
+                                            'required',
+                                        ]); ?>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <?php echo Form::label('grace_before_checkout_minutes', 'Grace before checkout (minutes)'); ?>
+
+                                        <?php echo Form::number('grace_before_checkout_minutes', $settings->grace_before_checkout_minutes ?? 15, [
+                                            'class' => 'form-control',
+                                            'min' => 0,
+                                            'max' => 1440,
+                                            'required',
+                                        ]); ?>
+
+                                        <small class="text-muted">Late checkout within this grace period does not add another room day.</small>
                                     </div>
                                 </div>
                                 <div class="clearfix"></div>
@@ -95,6 +131,21 @@
                                             <div class="input-group-addon">
                                                 <label class="form-check-label">
 <input type="checkbox" name="is_id_proof_3_required" value="1" <?php if($settings->is_id_proof_3_required ?? false): echo 'checked'; endif; ?>> <?php echo app('translator')->get('lang_v1.is_required'); ?></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <?php echo Form::label('id_proof_label_4', __('hms::lang.id_proof_label_4')); ?>
+
+                                        <div class="input-group">
+                                            <?php echo Form::text('id_proof_label_4', $settings->id_proof_label_4 ?? null, ['class' => 'form-control', 'id' => 'id_proof_label_4']); ?>
+
+                                            <div class="input-group-addon">
+                                                <label class="form-check-label">
+                                                    <input type="checkbox" name="is_id_proof_4_required" value="1" <?php if($settings->is_id_proof_4_required ?? false): echo 'checked'; endif; ?>> <?php echo app('translator')->get('lang_v1.is_required'); ?>
+                                                </label>
                                             </div>
                                         </div>
                                     </div>

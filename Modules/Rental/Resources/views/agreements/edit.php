@@ -25,23 +25,23 @@
                         <div class="form-group">
                             <?php echo Form::label('location_id', __('purchase.business_location') . ':*'); ?>
 
-                            <?php echo Form::select('location_id', $locations, $agreement->location_id, ['class' => 'form-control select2', 'required', 'style' => 'width:100%']); ?>
+                            <?php echo Form::select('location_id', $business_locations, $agreement->location_id, ['class' => 'form-control select2', 'required', 'style' => 'width:100%']); ?>
 
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                            <?php echo Form::label('rental_start_date', __('rental::lang.rental_start_date') . ':*'); ?>
+                            <?php echo Form::label('rental_start', __('rental::lang.rental_start_date') . ':*'); ?>
 
-                            <?php echo Form::text('rental_start_date', $agreement->rental_start_date ? $agreement->rental_start_date->format('m/d/Y H:i') : null, ['class' => 'form-control datetimepicker', 'required', 'readonly']); ?>
+                            <?php echo Form::text('rental_start', $agreement->rental_start ? $agreement->rental_start->format(session('business.date_format', 'm/d/Y') . ' H:i') : null, ['class' => 'form-control datetimepicker', 'required', 'readonly']); ?>
 
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                            <?php echo Form::label('rental_end_date', __('rental::lang.rental_end_date') . ':*'); ?>
+                            <?php echo Form::label('rental_end_expected', __('rental::lang.rental_end_date') . ':*'); ?>
 
-                            <?php echo Form::text('rental_end_date', $agreement->rental_end_date ? $agreement->rental_end_date->format('m/d/Y H:i') : null, ['class' => 'form-control datetimepicker', 'required', 'readonly']); ?>
+                            <?php echo Form::text('rental_end_expected', $agreement->rental_end_expected ? $agreement->rental_end_expected->format(session('business.date_format', 'm/d/Y') . ' H:i') : null, ['class' => 'form-control datetimepicker', 'required', 'readonly']); ?>
 
                         </div>
                     </div>
@@ -115,24 +115,28 @@
                         <tbody id="agreement_lines_body">
                             <?php $__currentLoopData = $agreement->lines; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $line): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <tr class="agreement_line" data-item-id="<?php echo e($line->rental_item_id, false); ?>">
-                                <td><?php echo e($line->item ? $line->item->name : '-', false); ?>
+                                <td><?php echo e($line->rentalItem ? $line->rentalItem->name : '-', false); ?>
 
-                                    <input type="hidden" name="lines[<?php echo e($index, false); ?>][rental_item_id]" value="<?php echo e($line->rental_item_id, false); ?>">
-                                    <input type="hidden" name="lines[<?php echo e($index, false); ?>][id]" value="<?php echo e($line->id, false); ?>">
+                                    <input type="hidden" name="rental_lines[<?php echo e($index, false); ?>][rental_item_id]" value="<?php echo e($line->rental_item_id, false); ?>">
+                                    <input type="hidden" name="rental_lines[<?php echo e($index, false); ?>][id]" value="<?php echo e($line->id, false); ?>">
                                 </td>
-                                <td><input type="number" name="lines[<?php echo e($index, false); ?>][quantity]" class="form-control input-sm line_quantity" value="<?php echo e($line->quantity, false); ?>" min="1"></td>
+                                <td><input type="number" name="rental_lines[<?php echo e($index, false); ?>][quantity]" class="form-control input-sm line_quantity" value="<?php echo e($line->quantity, false); ?>" min="1"></td>
                                 <td>
-                                    <select name="lines[<?php echo e($index, false); ?>][rate_type]" class="form-control input-sm line_rate_type">
+                                    <select name="rental_lines[<?php echo e($index, false); ?>][rate_type]" class="form-control input-sm line_rate_type">
                                         <option value="hourly" <?php echo e($line->rate_type == 'hourly' ? 'selected' : '', false); ?>><?php echo app('translator')->get('rental::lang.hourly'); ?></option>
                                         <option value="daily" <?php echo e($line->rate_type == 'daily' ? 'selected' : '', false); ?>><?php echo app('translator')->get('rental::lang.daily'); ?></option>
                                         <option value="weekly" <?php echo e($line->rate_type == 'weekly' ? 'selected' : '', false); ?>><?php echo app('translator')->get('rental::lang.weekly'); ?></option>
                                         <option value="monthly" <?php echo e($line->rate_type == 'monthly' ? 'selected' : '', false); ?>><?php echo app('translator')->get('rental::lang.monthly'); ?></option>
                                     </select>
                                 </td>
-                                <td><input type="text" name="lines[<?php echo e($index, false); ?>][rate_amount]" class="form-control input-sm input_number line_rate_amount" value="number_format($line->rate_amount, session('business.currency_precision', 2), session('currency')['decimal_separator'], session('currency')['thousand_separator'])"></td>
-                                <td><input type="number" name="lines[<?php echo e($index, false); ?>][duration]" class="form-control input-sm line_duration" value="<?php echo e($line->duration, false); ?>" min="1"></td>
-                                <td><input type="text" name="lines[<?php echo e($index, false); ?>][deposit_amount]" class="form-control input-sm input_number line_deposit" value="number_format($line->deposit_amount, session('business.currency_precision', 2), session('currency')['decimal_separator'], session('currency')['thousand_separator'])"></td>
-                                <td class="line_total_cell"><span class="display_currency" data-currency_symbol="true"><?php echo e($line->line_total, false); ?></span><input type="hidden" name="lines[<?php echo e($index, false); ?>][line_total]" class="line_total_input" value="<?php echo e($line->line_total, false); ?>"></td>
+                                <td><input type="text" name="rental_lines[<?php echo e($index, false); ?>][unit_rate]" class="form-control input-sm input_number line_rate_amount" value="<?php echo e(number_format($line->unit_rate, session('business.currency_precision', 2), session('currency')['decimal_separator'], session('currency')['thousand_separator']), false); ?>"
+                                    data-hourly="<?php echo e($line->rentalItem->hourly_rate ?? 0, false); ?>"
+                                    data-daily="<?php echo e($line->rentalItem->daily_rate ?? 0, false); ?>"
+                                    data-weekly="<?php echo e($line->rentalItem->weekly_rate ?? 0, false); ?>"
+                                    data-monthly="<?php echo e($line->rentalItem->monthly_rate ?? 0, false); ?>"></td>
+                                <td><input type="number" name="rental_lines[<?php echo e($index, false); ?>][duration]" class="form-control input-sm line_duration" value="<?php echo e($line->duration, false); ?>" min="1"></td>
+                                <td><input type="text" name="rental_lines[<?php echo e($index, false); ?>][deposit_per_unit]" class="form-control input-sm input_number line_deposit" value="<?php echo e(number_format($line->deposit_per_unit, session('business.currency_precision', 2), session('currency')['decimal_separator'], session('currency')['thousand_separator']), false); ?>"></td>
+                                <td class="line_total_cell"><span class="display_currency" data-currency_symbol="true"><?php echo e($line->line_total, false); ?></span><input type="hidden" name="rental_lines[<?php echo e($index, false); ?>][line_total]" class="line_total_input" value="<?php echo e($line->line_total, false); ?>"></td>
                                 <td><button type="button" class="btn btn-danger btn-xs remove_line"><i class="fas fa-times"></i></button></td>
                             </tr>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -140,7 +144,7 @@
                         <tfoot>
                             <tr>
                                 <td colspan="5" class="text-right"><strong><?php echo app('translator')->get('rental::lang.subtotal'); ?>:</strong></td>
-                                <td id="total_deposit"><span class="display_currency" data-currency_symbol="true"><?php echo e($agreement->deposit_amount, false); ?></span></td>
+                                <td id="total_deposit"><span class="display_currency" data-currency_symbol="true"><?php echo e($agreement->deposit_total, false); ?></span></td>
                                 <td id="total_amount"><span class="display_currency" data-currency_symbol="true"><?php echo e($agreement->subtotal, false); ?></span></td>
                                 <td></td>
                             </tr>
@@ -155,15 +159,15 @@
         <div class="col-md-6">
             <?php $__env->startComponent('components.widget', ['class' => 'box-info', 'title' => __('rental::lang.terms_and_notes')]); ?>
                 <div class="form-group">
-                    <?php echo Form::label('rental_terms', __('rental::lang.rental_terms') . ':'); ?>
+                    <?php echo Form::label('terms_and_conditions', __('rental::lang.rental_terms') . ':'); ?>
 
-                    <?php echo Form::textarea('rental_terms', $agreement->rental_terms, ['class' => 'form-control', 'rows' => 4]); ?>
+                    <?php echo Form::textarea('terms_and_conditions', $agreement->terms_and_conditions, ['class' => 'form-control', 'rows' => 4]); ?>
 
                 </div>
                 <div class="form-group">
-                    <?php echo Form::label('staff_note', __('rental::lang.notes') . ':'); ?>
+                    <?php echo Form::label('staff_notes', __('rental::lang.notes') . ':'); ?>
 
-                    <?php echo Form::textarea('staff_note', $agreement->staff_note, ['class' => 'form-control', 'rows' => 3]); ?>
+                    <?php echo Form::textarea('staff_notes', $agreement->staff_notes, ['class' => 'form-control', 'rows' => 3]); ?>
 
                 </div>
             <?php echo $__env->renderComponent(); ?>
@@ -189,7 +193,7 @@
                     </tr>
                     <tr>
                         <th><?php echo app('translator')->get('rental::lang.total_deposit'); ?>:</th>
-                        <td class="text-right" id="summary_deposit"><span class="display_currency" data-currency_symbol="true"><?php echo e($agreement->deposit_amount, false); ?></span></td>
+                        <td class="text-right" id="summary_deposit"><span class="display_currency" data-currency_symbol="true"><?php echo e($agreement->deposit_total, false); ?></span></td>
                     </tr>
                 </table>
             <?php echo $__env->renderComponent(); ?>
@@ -220,6 +224,21 @@
 <script>
     $(document).ready(function() {
         var line_index = <?php echo e(count($agreement->lines), false); ?>;
+        var rentalTaxRates = <?php echo json_encode($tax_rates, 15, 512) ?>;
+
+        var discountTypeSelect = $('#discount_type');
+        if (discountTypeSelect.hasClass('select2-hidden-accessible')) {
+            discountTypeSelect.select2('destroy');
+        }
+        discountTypeSelect.select2({
+            width: '100%',
+            closeOnSelect: true
+        }).on('select2:select', function() {
+            var select = $(this);
+            setTimeout(function() {
+                select.select2('close');
+            }, 0);
+        });
 
         $('#search_rental_item').select2({
             ajax: {
@@ -243,18 +262,22 @@
             var rate = item[period_type + '_rate'] || item.daily_rate || 0;
 
             var row = '<tr class="agreement_line" data-item-id="' + item.id + '">' +
-                '<td>' + item.name + '<input type="hidden" name="lines[' + line_index + '][rental_item_id]" value="' + item.id + '"></td>' +
-                '<td><input type="number" name="lines[' + line_index + '][quantity]" class="form-control input-sm line_quantity" value="1" min="1" max="' + item.available_quantity + '"></td>' +
-                '<td><select name="lines[' + line_index + '][rate_type]" class="form-control input-sm line_rate_type">' +
+                '<td>' + item.name + '<input type="hidden" name="rental_lines[' + line_index + '][rental_item_id]" value="' + item.id + '"></td>' +
+                '<td><input type="number" name="rental_lines[' + line_index + '][quantity]" class="form-control input-sm line_quantity" value="1" min="1" max="' + item.available_quantity + '"></td>' +
+                '<td><select name="rental_lines[' + line_index + '][rate_type]" class="form-control input-sm line_rate_type">' +
                     '<option value="hourly"' + (period_type == 'hourly' ? ' selected' : '') + '><?php echo e(__("rental::lang.hourly"), false); ?></option>' +
                     '<option value="daily"' + (period_type == 'daily' ? ' selected' : '') + '><?php echo e(__("rental::lang.daily"), false); ?></option>' +
                     '<option value="weekly"' + (period_type == 'weekly' ? ' selected' : '') + '><?php echo e(__("rental::lang.weekly"), false); ?></option>' +
                     '<option value="monthly"' + (period_type == 'monthly' ? ' selected' : '') + '><?php echo e(__("rental::lang.monthly"), false); ?></option>' +
                 '</select></td>' +
-                '<td><input type="text" name="lines[' + line_index + '][rate_amount]" class="form-control input-sm input_number line_rate_amount" value="' + rate + '"></td>' +
-                '<td><input type="number" name="lines[' + line_index + '][duration]" class="form-control input-sm line_duration" value="1" min="1"></td>' +
-                '<td><input type="text" name="lines[' + line_index + '][deposit_amount]" class="form-control input-sm input_number line_deposit" value="' + (item.deposit_amount || 0) + '"></td>' +
-                '<td class="line_total_cell"><span class="display_currency" data-currency_symbol="true">0</span><input type="hidden" name="lines[' + line_index + '][line_total]" class="line_total_input" value="0"></td>' +
+                '<td><input type="text" name="rental_lines[' + line_index + '][unit_rate]" class="form-control input-sm input_number line_rate_amount" value="' + rate + '"' +
+                    ' data-hourly="' + (item.hourly_rate || 0) + '"' +
+                    ' data-daily="' + (item.daily_rate || 0) + '"' +
+                    ' data-weekly="' + (item.weekly_rate || 0) + '"' +
+                    ' data-monthly="' + (item.monthly_rate || 0) + '"></td>' +
+                '<td><input type="number" name="rental_lines[' + line_index + '][duration]" class="form-control input-sm line_duration" value="1" min="1"></td>' +
+                '<td><input type="text" name="rental_lines[' + line_index + '][deposit_per_unit]" class="form-control input-sm input_number line_deposit" value="' + (item.deposit_amount || 0) + '"></td>' +
+                '<td class="line_total_cell"><span class="display_currency" data-currency_symbol="true">0</span><input type="hidden" name="rental_lines[' + line_index + '][line_total]" class="line_total_input" value="0"></td>' +
                 '<td><button type="button" class="btn btn-danger btn-xs remove_line"><i class="fas fa-times"></i></button></td>' +
                 '</tr>';
 
@@ -288,10 +311,10 @@
             var total_deposit = 0;
 
             $('.agreement_line').each(function() {
-                var qty = parseFloat($(this).find('.line_quantity').val()) || 0;
-                var rate = parseFloat($(this).find('.line_rate_amount').val()) || 0;
-                var duration = parseFloat($(this).find('.line_duration').val()) || 0;
-                var deposit = parseFloat($(this).find('.line_deposit').val()) || 0;
+                var qty = Number($(this).find('.line_quantity').val()) || 0;
+                var rate = parseRentalNumber($(this).find('.line_rate_amount').val());
+                var duration = Number($(this).find('.line_duration').val()) || 0;
+                var deposit = parseRentalNumber($(this).find('.line_deposit').val());
                 var line_total = qty * rate * duration;
 
                 $(this).find('.line_total_cell .display_currency').text(__currency_trans_from_en(line_total, false, true));
@@ -301,19 +324,28 @@
             });
 
             var discount_type = $('#discount_type').val();
-            var discount_amount = parseFloat($('#discount_amount').val()) || 0;
+            var discount_amount = parseRentalNumber($('#discount_amount').val());
             var discount = 0;
             if (discount_type == 'fixed') discount = discount_amount;
             else if (discount_type == 'percentage') discount = subtotal * (discount_amount / 100);
 
-            var total = subtotal - discount;
+            var tax_rate = Number(rentalTaxRates[$('#tax_id').val()]) || 0;
+            var tax = subtotal * (tax_rate / 100);
+            var total = subtotal + tax - discount;
 
             $('#total_deposit .display_currency').text(__currency_trans_from_en(total_deposit, false, true));
             $('#total_amount .display_currency').text(__currency_trans_from_en(subtotal, false, true));
             $('#summary_subtotal .display_currency').text(__currency_trans_from_en(subtotal, false, true));
             $('#summary_discount .display_currency').text(__currency_trans_from_en(discount, false, true));
+            $('#summary_tax .display_currency').text(__currency_trans_from_en(tax, false, true));
             $('#summary_total .display_currency').text(__currency_trans_from_en(total, false, true));
             $('#summary_deposit .display_currency').text(__currency_trans_from_en(total_deposit, false, true));
+        }
+
+        function parseRentalNumber(value) {
+            return typeof __number_uf === 'function'
+                ? Number(__number_uf(value || 0)) || 0
+                : Number(String(value || 0).replace(/,/g, '')) || 0;
         }
 
         if ($.fn.datetimepicker) {

@@ -85,9 +85,9 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
-                            <?php echo Form::label('vendor_name', __('rental::lang.vendor_name') . ':'); ?>
+                            <?php echo Form::label('vendor_id', __('rental::lang.vendor_name') . ':'); ?>
 
-                            <?php echo Form::text('vendor_name', isset($maintenance) ? $maintenance->vendor_name : null, ['class' => 'form-control']); ?>
+                            <?php echo Form::select('vendor_id', $suppliers, isset($maintenance) ? $selected_supplier_id : null, ['class' => 'form-control select2', 'style' => 'width:100%', 'placeholder' => __('messages.please_select')]); ?>
 
                         </div>
                     </div>

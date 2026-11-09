@@ -25,7 +25,7 @@
         <span class="input-group-text">
           <i class="fas fa-money-bill-alt"></i>
         </span>
-        <?php echo Form::select('payments['.$id.'][account_id]', $accounts, null , ['class' => 'form-control input-sm select2', 'id' => "account_id_".$id, 'style' => 'width:100%;', 'data-id' => $id]); ?>
+	  <?php echo Form::select('payments['.$id.'][account_id]', $accounts, $default_payment_account_id ?? null , ['class' => 'form-control input-sm select2', 'id' => "account_id_".$id, 'style' => 'width:100%;', 'data-id' => $id]); ?>
 
       </div>
 <?php endif; ?>
@@ -36,7 +36,7 @@
   <span class="input-group-text">
     <i class="fas fa-money-bill-alt"></i>
   </span>
-  <?php echo Form::select('payments['.$id.'][method]', $payment_types, null, ['class' => 'form-control select2 payment_types input-sm', 'id' => 'method_'.$id, 'style' => 'width:100%;', 'data-id' => $id, 'placeholder' => __('messages.please_select')]); ?>
+  <?php echo Form::select('payments['.$id.'][method]', $payment_types, $default_payment_method ?? null, ['class' => 'form-control select2 payment_types input-sm', 'id' => 'method_'.$id, 'style' => 'width:100%;', 'data-id' => $id, 'placeholder' => __('messages.please_select')]); ?>
 
 </div>
 

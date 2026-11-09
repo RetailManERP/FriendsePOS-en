@@ -92,6 +92,14 @@
                         <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="form-check mb-2">
                                 <label class="form-check-label">
+                                    <input name="reset[transactions_mobile_app_sales]" type="checkbox" value="1" class="form-check-input">
+                                    Reset MobileApp Sales
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="form-check mb-2">
+                                <label class="form-check-label">
                                     <input name="reset[transactions_sales_order]" type="checkbox" value="1" class="form-check-input">
                                     Reset Sales Orders
                                 </label>

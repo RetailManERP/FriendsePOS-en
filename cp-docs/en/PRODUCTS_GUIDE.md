@@ -51,6 +51,17 @@ Products are at the heart of your business — they're the items you buy, stock,
 
 > 💡 **Tip:** The system automatically calculates your profit margin when you enter both prices.
 
+### Selling Price Groups
+
+Selling Price Groups let you keep a fixed price for a customer group or calculate a group price as a percentage increase or decrease from the product's default selling price. Percentage-based prices use the variation's default selling price including tax and update automatically when that default changes.
+
+1. Open **Selling Price Groups** and add or edit a group.
+2. Choose **Fixed Price**, **Increase by %**, or **Decrease by %**.
+3. For a percentage rule, enter the adjustment percentage. A decrease must be less than 100%.
+4. Save the group. Calculated group prices are used in product views, POS, and purchase entry wherever that group is selected.
+
+On a purchase create/edit form, group prices can be displayed in the product rows. Use the **Unit Cost** column heading to choose a selling price group and apply available prices to the purchase rows.
+
 ### Product Type
 
 Choose how this product is structured:
@@ -103,6 +114,10 @@ If you have many products to add, importing from a spreadsheet is much faster:
 
 ---
 
+## Browsing the product list
+
+The Products list is paginated so large catalogues can be browsed without loading every product into one request. Choose a page size up to 1,000, then use the search box, report filters, and page controls to find products throughout the catalogue. The Row density selector changes the spacing of product rows. Product-list actions and export buttons appear alongside the density selector when space allows.
+
 ## How to Edit a Product
 
 1. Go to **Products → List Products**.
@@ -112,6 +127,16 @@ If you have many products to add, importing from a spreadsheet is much faster:
 5. Make your changes and click **Update**.
 
 📸 *[Screenshot: The product list with the Actions dropdown showing Edit option]*
+
+## Review product stock history from product search
+
+1. Open product search with **F10**.
+2. Select one product variation.
+3. Click **History** to open the stock history window. The first location's history loads automatically.
+4. Select another location tab to load its history.
+5. Use **Type** to filter the history by transaction type.
+
+Your role must allow you to view product stock history.
 
 ---
 

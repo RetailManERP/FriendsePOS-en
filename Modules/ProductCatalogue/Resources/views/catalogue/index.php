@@ -345,7 +345,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="d-flex justify-content-end mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="catalogue-orders-customer small text-muted">
+                        <div class="d-none" id="catalogueOrdersCustomerNameRow"><strong><?php echo app('translator')->get('productcatalogue::lang.customer_name'); ?>:</strong> <span id="catalogueOrdersCustomerName"></span></div>
+                        <div class="d-none" id="catalogueOrdersCustomerPhoneRow"><strong><?php echo app('translator')->get('productcatalogue::lang.customer_phone'); ?>:</strong> <span id="catalogueOrdersCustomerPhone"></span></div>
+                    </div>
                     <button type="button" class="btn btn-sm btn-outline-primary" id="refreshOrdersBtn">
                         <i class="fas fa-sync-alt me-1"></i><?php echo app('translator')->get('productcatalogue::lang.refresh_orders'); ?>
                     </button>
@@ -1369,6 +1373,8 @@
         var ordersUrl = getOrdersUrl();
         if (!ordersUrl) return;
 
+        $('#catalogueOrdersCustomerNameRow, #catalogueOrdersCustomerPhoneRow').addClass('d-none');
+
         var params = {};
         var ids = getStoredOrderIds();
         if (ids.length > 0) {
@@ -1404,6 +1410,17 @@
                     $('.catalogue-orders-grand-total').addClass('d-none');
                     return;
                 }
+
+                var savedCustomer = getCustomerInfo() || {};
+                var orderCustomer = orders.find(function(order) {
+                    return order.customer_name || order.customer_phone;
+                }) || {};
+                var customerName = orderCustomer.customer_name || savedCustomer.name || '';
+                var customerPhone = orderCustomer.customer_phone || savedCustomer.phone || '';
+                $('#catalogueOrdersCustomerName').text(customerName);
+                $('#catalogueOrdersCustomerPhone').text(customerPhone);
+                $('#catalogueOrdersCustomerNameRow').toggleClass('d-none', !customerName);
+                $('#catalogueOrdersCustomerPhoneRow').toggleClass('d-none', !customerPhone);
 
                 var $list = $('.catalogue-orders-list');
                 orders.forEach(function(order) {
@@ -1480,6 +1497,7 @@
                 $('.catalogue-orders-loading').addClass('d-none');
                 $('.catalogue-orders-empty').removeClass('d-none');
                 $('.catalogue-orders-grand-total').addClass('d-none');
+                $('#catalogueOrdersCustomerNameRow, #catalogueOrdersCustomerPhoneRow').addClass('d-none');
             }
         });
     }

@@ -26,7 +26,7 @@
                 <div class="form-group">
                     <?php echo Form::label('report_location', __('purchase.business_location') . ':'); ?>
 
-                    <?php echo Form::select('report_location', $locations, null, ['class' => 'form-control select2', 'id' => 'report_location', 'style' => 'width:100%']); ?>
+                    <?php echo Form::select('report_location', ['' => __('rental::lang.all')] + $business_locations->toArray(), null, ['class' => 'form-control select2', 'id' => 'report_location', 'style' => 'width:100%']); ?>
 
                 </div>
             </div>
@@ -128,27 +128,99 @@
 <?php $__env->startSection('javascript'); ?>
 <script>
     $(document).ready(function() {
-        $('#generate_report').click(function() {
+        $('#report_date_range').daterangepicker(dateRangeSettings);
+
+        function escapeHtml(value) {
+            return $('<div>').text(value == null ? '' : value).html();
+        }
+
+        function money(value) {
+            return Number(value || 0).toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        function table(headers, rows) {
+            var html = '<div class="table-responsive"><table class="table table-bordered table-striped"><thead><tr>';
+            headers.forEach(function(header) { html += '<th>' + escapeHtml(header) + '</th>'; });
+            html += '</tr></thead><tbody>';
+            if (!rows.length) {
+                html += '<tr><td colspan="' + headers.length + '" class="text-center">No data available</td></tr>';
+            } else {
+                rows.forEach(function(row) {
+                    html += '<tr>';
+                    row.forEach(function(cell) { html += '<td>' + escapeHtml(cell) + '</td>'; });
+                    html += '</tr>';
+                });
+            }
+            return html + '</tbody></table></div>';
+        }
+
+        function renderReport(type, data) {
+            var html = '';
+            if (type === 'revenue') {
+                var summary = data.summary || {};
+                html += '<div class="row">';
+                [
+                    ['Rental income', summary.total_rental_income],
+                    ['Deposits collected', summary.total_deposits_collected],
+                    ['Deposits refunded', summary.total_deposits_refunded],
+                    ['Net revenue', summary.net_revenue]
+                ].forEach(function(card) {
+                    html += '<div class="col-md-3"><div class="info-box"><div class="info-box-content"><span class="info-box-text">' +
+                        escapeHtml(card[0]) + '</span><span class="info-box-number">' + money(card[1]) + '</span></div></div></div>';
+                });
+                html += '</div>';
+                html += table(['Date', 'Revenue'], (data.trend || []).map(function(row) {
+                    return [row.date, money(row.total)];
+                }));
+            } else if (type === 'items') {
+                html = table(['Rental item', 'SKU', 'Rentals', 'Revenue', 'Average duration'], (data.items || []).map(function(item) {
+                    return [item.name, item.rental_sku, item.total_rentals, money(item.total_revenue), item.avg_duration || 0];
+                }));
+            } else if (type === 'agreements') {
+                var statuses = data.by_status || {};
+                var statusRows = Object.keys(statuses).map(function(status) { return [status, statuses[status]]; });
+                html += '<div class="row"><div class="col-md-3"><div class="info-box"><div class="info-box-content"><span class="info-box-text">Agreements</span><span class="info-box-number">' +
+                    escapeHtml(data.total) + '</span></div></div></div><div class="col-md-3"><div class="info-box"><div class="info-box-content"><span class="info-box-text">Total value</span><span class="info-box-number">' +
+                    money(data.total_value) + '</span></div></div></div><div class="col-md-3"><div class="info-box"><div class="info-box-content"><span class="info-box-text">Average value</span><span class="info-box-number">' +
+                    money(data.avg_value) + '</span></div></div></div></div>';
+                html += table(['Status', 'Count'], statusRows);
+            } else if (type === 'overdue') {
+                html = '<p><strong>Overdue agreements:</strong> ' + escapeHtml(data.total_count) +
+                    ' &nbsp; <strong>Overdue value:</strong> ' + money(data.total_overdue_value) +
+                    ' &nbsp; <strong>Potential late fees:</strong> ' + money(data.total_potential_late_fees) + '</p>';
+                html += table(['Agreement', 'Customer', 'Due date', 'Balance'], (data.agreements || []).map(function(agreement) {
+                    return [agreement.agreement_no, agreement.contact ? agreement.contact.name : '', agreement.rental_end_expected, money(agreement.balance_due)];
+                }));
+            } else if (type === 'utilization') {
+                html = '<p><strong>Average utilization:</strong> ' + escapeHtml(data.avg_utilization) + '%</p>';
+                html += table(['Rental item', 'Total quantity', 'Available quantity', 'Rental count', 'Utilization'], (data.items || []).map(function(item) {
+                    return [item.item_name, item.total_quantity, item.available_quantity, item.rental_count, item.utilization_rate + '%'];
+                }));
+            }
+            $('#report_results').html(html);
+        }
+
+        function generateReport() {
+            var range = $('#report_date_range').data('daterangepicker');
             var params = {
                 report_type: $('#report_type').val(),
                 location_id: $('#report_location').val(),
-                date_range: $('#report_date_range').val()
+                start_date: range ? range.startDate.format('YYYY-MM-DD') : '',
+                end_date: range ? range.endDate.format('YYYY-MM-DD') : ''
             };
-
-            var url = '<?php echo e(action([\Modules\Rental\Http\Controllers\RentalReportController::class, "index"]), false); ?>';
-            var queryString = $.param(params);
-            window.location.href = url + '?' + queryString;
-        });
-
-        if ($('#report_data_table').length) {
-            $('#report_data_table').DataTable({
-                paging: true,
-                searching: true,
-                ordering: true,
-                dom: 'Bfrtip',
-                buttons: ['csv', 'excel', 'print']
-            });
+            $('#report_results').html('<p class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading report...</p>');
+            $.get('<?php echo e(action([\Modules\Rental\Http\Controllers\RentalReportController::class, "getData"]), false); ?>', params)
+                .done(function(data) { renderReport(params.report_type, data); })
+                .fail(function() {
+                    $('#report_results').html('<div class="callout callout-danger">Unable to load the report. Please try again.</div>');
+                });
         }
+
+        $('#generate_report').on('click', generateReport);
+        generateReport();
     });
 </script>
 <?php $__env->stopSection(); ?>

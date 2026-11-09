@@ -38,6 +38,10 @@
         <p class="text-muted" style="font-size: 0.8125rem;">
             <?php echo app('translator')->get('cms::lang.download_buttons_help'); ?>
         </p>
+        <p class="text-muted" style="font-size: 0.8125rem;">
+            Enter a full URL for an external store, or only the file name for a file in <code>public/downloads</code>.
+            File names use this site's downloads folder when available; otherwise they use the primary domain's downloads folder.
+        </p>
     </div>
 
     
@@ -70,7 +74,7 @@
                 <div class="form-group mb-3">
                     <?php echo Form::label('android_app_1_link', __('cms::lang.button_link') . ':'); ?>
 
-                    <?php echo Form::url('btns[android_app_1][link]', $android_app_1['link'], array_merge(['class' => 'form-control', 'placeholder' => 'https://play.google.com/store/apps/details?id=...'], $download_file_input)); ?>
+                    <?php echo Form::text('btns[android_app_1][link]', $android_app_1['link'], array_merge(['class' => 'form-control', 'placeholder' => 'https://play.google.com/store/apps/details?id=...'], $download_file_input)); ?>
 
                 </div>
             </div>
@@ -87,7 +91,7 @@
                 <div class="form-group mb-3">
                     <?php echo Form::label('android_app_2_link', __('cms::lang.button_link') . ':'); ?>
 
-                    <?php echo Form::url('btns[android_app_2][link]', $android_app_2['link'], array_merge(['class' => 'form-control', 'placeholder' => 'https://example.com/app.apk'], $download_file_input)); ?>
+                    <?php echo Form::text('btns[android_app_2][link]', $android_app_2['link'], array_merge(['class' => 'form-control', 'placeholder' => 'ActuaryPOS-Pro.apk or https://example.com/app.apk'], $download_file_input)); ?>
 
                 </div>
             </div>
@@ -124,7 +128,7 @@
                 <div class="form-group mb-3">
                     <?php echo Form::label('ios_app_1_link', __('cms::lang.button_link') . ':'); ?>
 
-                    <?php echo Form::url('btns[ios_app_1][link]', $ios_app_1['link'], array_merge(['class' => 'form-control', 'placeholder' => 'https://apps.apple.com/app/...'], $download_file_input)); ?>
+                    <?php echo Form::text('btns[ios_app_1][link]', $ios_app_1['link'], array_merge(['class' => 'form-control', 'placeholder' => 'https://apps.apple.com/app/...'], $download_file_input)); ?>
 
                 </div>
             </div>
@@ -141,7 +145,7 @@
                 <div class="form-group mb-3">
                     <?php echo Form::label('ios_app_2_link', __('cms::lang.button_link') . ':'); ?>
 
-                    <?php echo Form::url('btns[ios_app_2][link]', $ios_app_2['link'], array_merge(['class' => 'form-control', 'placeholder' => 'https://testflight.apple.com/join/...'], $download_file_input)); ?>
+                    <?php echo Form::text('btns[ios_app_2][link]', $ios_app_2['link'], array_merge(['class' => 'form-control', 'placeholder' => 'https://testflight.apple.com/join/...'], $download_file_input)); ?>
 
                 </div>
             </div>
@@ -170,7 +174,7 @@
                     <div class="form-group mb-3">
                         <?php echo Form::label('desktop_' . $key . '_link', __('cms::lang.button_link') . ':'); ?>
 
-                        <?php echo Form::url('btns[' . $key . '][link]', $desktop_button['link'], array_merge(['class' => 'form-control', 'id' => 'desktop_' . $key . '_link', 'placeholder' => 'https://example.com/download'], $download_file_input)); ?>
+                        <?php echo Form::text('btns[' . $key . '][link]', $desktop_button['link'], array_merge(['class' => 'form-control', 'id' => 'desktop_' . $key . '_link', 'placeholder' => 'filename.exe or https://example.com/download'], $download_file_input)); ?>
 
                     </div>
                 </div>

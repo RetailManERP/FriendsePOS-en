@@ -505,15 +505,10 @@
             return is_valid;
         });
 
-        $('.credit').change(function(){
-            if($(this).val() > 0){
-                $(this).parents('tr').find('.debit').val('');
-            }
-            calculate_total();
-        });
-        $('.debit').change(function(){
-            if($(this).val() > 0){
-                $(this).parents('tr').find('.credit').val('');
+        $(document).on('input change', '#journal_table .credit, #journal_table .debit', function(){
+            if(__read_number($(this)) > 0){
+                var opposite_class = $(this).hasClass('credit') ? '.debit' : '.credit';
+                $(this).closest('tr').find(opposite_class).val('');
             }
             calculate_total();
         });
@@ -619,11 +614,12 @@
 	}
 
     function calculate_total(){
-        var precision = $('#__precision').val();
+        var precision = parseInt($('#__precision').val(), 10);
+        precision = Number.isNaN(precision) ? 2 : precision;
 
         var total_credit = 0;
         var total_debit = 0;
-        $('table > tbody  > tr').each(function(index, tr) { 
+        $('#journal_table > tbody > tr').each(function(index, tr) {
             var credit = __read_number($(tr).find('.credit'));
             total_credit += credit;
 
@@ -639,8 +635,8 @@
         $('.total_credit_hidden').val(total_credit);
         $('.total_debit_hidden').val(total_debit);
 
-        $('.total_credit').text(__currency_trans_from_en(total_credit, false));
-        $('.total_debit').text(__currency_trans_from_en(total_debit, false));
+        $('.total_credit').text(__currency_trans_from_en(total_credit, false, false, precision));
+        $('.total_debit').text(__currency_trans_from_en(total_debit, false, false, precision));
 
         if((total_credit != 0) || (total_debit != 0) )
         {

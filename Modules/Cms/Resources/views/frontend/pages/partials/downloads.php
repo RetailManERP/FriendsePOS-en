@@ -108,6 +108,17 @@
             continue;
         }
 
+        $link = trim($link);
+        // A plain filename points to the site's public/downloads folder when
+        // available; subdomains without that folder use the configured primary
+        // downloads directory.
+        if (preg_match('/^[^\/\\\\?#]+$/', $link) === 1) {
+            $encoded_filename = rawurlencode($link);
+            $link = is_dir(public_path('downloads'))
+                ? asset('downloads/' . $encoded_filename)
+                : getMainDomainUrl('downloads/' . $encoded_filename);
+        }
+
         $download_sections[$definition['section']]['buttons'][] = [
             'text' => $text,
             'link' => $link,

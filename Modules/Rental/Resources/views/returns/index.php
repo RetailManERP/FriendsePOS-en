@@ -63,7 +63,11 @@
             ajax: {
                 url: '<?php echo e(action([\Modules\Rental\Http\Controllers\RentalReturnController::class, "index"]), false); ?>',
                 data: function(d) {
-                    d.date_range = $('#return_date_range').val();
+                    var date_range = $('#return_date_range').data('daterangepicker');
+                    if (date_range && $('#return_date_range').val()) {
+                        d.start_date = date_range.startDate.format('YYYY-MM-DD');
+                        d.end_date = date_range.endDate.format('YYYY-MM-DD');
+                    }
                     d.location_id = $('#return_location_filter').val();
                     d.condition = $('#return_condition_filter').val();
                 }
@@ -85,8 +89,13 @@
         $('#return_location_filter, #return_condition_filter').change(function() {
             returns_table.ajax.reload();
         });
+        $('#return_date_range').daterangepicker(dateRangeSettings);
         $('#return_date_range').on('apply.daterangepicker cancel.daterangepicker', function(ev) {
-            if (ev.type == 'cancel') $(this).val('');
+            if (ev.type == 'cancel') {
+                $(this).val('');
+                $(this).data('daterangepicker').setStartDate(moment(business_start_date));
+                $(this).data('daterangepicker').setEndDate(moment());
+            }
             returns_table.ajax.reload();
         });
     });

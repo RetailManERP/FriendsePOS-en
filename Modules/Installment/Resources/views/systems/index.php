@@ -68,17 +68,64 @@
             <?php endif; ?>
         <?php echo $__env->renderComponent(); ?>
 
-
-
     </section>
 
     <div class="modal fade div_modal" tabindex="-1" role="dialog"
-         aria-labelledby="gridSystemModalLabel" style="z-index: 11000 !important;">
+         aria-labelledby="gridSystemModalLabel">
     </div>
 
     <style>
-        .div_modal .modal-dialog {
-            z-index: 11001 !important;
+        .div_modal .installment-plan-modal-dialog {
+            width: min(1100px, calc(100vw - 32px));
+            max-width: none;
+            margin: 16px auto;
+        }
+
+        .div_modal .installment-plan-modal-content,
+        .div_modal .installment-plan-modal-form {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            max-height: calc(100vh - 32px);
+        }
+
+        .div_modal .installment-plan-modal-form {
+            flex: 1 1 auto;
+        }
+
+        .div_modal .installment-plan-modal-header,
+        .div_modal .installment-plan-modal-footer {
+            position: sticky;
+            z-index: 1;
+            flex: 0 0 auto;
+            background: #f5f8fa;
+        }
+
+        .div_modal .installment-plan-modal-header {
+            top: 0;
+        }
+
+        .div_modal .installment-plan-modal-footer {
+            bottom: 0;
+        }
+
+        .div_modal .installment-plan-modal-body {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow: auto;
+            overscroll-behavior: contain;
+        }
+
+        @media (max-width: 575.98px) {
+            .div_modal .installment-plan-modal-dialog {
+                width: calc(100vw - 16px);
+                margin: 8px auto;
+            }
+
+            .div_modal .installment-plan-modal-content,
+            .div_modal .installment-plan-modal-form {
+                max-height: calc(100vh - 16px);
+            }
         }
     </style>
 <?php $__env->stopSection(); ?>
@@ -176,6 +223,25 @@ $(document).ready(function () {
 
     });
 
+    function handleInstallmentPlanSaveError(xhr, form) {
+        __enable_submit_button(form.find('button[type="submit"]'));
+
+        var response = xhr.responseJSON || {};
+        var errors = response.errors || {};
+        var messages = [];
+
+        $.each(errors, function (field, fieldMessages) {
+            messages = messages.concat(fieldMessages);
+        });
+
+        if (messages.length) {
+            toastr.error(messages[0]);
+            return;
+        }
+
+        toastr.error(response.message || "<?php echo e(__('messages.something_went_wrong'), false); ?>");
+    }
+
     $(document).on('submit', 'form#add_installment_system', function(e) {
         e.preventDefault();
         var form = $(this);
@@ -194,8 +260,12 @@ $(document).ready(function () {
                     toastr.success(result.msg);
                     data_table.ajax.reload();
                 } else {
-                    toastr.error(result.msg);
+                    __enable_submit_button(form.find('button[type="submit"]'));
+                    toastr.error(result.msg || "<?php echo e(__('messages.something_went_wrong'), false); ?>");
                 }
+            },
+            error: function (xhr) {
+                handleInstallmentPlanSaveError(xhr, form);
             },
         });
     });
@@ -220,8 +290,12 @@ $(document).ready(function () {
                     toastr.success(result.msg);
                     data_table.ajax.reload();
                 } else {
-                    toastr.error(result.msg);
+                    __enable_submit_button(form.find('button[type="submit"]'));
+                    toastr.error(result.msg || "<?php echo e(__('messages.something_went_wrong'), false); ?>");
                 }
+            },
+            error: function(xhr) {
+                handleInstallmentPlanSaveError(xhr, form);
             },
         });
     });

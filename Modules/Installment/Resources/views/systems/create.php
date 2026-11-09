@@ -1,15 +1,15 @@
-<div class="modal-dialog" role="document">
-    <div class="modal-content">
+<div class="modal-dialog installment-plan-modal-dialog" role="document">
+    <div class="modal-content installment-plan-modal-content">
 
-        <?php echo Form::open(['url' => action('\Modules\Installment\Http\Controllers\InstallmentSystemController@store'), 'method' => 'post','id'=>'add_installment_system' ]); ?>
+        <?php echo Form::open(['url' => action('\Modules\Installment\Http\Controllers\InstallmentSystemController@store'), 'method' => 'post','id'=>'add_installment_system', 'class' => 'installment-plan-modal-form' ]); ?>
 
 
-        <div class="modal-header">
+        <div class="modal-header installment-plan-modal-header">
             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <h4 class="modal-title">Add Installment Plan</h4>
         </div>
 
-        <div class="modal-body">
+        <div class="modal-body installment-plan-modal-body">
             <div class="form-group">
                 <?php echo Form::label('name','Installment Plan Name :*'); ?>
 
@@ -48,7 +48,7 @@
                     <div class="col-lg-4">
                         <?php echo Form::label('benefit',' Interest Rate %:'); ?>
 
-                        <?php echo Form::text('benefit', null, ['class' => 'form-control', 'required' ]); ?>
+                        <?php echo Form::text('benefit', '0', ['class' => 'form-control', 'required' ]); ?>
 
                     </div>
                     <div class="col-lg-4">
@@ -120,7 +120,7 @@
 
      </div>
 
-        <div class="modal-footer">
+        <div class="modal-footer installment-plan-modal-footer">
             <button type="submit" class="btn btn-primary" ><?php echo app('translator')->get( 'messages.save' ); ?></button>
             <button type="button" class="btn btn-default" data-bs-dismiss="modal"><?php echo app('translator')->get( 'messages.close' ); ?></button>
         </div>

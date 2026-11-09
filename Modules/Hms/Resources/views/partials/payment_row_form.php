@@ -1,5 +1,13 @@
 <div class="row">
 	<input type="hidden" class="payment_row_index" value="<?php echo e($row_index, false); ?>">
+	<?php if(!empty($removable)): ?>
+		<div class="col-md-12 text-right">
+			<button type="button" class="btn btn-danger btn-xs remove_payment_row" aria-label="<?php echo e(__('messages.delete'), false); ?>">
+				<i class="fas fa-trash"></i> <?php echo e(__('messages.delete'), false); ?>
+
+			</button>
+		</div>
+	<?php endif; ?>
 	<?php
 		$col_class = 'col-md-4';
 		$readonly = $payment_line['method'] == 'advance' ? true : false;
@@ -123,7 +131,7 @@
 					<span class="input-group-text">
 						<i class="fas fa-money-bill-alt"></i>
 					</span>
-					<?php echo Form::select("payment[$row_index][account_id]", $accounts, !empty($payment_line['account_id']) ? $payment_line['account_id'] : '' , ['class' => 'form-control select2 account-dropdown', 'id' => !$readonly ? "account_$row_index" : "account_advance_$row_index", 'style' => 'width:100%;', 'disabled' => $readonly]); ?>
+					<?php echo Form::select("payment[$row_index][account_id]", $accounts, !empty($payment_line['account_id']) ? $payment_line['account_id'] : '' , ['class' => 'form-control select2 account-dropdown', 'id' => !$readonly ? "account_$row_index" : "account_advance_$row_index", 'style' => 'width:100%;', 'disabled' => $readonly, 'data-select-default-account' => empty($payment_line['account_id']) && !$readonly ? '1' : '0']); ?>
 
 				</div>
 			</div>

@@ -55,16 +55,16 @@
             </div>
         <?php echo $__env->renderComponent(); ?>
         <?php $__env->startComponent('components.widget'); ?>
-            <div class="box-tools float-end mb-3">
+            <div class="d-flex flex-wrap justify-content-end gap-2 mb-2 w-100">
                 <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('hms.add_booking')): ?>
-                        <a class="btn btn-primary pull-right"
-                            href="<?php echo e(action([\Modules\Hms\Http\Controllers\HmsBookingController::class, 'create']), false); ?>">
-                            <i class="fa fa-plus"></i> <?php echo app('translator')->get('messages.add'); ?>
-                        </a>
+                    <a class="btn btn-primary"
+                        href="<?php echo e(action([\Modules\Hms\Http\Controllers\HmsBookingController::class, 'create']), false); ?>">
+                        <i class="fa fa-plus"></i> <?php echo app('translator')->get('messages.add'); ?>
+                    </a>
                 <?php endif; ?>
             </div>
-            <div class="table-responsive" style="min-height: 80vh">
-<table class="table table-bordered table-striped table-hover table-th-skin" id="bookings_table">
+            <div class="table-responsive w-100" style="min-height: 80vh">
+<table class="table table-bordered table-striped table-hover table-th-skin w-100" id="bookings_table">
                 <thead>
                     <tr>
                         <th>
@@ -260,9 +260,13 @@
                 e.preventDefault();
                 $.ajax({
                     url: $(this).attr('href'),
-                    dataType: 'html',
+                    dataType: 'json',
                     success: function(result) {
-                        $('.payment_modal').html(result).modal('show');
+                        if (result.status === 'due' && result.view) {
+                            $('.payment_modal').html(result.view).modal('show');
+                        } else if (result.msg) {
+                            toastr.warning(result.msg);
+                        }
                     },
                 });
             });
@@ -273,6 +277,8 @@
                     bookings_table.ajax.reload();
                 }, 1500);
             });
+            });
+        </script>
 
     <?php $__env->stopSection(); ?>
 

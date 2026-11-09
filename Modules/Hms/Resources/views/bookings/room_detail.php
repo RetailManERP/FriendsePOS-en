@@ -1,13 +1,13 @@
 <?php if($is_edit): ?>
     <tr>
 <?php endif; ?>
+    <td>
         <input type="hidden" value="<?php echo e($data['total_price'], false); ?>" name="rooms[<?php echo e($currentIndex, false); ?>][total_price]">
         <input type="hidden" value="<?php echo e($data['price'], false); ?>" name="rooms[<?php echo e($currentIndex, false); ?>][price]">
         <input type="hidden" value="<?php echo e($type->id, false); ?>" name="rooms[<?php echo e($currentIndex, false); ?>][type_id]">
         <input type="hidden" class="room-id-input" value="<?php echo e($room->id, false); ?>" name="rooms[<?php echo e($currentIndex, false); ?>][room_id]">
         <input type="hidden" value="<?php echo e($data['no_of_adult'], false); ?>" name="rooms[<?php echo e($currentIndex, false); ?>][no_of_adult]">
         <input type="hidden" value="<?php echo e($data['no_of_child'], false); ?>" name="rooms[<?php echo e($currentIndex, false); ?>][no_of_child]">
-    <td>
         <?php echo e($type->type, false); ?>
 
        
@@ -24,7 +24,9 @@
         <?php echo e($data['no_of_child'], false); ?>
 
     </td>
-    <td class="price-td display_currency" data-currency_symbol="true">
+    <td class="price-td display_currency" data-currency_symbol="true"
+        data-unit-price="<?php echo e($data['price'], false); ?>" data-room-type-id="<?php echo e($type->id, false); ?>"
+        data-daily-prices="<?php echo e(json_encode($data['daily_prices']), false); ?>">
         <?php echo e($data['total_price'], false); ?>
 
     </td>

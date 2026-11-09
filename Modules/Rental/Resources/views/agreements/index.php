@@ -52,9 +52,10 @@
             </div>
         </div>
 
-        <table class="table table-bordered table-striped" id="rental_agreements_table">
+        <table class="table table-bordered table-striped" id="rental_agreements_table" style="width:100%">
             <thead>
                 <tr>
+                    <th><?php echo app('translator')->get('messages.action'); ?></th>
                     <th><?php echo app('translator')->get('rental::lang.agreement_no'); ?></th>
                     <th><?php echo app('translator')->get('rental::lang.customer'); ?></th>
                     <th><?php echo app('translator')->get('rental::lang.location'); ?></th>
@@ -63,7 +64,6 @@
                     <th><?php echo app('translator')->get('rental::lang.balance_due'); ?></th>
                     <th><?php echo app('translator')->get('rental::lang.status'); ?></th>
                     <th><?php echo app('translator')->get('rental::lang.payment_status'); ?></th>
-                    <th><?php echo app('translator')->get('messages.action'); ?></th>
                 </tr>
             </thead>
         </table>
@@ -77,16 +77,24 @@
         var agreements_table = $('#rental_agreements_table').DataTable({
             processing: true,
             serverSide: true,
+            scrollX: true,
+            scrollCollapse: true,
+            autoWidth: false,
             ajax: {
                 url: '<?php echo e(action([\Modules\Rental\Http\Controllers\RentalAgreementController::class, "index"]), false); ?>',
                 data: function(d) {
                     d.status = $('#agreement_status_filter').val();
                     d.location_id = $('#agreement_location_filter').val();
-                    d.date_range = $('#agreement_date_range').val();
+                    var date_range = $('#agreement_date_range').data('daterangepicker');
+                    if (date_range && $('#agreement_date_range').val()) {
+                        d.start_date = date_range.startDate.format('YYYY-MM-DD');
+                        d.end_date = date_range.endDate.format('YYYY-MM-DD');
+                    }
                     d.payment_status = $('#agreement_payment_status_filter').val();
                 }
             },
             columns: [
+                { data: 'action', name: 'action', orderable: false, searchable: false },
                 { data: 'agreement_no', name: 'agreement_no' },
                 { data: 'customer', name: 'contact_id' },
                 { data: 'location', name: 'location_id' },
@@ -94,8 +102,7 @@
                 { data: 'total_amount', name: 'total_amount' },
                 { data: 'balance_due', name: 'balance_due' },
                 { data: 'status', name: 'status' },
-                { data: 'payment_status', name: 'payment_status' },
-                { data: 'action', name: 'action', orderable: false, searchable: false }
+                { data: 'payment_status', name: 'payment_status' }
             ]
         });
 
@@ -103,8 +110,11 @@
             agreements_table.ajax.reload();
         });
 
+        $('#agreement_date_range').daterangepicker(dateRangeSettings);
         $('#agreement_date_range').on('cancel.daterangepicker', function() {
             $(this).val('');
+            $(this).data('daterangepicker').setStartDate(moment(business_start_date));
+            $(this).data('daterangepicker').setEndDate(moment());
             agreements_table.ajax.reload();
         });
         $('#agreement_date_range').on('apply.daterangepicker', function() {

@@ -70,7 +70,11 @@
             ajax: {
                 url: '<?php echo e(action([\Modules\Rental\Http\Controllers\RentalPaymentController::class, "index"]), false); ?>',
                 data: function(d) {
-                    d.date_range = $('#payment_date_range').val();
+                    var date_range = $('#payment_date_range').data('daterangepicker');
+                    if (date_range && $('#payment_date_range').val()) {
+                        d.start_date = date_range.startDate.format('YYYY-MM-DD');
+                        d.end_date = date_range.endDate.format('YYYY-MM-DD');
+                    }
                     d.payment_type = $('#payment_type_filter').val();
                     d.payment_method = $('#payment_method_filter').val();
                 }
@@ -91,8 +95,13 @@
         $('#payment_type_filter, #payment_method_filter').change(function() {
             payments_table.ajax.reload();
         });
+        $('#payment_date_range').daterangepicker(dateRangeSettings);
         $('#payment_date_range').on('apply.daterangepicker cancel.daterangepicker', function(ev) {
-            if (ev.type == 'cancel') $(this).val('');
+            if (ev.type == 'cancel') {
+                $(this).val('');
+                $(this).data('daterangepicker').setStartDate(moment(business_start_date));
+                $(this).data('daterangepicker').setEndDate(moment());
+            }
             payments_table.ajax.reload();
         });
     });

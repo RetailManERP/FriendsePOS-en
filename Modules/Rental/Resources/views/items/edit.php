@@ -25,8 +25,11 @@
                         <div class="form-group">
                             <?php echo Form::label('rental_sku', __('rental::lang.rental_sku') . ':'); ?>
 
-                            <?php echo Form::text('rental_sku', $item->rental_sku, ['class' => 'form-control']); ?>
+                            <?php echo Form::text('rental_sku', old('rental_sku', $item->rental_sku), ['class' => 'form-control' . ($errors->has('rental_sku') ? ' is-invalid' : '')]); ?>
 
+                            <?php if($errors->has('rental_sku')): ?>
+                                <span class="text-danger"><?php echo e($errors->first('rental_sku'), false); ?></span>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>

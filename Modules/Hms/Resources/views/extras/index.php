@@ -11,13 +11,14 @@
     <!-- Main content -->
     <section class="content">
         <?php $__env->startComponent('components.widget'); ?>
-                <a class="btn btn-primary pull-right btn-modal-extra"
+            <div class="d-flex flex-wrap justify-content-end gap-2 mb-2 w-100">
+                <a class="btn btn-primary btn-modal-extra"
                     href="<?php echo e(action([\Modules\Hms\Http\Controllers\ExtraController::class, 'create']), false); ?>">
                     <i class="fa fa-plus"></i> <?php echo app('translator')->get('messages.add'); ?>
                 </a>
             </div>
-            <div class="table-responsive" style="min-height: 80vh">
-<table class="table table-bordered table-striped table-hover table-th-skin" id="extras_table">
+            <div class="table-responsive w-100" style="min-height: 80vh">
+<table class="table table-bordered table-striped table-hover table-th-skin w-100" id="extras_table">
                 <thead>
                     <tr>
                         <th>

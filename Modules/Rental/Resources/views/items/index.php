@@ -70,6 +70,8 @@ $(document).ready(function() {
     var rental_items_table = $('#rental_items_table').DataTable({
         processing: true,
         serverSide: true,
+        stateSave: false,
+        order: [],
         ajax: {
             url: '<?php echo e(action([\Modules\Rental\Http\Controllers\RentalItemController::class, "index"]), false); ?>',
             data: function(d) {

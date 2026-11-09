@@ -16,9 +16,9 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <?php echo Form::label('agreement_prefix', __('rental::lang.agreement_prefix') . ':'); ?>
+                            <?php echo Form::label('agreement_prefix', __('rental::lang.agreement_prefix') . '*'); ?>
 
-                            <?php echo Form::text('agreement_prefix', $settings['agreement_prefix'] ?? 'RA', ['class' => 'form-control']); ?>
+                            <?php echo Form::text('agreement_prefix', $settings['agreement_prefix'] ?? 'RA', ['class' => 'form-control', 'required']); ?>
 
                         </div>
                     </div>
@@ -36,7 +36,7 @@
                         <div class="form-group">
                             <?php echo Form::label('damage_report_prefix', __('rental::lang.damage_report_prefix') . ':'); ?>
 
-                            <?php echo Form::text('damage_report_prefix', $settings['damage_report_prefix'] ?? 'DR', ['class' => 'form-control']); ?>
+                            <?php echo Form::text('damage_report_prefix', $settings['damage_report_prefix'] ?? 'RD', ['class' => 'form-control']); ?>
 
                         </div>
                     </div>
@@ -51,6 +51,35 @@
                                 'monthly' => __('rental::lang.monthly'),
                             ], $settings['default_rental_period'] ?? 'daily', ['class' => 'form-control select2', 'style' => 'width:100%']); ?>
 
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <?php echo Form::label('default_rental_start_time', 'Rental start time'); ?>
+
+                            <?php echo Form::input('time', 'default_rental_start_time', substr($settings['default_rental_start_time'] ?? '09:00', 0, 5), ['class' => 'form-control', 'required']); ?>
+
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <?php echo Form::label('default_rental_end_time', 'Rental end time'); ?>
+
+                            <?php echo Form::input('time', 'default_rental_end_time', substr($settings['default_rental_end_time'] ?? '17:00', 0, 5), ['class' => 'form-control', 'required']); ?>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <?php echo Form::label('grace_before_end_minutes', 'Grace before rental end (minutes)'); ?>
+
+                            <?php echo Form::number('grace_before_end_minutes', $settings['grace_before_end_minutes'] ?? 15, ['class' => 'form-control', 'min' => 0, 'max' => 1440, 'required']); ?>
+
+                            <small class="text-muted">Late returns within this grace period do not add another rental period.</small>
                         </div>
                     </div>
                 </div>
@@ -180,12 +209,16 @@
                                     <?php echo Form::open(['url' => action([\Modules\Rental\Http\Controllers\RentalSettingController::class, 'updateCategory'], [$category->id]), 'method' => 'put', 'class' => 'category_form']); ?>
 
                                     <div class="input-group input-group-sm">
-                                        <?php echo Form::text('name', $category->name, ['class' => 'form-control', 'required']); ?>
+                                        <?php echo Form::text('name', $category->name, ['class' => 'form-control', 'required', 'aria-label' => __('rental::lang.category_name')]); ?>
 
                                         <span class="input-group-btn">
                                             <button type="submit" class="btn btn-success btn-xs"><i class="fas fa-check"></i></button>
                                             <button type="button" class="btn btn-default btn-xs cancel_edit_category"><i class="fas fa-times"></i></button>
                                         </span>
+                                    </div>
+                                    <div class="form-group" style="margin-top:5px; margin-bottom:0;">
+                                        <?php echo Form::select('is_active', ['1' => __('rental::lang.active'), '0' => __('rental::lang.inactive')], $category->is_active ? '1' : '0', ['class' => 'form-control input-sm']); ?>
+
                                     </div>
                                     <?php echo Form::close(); ?>
 

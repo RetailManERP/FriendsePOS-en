@@ -164,6 +164,7 @@ return [
     'waiting_approval_gateway' => 'Waiting for approval by payment gateway',
     'enable_register_tc' => 'Enable Terms & Conditions in Registration',
     'disable_pricing' => 'Disable Pricing',
+    'disable_github_update' => 'Disable GitHub Update',
     'register_tc' => 'Registration Terms & Conditions',
     'agreement_url' => 'Agreement URL',
     'agreement_url_help' => 'Public link to view and print the registration terms without login.',
