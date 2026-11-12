@@ -44,6 +44,7 @@
                                 <tr>
                                     <th><?php echo app('translator')->get('restaurant.booking_starts'); ?></th>
                                     <th><?php echo app('translator')->get('restaurant.booking_ends'); ?></th>
+                                    <th><?php echo app('translator')->get('restaurant.customer_note'); ?></th>
                                     <th><?php echo app('translator')->get('sale.status'); ?></th>
                                     <th><?php echo app('translator')->get('messages.location'); ?></th>
                                 </tr>
@@ -126,6 +127,7 @@
                             columns: [
                                 {data: 'booking_start', name: 'booking_start'},
                                 {data: 'booking_end', name: 'booking_end'},
+                                {data: 'booking_note', name: 'booking_note'},
                                 {data: 'booking_status'},
                                 {data: 'location_name', name: 'bl.name'},
                             ]

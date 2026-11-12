@@ -57,7 +57,7 @@
 	<input type="hidden" id="customer_id" name="contact_id" value="<?php echo e($contact->id, false); ?>">
 	 <input type="hidden" id="sale_type" name="type" value="crm_order_request">
 	<div class="row">
-		<div class="col-md-12 col-sm-12">
+		<div class="col-md-8 col-sm-12">
 			<?php echo Form::hidden('location_id', !empty($default_location) ? $default_location->id : null , ['id' => 'location_id', 'data-receipt_printer_type' => !empty($default_location->receipt_printer_type) ? $default_location->receipt_printer_type : 'browser', 'data-default_payment_accounts' => !empty($default_location) ? $default_location->default_payment_accounts : '']); ?>
 
 
@@ -87,7 +87,7 @@
 			</div>
 			<?php echo $__env->renderComponent(); ?>
 			<?php $__env->startComponent('components.widget', ['class' => 'box-primary']); ?>
-				<div class="col-sm-10 col-sm-offset-1">
+				<div class="col-sm-12">
 					<div class="form-group">
 						<div class="input-group">
 							<div class="input-group-btn">
@@ -148,6 +148,47 @@
 					</div>
 				</div>
 			<?php echo $__env->renderComponent(); ?>
+		</div>
+
+		<div class="col-md-4 col-sm-12">
+			<div class="box box-primary order-request-suggestions-panel">
+				<div class="box-header with-border">
+					<h3 class="box-title">Suggested Products</h3>
+				</div>
+				<div class="box-body">
+					<div class="row">
+						<div class="col-6 mb-2">
+							<select id="or_suggestion_category" class="form-control select2" style="width:100%">
+								<option value="all"><?php echo app('translator')->get('lang_v1.all_category'); ?></option>
+								<?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category_id => $category_name): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+									<option value="<?php echo e($category_id, false); ?>"><?php echo e($category_name, false); ?></option>
+								<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+							</select>
+						</div>
+						<div class="col-6 mb-2">
+							<select id="or_suggestion_brand" class="form-control select2" style="width:100%">
+								<option value="all"><?php echo app('translator')->get('lang_v1.all_brands'); ?></option>
+								<?php $__currentLoopData = $brands; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $brand_id => $brand_name): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+									<?php if($brand_id !== ''): ?>
+										<option value="<?php echo e($brand_id, false); ?>"><?php echo e($brand_name, false); ?></option>
+									<?php endif; ?>
+								<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+							</select>
+						</div>
+						<div class="col-12 mb-2">
+							<input type="search" id="or_suggestion_search" class="form-control" placeholder="<?php echo e(__('lang_v1.search_product_placeholder'), false); ?>">
+						</div>
+					</div>
+					<div id="or_suggestion_products" class="order-request-suggestion-grid" aria-live="polite"></div>
+					<div id="or_suggestion_loading" class="text-center text-muted py-2" style="display:none"><i class="fa fa-spinner fa-spin"></i></div>
+					<button type="button" id="or_suggestion_load_more" class="btn btn-default btn-block mt-2" style="display:none"><?php echo app('translator')->get('lang_v1.load_more'); ?></button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-12 col-sm-12">
 			<?php $__env->startComponent('components.widget', ['class' => 'box-primary']); ?>
 			    <div class="col-md-6">
 			    	<div class="form-group">
@@ -199,11 +240,137 @@
 
 <?php $__env->stopSection(); ?>
 
+<?php $__env->startSection('css'); ?>
+<style>
+	.order-request-suggestions-panel { position: sticky; top: 12px; }
+	.order-request-suggestion-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; max-height:68vh; overflow-y:auto; }
+	.order-request-suggestion { display:flex; min-width:0; flex-direction:column; align-items:center; gap:7px; padding:8px; border:1px solid #d7e1e8; border-radius:8px; background:#fff; color:#263746; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,.06); }
+	.order-request-suggestion-image-button { display:flex; align-items:center; justify-content:center; width:100%; height:112px; padding:0; border:0; background:#f5f7f8; cursor:zoom-in; }
+	.order-request-suggestion-image-button.is-unavailable { cursor:default; }
+	.order-request-suggestion-image { max-width:100%; max-height:100%; object-fit:contain; }
+	.order-request-suggestion-name { width:100%; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+	.order-request-suggestion strong { white-space:nowrap; }
+	.order-request-suggestion .js-order-request-add { width:100%; margin-top:4px; }
+	#or_product_gallery_modal .modal-body { display:flex; align-items:center; justify-content:center; min-height:55vh; padding:12px 55px; background:#151515; }
+	#or_product_gallery_modal_image { display:block; max-width:100%; max-height:70vh; object-fit:contain; }
+	#or_product_gallery_modal .gallery-nav { position:absolute; top:50%; z-index:2; transform:translateY(-50%); border:0; border-radius:50%; width:42px; height:42px; background:rgba(255,255,255,.9); color:#222; font-size:22px; }
+	#or_product_gallery_prev { left:10px; }
+	#or_product_gallery_next { right:10px; }
+	@media (max-width:767px) { .order-request-suggestions-panel { position:static; } .order-request-suggestion-grid { max-height:45vh; } }
+</style>
+<?php $__env->stopSection(); ?>
+
 <?php $__env->startSection('javascript'); ?>
 	<script src="<?php echo e(asset('js/pos.js?v=' . $asset_v), false); ?>"></script>
 	<script src="<?php echo e(asset('js/product.js?v=' . $asset_v), false); ?>"></script>
     <script type="text/javascript">
     	$(document).ready( function() {
+			var suggestionPage = 1;
+			var suggestionHasMore = false;
+			var suggestionRequest = null;
+
+			function loadOrderRequestSuggestions(reset) {
+				var locationId = $('#location_id').val();
+				if (!locationId) {
+					$('#or_suggestion_products').empty();
+					$('#or_suggestion_load_more').hide();
+					return;
+				}
+
+				if (reset) {
+					suggestionPage = 1;
+					suggestionHasMore = false;
+					$('#or_suggestion_products').empty();
+				}
+				if (suggestionRequest) {
+					suggestionRequest.abort();
+				}
+				$('#or_suggestion_loading').show();
+				var currentRequest = $.ajax({
+					url: <?php echo json_encode(action([\Modules\Crm\Http\Controllers\OrderRequestController::class, 'getProductSuggestions']), 512) ?>,
+					data: {
+						location_id: locationId,
+						category_id: $('#or_suggestion_category').val(),
+						brand_id: $('#or_suggestion_brand').val(),
+						term: $('#or_suggestion_search').val(),
+						page: suggestionPage
+					},
+					success: function (result) {
+						$('#or_suggestion_products').append(result.html || '');
+						suggestionHasMore = !!result.has_more;
+						suggestionPage = result.next_page || suggestionPage + 1;
+						$('#or_suggestion_load_more').toggle(suggestionHasMore);
+					},
+					error: function (xhr, status) {
+						if (status !== 'abort') {
+							toastr.error(LANG.something_went_wrong);
+						}
+					},
+					complete: function () {
+						$('#or_suggestion_loading').hide();
+						if (suggestionRequest === currentRequest) {
+							suggestionRequest = null;
+						}
+					}
+				});
+				suggestionRequest = currentRequest;
+			}
+
+			$('#or_suggestion_category, #or_suggestion_brand').select2({width: '100%'});
+			$('#or_suggestion_category, #or_suggestion_brand').on('change', function () {
+				loadOrderRequestSuggestions(true);
+			});
+			var suggestionSearchTimer;
+			$('#or_suggestion_search').on('input', function () {
+				clearTimeout(suggestionSearchTimer);
+				suggestionSearchTimer = setTimeout(function () { loadOrderRequestSuggestions(true); }, 300);
+			});
+			$('#or_suggestion_load_more').on('click', function () {
+				if (suggestionHasMore) { loadOrderRequestSuggestions(false); }
+			});
+			$(document).on('click', '.js-order-request-add', function () {
+				or_product_row($(this).data('variation-id'));
+			});
+
+			var orderRequestGallery = [];
+			var orderRequestGalleryIndex = 0;
+			function showOrderRequestGalleryImage() {
+				if (!orderRequestGallery.length) { return; }
+				$('#or_product_gallery_modal_image').attr('src', orderRequestGallery[orderRequestGalleryIndex]);
+				$('#or_product_gallery_prev, #or_product_gallery_next').toggle(orderRequestGallery.length > 1);
+			}
+			$(document).on('click', '.js-order-request-gallery:not(:disabled)', function () {
+				try {
+					orderRequestGallery = JSON.parse($(this).attr('data-gallery') || '[]');
+				} catch (error) {
+					orderRequestGallery = [];
+				}
+				if (!orderRequestGallery.length) { return; }
+				orderRequestGalleryIndex = 0;
+				showOrderRequestGalleryImage();
+				$('#or_product_gallery_modal').modal('show');
+			});
+			$('#or_product_gallery_prev').on('click', function () {
+				orderRequestGalleryIndex = (orderRequestGalleryIndex - 1 + orderRequestGallery.length) % orderRequestGallery.length;
+				showOrderRequestGalleryImage();
+			});
+			$('#or_product_gallery_next').on('click', function () {
+				orderRequestGalleryIndex = (orderRequestGalleryIndex + 1) % orderRequestGallery.length;
+				showOrderRequestGalleryImage();
+			});
+			$('#or_product_gallery_modal_close').on('click', function () {
+				var galleryModal = document.getElementById('or_product_gallery_modal');
+				if (window.bootstrap && bootstrap.Modal) {
+					bootstrap.Modal.getOrCreateInstance(galleryModal).hide();
+				} else {
+					$('#or_product_gallery_modal').modal('hide');
+				}
+			});
+			$('#select_location_id').on('change', function () {
+				$('#location_id').val($(this).val());
+				loadOrderRequestSuggestions(true);
+			});
+			loadOrderRequestSuggestions(true);
 
     		$('#or_search_product')
 	            .autocomplete({
@@ -370,7 +537,7 @@ function or_product_row(variation_id = null, purchase_line_id = null, weighing_s
     if (add_via_ajax) {
         var product_row = $('input#product_row_count').val();
         var location_id = $('input#location_id').val();
-        var customer_id = $('select#customer_id').val();
+        var customer_id = $('input#customer_id').val();
         var is_direct_sell = false;
         if (
             $('input[name="is_direct_sale"]').length > 0 &&
@@ -405,6 +572,7 @@ function or_product_row(variation_id = null, purchase_line_id = null, weighing_s
             data: {
                 product_row: product_row,
                 customer_id: customer_id,
+                price_group: price_group,
                 is_direct_sell: true,
                 quantity: quantity,
             },
@@ -554,7 +722,7 @@ function or_product_row(variation_id = null, purchase_line_id = null, weighing_s
                 // Add via AJAX but with custom parameters
                 var product_row = $('input#product_row_count').val();
                 var location_id = $('input#location_id').val();
-                var customer_id = $('select#customer_id').val();
+                var customer_id = $('input#customer_id').val();
                 
                 $.ajax({
                     method: 'GET',
@@ -604,6 +772,18 @@ function or_product_row(variation_id = null, purchase_line_id = null, weighing_s
             });
     	});
     </script>
+	<div class="modal fade" id="or_product_gallery_modal" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-body">
+					<button type="button" class="gallery-nav" id="or_product_gallery_prev" aria-label="Previous image">&#8249;</button>
+					<img id="or_product_gallery_modal_image" src="" alt="Product image">
+					<button type="button" class="gallery-nav" id="or_product_gallery_next" aria-label="Next image">&#8250;</button>
+					<button type="button" class="close" id="or_product_gallery_modal_close" data-bs-dismiss="modal" aria-label="Close" style="position:absolute;right:10px;top:6px;color:#fff;opacity:1;font-size:30px"><span aria-hidden="true">&times;</span></button>
+				</div>
+			</div>
+		</div>
+	</div>
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('crm::layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>

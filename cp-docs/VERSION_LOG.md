@@ -1,3 +1,19 @@
+### Version 8.99.9 - Purchase, Order Request, POS, and Sales Form Updates (2026-11-10)
+
+#### Purchase Entry
+- When **Enable Rack Details** is on, purchase create/edit product rows display the product's rack, row, and position for the selected location. Changes saved on a purchase update that product's location rack information.
+- When **Enable PCT/HSN Code** is on, purchase create/edit product rows display the code and save edits back to the product record.
+- Added **Enable Load Products from Sales Invoice** under Business Settings > Purchase. When enabled, purchase create/edit can select finalized sales invoices from any business location and import their product lines.
+
+#### Contact Order Requests
+- Suggested-product prices use the logged-in contact's customer-group percentage or selling-price-group rule.
+- Product cards include **Add to Cart** and open configured gallery images in a navigable viewer.
+
+#### Sales Forms and POS
+- Sale create/edit only shows Gross Profit % and Gross Profit when the user's **Show Total Profit** setting is enabled; the Gross Profit amount includes the currency symbol.
+- The setting appears under POS when the POS module is enabled, or under Sales when POS is disabled.
+- POS quick-menu tiles omit default placeholder product images and use the tile for text when no real image is configured.
+
 ## Product Catalogue - My Orders Customer Details (2026-11-09)
 
 - The public **My Orders** modal displays the customer's name and phone number above the order list.
