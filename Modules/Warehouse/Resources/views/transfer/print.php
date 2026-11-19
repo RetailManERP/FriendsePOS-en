@@ -1,7 +1,10 @@
 <?php
   $display_status = $sell_transfer->status === 'final' ? 'completed' : $sell_transfer->status;
   $priority = $sell_transfer->sub_status ?: 'normal';
-  $is_received = !empty($purchase_transfer) && in_array($purchase_transfer->status, ['received', 'final', 'completed']);
+  $report_title = __('warehouse::lang.wh_transfer').' - '.$sell_transfer->ref_no;
+  $sheet_width = '210mm';
+  $sheet_min_height = '297mm';
+  $page_size = 'A4 portrait';
   $show_lot = $sell_transfer->sell_lines->contains(function($line) {
     return !empty(optional($line->lot_details)->lot_number);
   });
@@ -12,14 +15,55 @@
   $total_quantity = $sell_transfer->sell_lines->sum('quantity');
 ?>
 
-<div class="row">
-  <div class="col-12">
-    <h2 class="page-header">
-      <?php echo app('translator')->get('warehouse::lang.wh_transfer'); ?> (<b><?php echo app('translator')->get('purchase.ref_no'); ?>:</b> #<?php echo e($sell_transfer->ref_no, false); ?>)
-      <small class="float-end"><b><?php echo app('translator')->get('messages.date'); ?>:</b> <?php echo e(\Carbon::createFromTimestamp(strtotime($sell_transfer->transaction_date ?? $sell_transfer->created_at))->format(session('business.date_format')), false); ?></small>
-    </h2>
-  </div>
+<!DOCTYPE html>
+<html lang="<?php echo e(app()->getLocale(), false); ?>">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><?php echo e($report_title, false); ?></title>
+  <?php echo $__env->make('report.partials.crystal_report_styles', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+  <style>
+    .transfer-preview { font-size: calc(10pt + var(--cr-table-font-offset)); }
+    .transfer-preview .invoice-info { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 12px 0; }
+    .transfer-preview .invoice-col { border: 1px solid #ddd; padding: 8px; overflow-wrap: anywhere; }
+    .transfer-preview address { font-style: normal; }
+    .transfer-preview .cr-table th { white-space: normal; }
+    .transfer-preview .text-end { text-align: right; }
+    .transfer-preview .transfer-summary { margin-top: 8px; break-inside: avoid; }
+    .transfer-preview .transfer-barcode { margin-top: 12px; text-align: center; break-inside: avoid; }
+    @media print {
+      .cr-stage { display: block; }
+      .cr-stage .cr-sheet { display: block; zoom: 1 !important; }
+      .cr-table tr, .invoice-info { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+<div class="cr-toolbar">
+    <span class="cr-title"><?php echo e($report_title, false); ?></span>
+    <div class="cr-group">
+        <button class="cr-btn cr-iconbtn" id="zoomOut" title="Zoom Out">&minus;</button>
+        <span class="cr-zoom-label" id="zoomLabel">100%</span>
+        <button class="cr-btn cr-iconbtn" id="zoomIn" title="Zoom In">+</button>
+        <button class="cr-btn cr-iconbtn" id="zoomReset" title="Fit / Reset" style="font-size:12px;">100%</button>
+    </div>
+    <div class="cr-group">
+        <button class="cr-btn cr-iconbtn" id="fontSizeDec" title="Decrease Font Size" style="font-size:12px;">A&minus;</button>
+        <span class="cr-zoom-label" id="fontSizeLabel">0px</span>
+        <button class="cr-btn cr-iconbtn" id="fontSizeInc" title="Increase Font Size" style="font-size:12px;">A&#43;</button>
+        <button class="cr-btn cr-iconbtn" id="fontSizeReset" title="Reset Font Size" style="font-size:12px;">A</button>
+    </div>
+    <div class="cr-group">
+        <button class="cr-btn primary" id="printBtn">&#128424; <?php echo e(__('messages.print'), false); ?> A4</button>
+        <button class="cr-btn" id="closeBtn"
+            data-fallback-url="<?php echo e(route('warehouse.transfers'), false); ?>">&times; <?php echo e(__('messages.close'), false); ?></button>
+    </div>
 </div>
+<main class="cr-stage" id="crStage">
+<div class="cr-sheet transfer-preview" id="crPage1">
+  <header class="cr-head">
+    <h1 class="cr-report-title"><?php echo e($report_title, false); ?></h1>
+  </header>
 
 <div class="row invoice-info">
   <div class="col-sm-4 invoice-col">
@@ -79,18 +123,17 @@
     <?php if(!empty($sell_transfer->delivery_date)): ?>
       <b><?php echo app('translator')->get('warehouse::lang.expected_date'); ?>:</b> <?php echo e(\Carbon::createFromTimestamp(strtotime($sell_transfer->delivery_date))->format(session('business.date_format') . ' ' . 'h:i A'), false); ?><br/>
     <?php endif; ?>
-    <b><?php echo app('translator')->get('sale.shipping_charges'); ?>:</b> <?php echo e(number_format($sell_transfer->shipping_charges ?? 0, session('business.currency_precision', 2), session('currency')['decimal_separator'], session('currency')['thousand_separator']), false); ?><br/>
-    <b><?php echo app('translator')->get('sale.total'); ?>:</b> <?php echo e(number_format($sell_transfer->final_total ?? 0, session('business.currency_precision', 2), session('currency')['decimal_separator'], session('currency')['thousand_separator']), false); ?>
+    <?php if($show_cost_value): ?>
+      <b><?php echo app('translator')->get('sale.shipping_charges'); ?>:</b> <?php echo e(number_format($sell_transfer->shipping_charges ?? 0, session('business.currency_precision', 2), session('currency')['decimal_separator'], session('currency')['thousand_separator']), false); ?><br/>
+      <b><?php echo app('translator')->get('sale.total'); ?>:</b> <?php echo e(number_format($sell_transfer->final_total ?? 0, session('business.currency_precision', 2), session('currency')['decimal_separator'], session('currency')['thousand_separator']), false); ?>
 
+    <?php endif; ?>
   </div>
 </div>
 
-<br>
-<div class="row">
-  <div class="col-12">
-    <div class="table-responsive">
-      <table class="table bg-gray">
-        <tr class="bg-green">
+      <table class="cr-table">
+        <thead>
+        <tr>
           <th>#</th>
           <th><?php echo app('translator')->get('sale.product'); ?></th>
           <th><?php echo app('translator')->get('product.sku'); ?></th>
@@ -98,9 +141,13 @@
           <th><?php echo app('translator')->get('warehouse::lang.lot_number'); ?></th>
           <?php endif; ?>
           <th><?php echo app('translator')->get('warehouse::lang.quantity_sent'); ?></th>
+          <?php if($show_cost_value): ?>
           <th>Cost Price</th>
           <th><?php echo app('translator')->get('sale.subtotal'); ?></th>
+          <?php endif; ?>
         </tr>
+        </thead>
+        <tbody>
         <?php $__currentLoopData = $sell_transfer->sell_lines; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $line): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
           <tr>
             <td><?php echo e($loop->iteration, false); ?></td>
@@ -117,23 +164,23 @@
             <td><?php echo e(optional($line->lot_details)->lot_number ?? '-', false); ?></td>
             <?php endif; ?>
             <td><?php echo e(number_format($line->quantity, session('business.quantity_precision', 2), session('currency')['decimal_separator'], session('currency')['thousand_separator']), false); ?></td>
+            <?php if($show_cost_value): ?>
             <td><?php echo e(number_format($line->unit_price ?? 0, session('business.currency_precision', 2), session('currency')['decimal_separator'], session('currency')['thousand_separator']), false); ?></td>
             <td><?php echo e(number_format(($line->quantity ?? 0) * ($line->unit_price ?? 0), session('business.currency_precision', 2), session('currency')['decimal_separator'], session('currency')['thousand_separator']), false); ?></td>
+            <?php endif; ?>
           </tr>
         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        </tbody>
       </table>
-    </div>
-  </div>
-</div>
 
-<div class="row">
-  <div class="col-12 text-end">
+<div class="transfer-summary">
+  <?php if($show_cost_value): ?>
+  <div class="text-end">
     <strong><?php echo app('translator')->get('sale.total'); ?>:</strong> <?php echo e(number_format($line_total_amount, session('business.currency_precision', 2), session('currency')['decimal_separator'], session('currency')['thousand_separator']), false); ?>
 
   </div>
-</div>
-<div class="row" style="margin-top: 4px;">
-  <div class="col-12 text-end">
+  <?php endif; ?>
+  <div class="text-end">
     <strong><?php echo app('translator')->get('warehouse::lang.total_products'); ?>:</strong> <?php echo e($total_products, false); ?>
 
     &nbsp; | &nbsp;
@@ -155,8 +202,11 @@
 <?php endif; ?>
 
 
-<div class="row print_section">
-  <div class="col-12 text-center">
-    <img class="center-block" src="data:image/png;base64,<?php echo e(DNS1D::getBarcodePNG($sell_transfer->ref_no, 'C128', 2, 30, array(39, 48, 54), true), false); ?>">
-  </div>
+<div class="transfer-barcode">
+    <img alt="<?php echo e($sell_transfer->ref_no, false); ?>" src="data:image/png;base64,<?php echo e(DNS1D::getBarcodePNG($sell_transfer->ref_no, 'C128', 2, 30, array(39, 48, 54), true), false); ?>">
 </div>
+</div>
+</main>
+<?php echo $__env->make('report.partials.crystal_report_scripts', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+</body>
+</html>

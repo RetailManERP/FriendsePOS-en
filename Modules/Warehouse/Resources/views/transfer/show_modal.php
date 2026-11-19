@@ -116,10 +116,9 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-primary no-print" aria-label="Print"
-                    onclick="$(this).closest('div.modal-content').printThis();">
+            <a class="btn btn-primary no-print" href="<?php echo e(route('warehouse.transfers.print', $sell_transfer->id), false); ?>" target="_blank" rel="noopener">
                 <i class="fas fa-print"></i> <?php echo app('translator')->get('messages.print'); ?>
-            </button>
+            </a>
             <button type="button" class="btn btn-default" data-bs-dismiss="modal"><?php echo app('translator')->get('messages.close'); ?></button>
         </div>
     </div>

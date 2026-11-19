@@ -98,12 +98,6 @@
                                 <i class="fas fa-cog me-1"></i><?php echo app('translator')->get('warehouse::lang.settings'); ?>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link <?php if(request()->segment(1) == 'warehouse' && request()->segment(2) == 'hard-reset'): ?> active <?php endif; ?>"
-                               href="<?php echo e(route('warehouse.hard-reset'), false); ?>">
-                                <i class="fas fa-sync-alt me-1"></i><?php echo app('translator')->get('warehouse::lang.hard_reset_options'); ?>
-                            </a>
-                        </li>
                     <?php endif; ?>
                 </ul>
             </div>

@@ -1,3 +1,102 @@
+## Version 9.00.4
+
+**Release Date:** 2026-11-18
+
+### Module: Mobile POS / Offline Workstation
+
+#### New Features
+
+- Mobile POS detects rejected OAuth credentials and presents a clear reconfiguration message: **"YOUR CLIENT ID SECRET DOES NOT MATCH. PLEASE RECONFIGURE."**
+- Offline Sync saves the workstation authorization token in the active host environment file and confirms when it can be used for synchronization.
+- A deployment-wide `CONNECTOR_REQUIRE_SUBSCRIPTION=false` option permits Mobile POS and Offline Sync access without assigning every business package a separate Connector Module entitlement.
+
+#### Improvements
+
+- RegisterFlow writes the Connector entitlement option into newly provisioned tenant environments.
+- Existing server URL and Client ID can be restored for mobile reconfiguration without exposing the saved Client Secret.
+- Android workstation printing guidance now covers LAN pairing, offline job queuing, and multi-floor access-point layouts.
+
+#### Bug Fixes
+
+- Table-order **Print Bill** now submits the receipt-print instruction to the configured Hardware Service instead of saving the order without a browser receipt-print request.
+- Offline sale synchronization reconciles payments for new and existing invoices through a dedicated endpoint, confirms the cloud payment status, and reports failed invoice updates in the sync result.
+- Offline sale synchronization retries unsynced payment rows against an existing cloud invoice after its sale update succeeds, recovering sales created as **Due** by an earlier incomplete sync.
+
+#### Security Notes
+
+- The option removes the package entitlement check only. The Connector module must be installed, the user must be active, and valid Client ID/Client Secret credentials are still required.
+- Do not share Client Secrets in screenshots, chat messages, or public documentation. Regenerate a secret immediately if it is exposed.
+
+## Version 9.00.3
+
+**Release Date:** 2026-11-13
+
+### Module: POS / Cash Register
+
+#### New Features
+- None.
+
+#### Improvements
+- None.
+
+#### Bug Fixes
+- Removed currency symbols from payment method amounts in the POS cash register details modal.
+- Closing-register summary snapshots now preserve cash denomination counts and other values entered at close for register details and printouts.
+- Close and Print now loads the cash register report using the configured application base URL, including subdirectory installations.
+- Cash register printing now uses the local printer service's configured default when no workstation-specific printer is saved, and reports service failures instead of silently opening browser print.
+- A repeated Close and Print submission no longer queues a second receipt.
+
+#### UI / UX Changes
+- The cash register details heading now displays the opening and closing times on separate lines in a smaller font.
+- Cash register receipts now print with larger, more readable text.
+- The opening-register modal shows “Register Open” as the main heading, with the register number and opening and closing times in smaller text.
+- Closing-register printouts now fit the 80 mm paper width, with readable text and aligned payment columns.
+- “Cash in Hand” can wrap within the receipt table while payment amounts stay on one line.
+
+#### Technical Updates
+- None.
+
+## Version 9.00.2
+
+**Release Date:** 2026-11-09
+
+### Module: Reports
+
+#### New Features
+- None.
+
+#### Improvements
+- None.
+
+#### Bug Fixes
+- Profit / Loss product totals now use the recorded purchase-lot cost, including purchase ledger discounts, so the product breakdown reconciles with the report's gross profit.
+- Product Stock History profit now excludes scheme quantities from sales revenue and tax while retaining their inventory cost, so free units correctly reduce profit.
+- Finalized zero-total sales, including scheme-only sales, no longer show an incorrectly reconstructed due amount in the Sell List or Sale Details.
+- Held Qty in Sale Details now includes scheme quantities, excludes pending delivery notes, and cannot display a negative balance.
+
+#### UI / UX Changes
+- Scheme quantities are marked with an asterisk in the Product Stock History Quantity Change column.
+
+#### Technical Updates
+- None.
+
+### Module: Sales / POS
+
+#### New Features
+- None.
+
+#### Improvements
+- None.
+
+#### Bug Fixes
+- Zero-total updates now calculate the fallback from paid quantity only, excluding scheme quantity so scheme-only sales remain at zero.
+
+#### UI / UX Changes
+- None.
+
+#### Technical Updates
+- None.
+
 ### Version 8.99.9 - Purchase, Order Request, POS, and Sales Form Updates (2026-11-10)
 
 #### Purchase Entry

@@ -105,28 +105,16 @@
 			
 			$is_admin = auth()->user()->hasRole('Admin#'.auth()->user()->business_id);
 			$hide_brand = '';
-			$colspan = '7';
 			if (empty($user_settings['stock_transfer_show_brand_column']) && !$is_admin) {
-				$colspan = '6';
 				$hide_brand = 'hide';
 			}
 			if(empty(session('business.enable_brand'))){
 				$hide_brand = 'hide';
-				$colspan = '6';
 			}
-			$hide_category = '';
-			if (empty($user_settings['stock_transfer_show_category_column']) && !$is_admin) {
-				$hide_category = 'hide';
-				$colspan = '6';
-			}
-			if(empty(session('business.enable_category'))){
-				$hide_category = 'hide';
-				$colspan = '6';
-			}
-			$hide_price = '';
-			if (empty($user_settings['stock_transfer_show_price_column']) && !$is_admin) {
-				$hide_price = 'hide';
-			}
+			$show_category_column = !empty($user_settings['stock_transfer_show_category_column']);
+			$show_cost_value = $show_cost_value && (!empty($user_settings['stock_transfer_show_price_column']) || $is_admin);
+			$show_lot_column = (bool) session('business.enable_lot_number');
+			$colspan = 5 + (int) $show_lot_column + (int) ($hide_brand === '') + (int) $show_category_column;
 			?>
         <div class="row">
 				<div class="col-sm-12 sell_product_div">
@@ -143,32 +131,40 @@
 								<th class="text-nowrap" style="width:100%">	
 									<?php echo app('translator')->get('sale.product'); ?>
 								</th>
-								<th class="text-nowrap <?php echo e($hide_brand, false); ?>">	
+								<?php if($show_lot_column): ?>
+                                <th class="text-nowrap"><?php echo app('translator')->get('warehouse::lang.lot_number'); ?></th>
+                                <?php endif; ?>
+                                <th class="text-nowrap <?php echo e($hide_brand, false); ?>">
 									<?php echo app('translator')->get('product.brand'); ?>
 								</th>
-								<th class="text-nowrap <?php echo e($hide_category, false); ?>">	
+								<?php if($show_category_column): ?>
+								<th class="text-nowrap">
 									<?php echo app('translator')->get('product.category'); ?>
 								</th>
+								<?php endif; ?>
 								<th class="text-nowrap" style="width:1%">
 									<?php echo app('translator')->get('sale.qty'); ?>
 								</th>
-								<th class="text-nowrap text-end <?php echo e($hide_price, false); ?>">
+								<?php if($show_cost_value): ?>
+								<th class="text-nowrap text-end">
 									<?php echo app('translator')->get('sale.unit_price'); ?> <span class="selected_currency_symbol badge bg-info" style="font-size:10px;"></span>
 								</th>
-								<th class="text-nowrap text-end <?php echo e($hide_price, false); ?>">
+								<th class="text-nowrap text-end">
 									<?php echo app('translator')->get('sale.subtotal'); ?> <span class="selected_currency_symbol badge bg-info" style="font-size:10px;"></span>
 								</th>
+								<?php endif; ?>
 								<th class="text-nowrap" style="width:1%; min-width:30px"><i class="fa fa-trash" aria-hidden="true"></i></th>
 							</tr>
 						</thead>
 						<tbody>
 						</tbody>
 						<tfoot>
-						<?php if(!empty($user_settings['stock_transfer_show_price_column']) || $is_admin): ?>
+						<?php if($show_cost_value): ?>
 							<tr class="text-center">
 								<td colspan="<?php echo e($colspan, false); ?>"></td>
 								<td><div class="float-end"><b><?php echo app('translator')->get('sale.total'); ?>:</b> <span id="total_adjustment">0.00</span></div>
 								</td>
+								<td></td>
 							</tr>
 						<?php endif; ?>
 						</tfoot>
@@ -345,7 +341,7 @@ $(document).ready(function() {
         $.ajax({
             method: 'POST',
             url: '/stock-adjustments/get_product_row',
-            data: { row_index: row_index, variation_id: variation_id, location_id: location_id, type: 'stock_transfer' },
+            data: { row_index: row_index, variation_id: variation_id, location_id: location_id, type: 'stock_transfer', warehouse_transfer_create: 1, warehouse_transfer_lot_column: 1, show_selling_price: 0 },
             dataType: 'html',
             success: await function (result) {
                 $('table#stock_transfer_product_table tbody').append(result);

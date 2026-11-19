@@ -74,11 +74,6 @@
                     <i class="fa fa-cog"></i> <?php echo app('translator')->get('warehouse::lang.settings'); ?>
                 </a>
             </li>
-            <li class="<?php echo e(request()->is('warehouse/hard-reset*') ? 'active' : '', false); ?>">
-                <a href="<?php echo e(route('warehouse.hard-reset'), false); ?>">
-                    <i class="fa fa-sync-alt"></i> <?php echo app('translator')->get('warehouse::lang.hard_reset_options'); ?>
-                </a>
-            </li>
         <?php endif; ?>
     </ul>
 </li>

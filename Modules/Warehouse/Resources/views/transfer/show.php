@@ -145,7 +145,7 @@
                             <?php endif; ?>
                         <?php endif; ?>
 
-                        <a href="#" class="btn btn-primary print-invoice" data-href="<?php echo e(route('warehouse.transfers.print', $sell_transfer->id), false); ?>">
+                        <a href="<?php echo e(route('warehouse.transfers.print', $sell_transfer->id), false); ?>" class="btn btn-primary" target="_blank" rel="noopener">
                             <i class="fas fa-print"></i> <?php echo app('translator')->get('messages.print'); ?>
                         </a>
 

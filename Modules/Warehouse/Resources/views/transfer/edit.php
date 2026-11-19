@@ -104,28 +104,25 @@
         <?php
 			$is_admin = auth()->user()->hasRole('Admin#'.auth()->user()->business_id);
 			$hide_brand = '';
-			$colspan = '7';
 			if (empty($user_settings['stock_transfer_show_brand_column']) && !$is_admin) {
-				$colspan = '6';
 				$hide_brand = 'hide';
 			}
 			if(empty(session('business.enable_brand'))){
 				$hide_brand = 'hide';
-				$colspan = '6';
 			}
 			$hide_category = '';
 			if (empty($user_settings['stock_transfer_show_category_column']) && !$is_admin) {
 				$hide_category = 'hide';
-				$colspan = '6';
 			}
 			if(empty(session('business.enable_category'))){
 				$hide_category = 'hide';
-				$colspan = '6';
 			}
 			$hide_price = '';
 			if (empty($user_settings['stock_transfer_show_price_column']) && !$is_admin) {
 				$hide_price = 'hide';
 			}
+			$show_lot_column = (bool) session('business.enable_lot_number');
+			$colspan = 5 + (int) $show_lot_column + (int) ($hide_brand === '') + (int) ($hide_category === '');
 
             $check_qty = !empty($pos_settings['allow_overselling']) ? false : true;
             $product_row_index = 0;
@@ -146,7 +143,10 @@
 								<th class="text-nowrap" style="width:100%">	
 									<?php echo app('translator')->get('sale.product'); ?>
 								</th>
-								<th class="text-nowrap <?php echo e($hide_brand, false); ?>">	
+								<?php if($show_lot_column): ?>
+                                <th class="text-nowrap"><?php echo app('translator')->get('warehouse::lang.lot_number'); ?></th>
+                                <?php endif; ?>
+                                <th class="text-nowrap <?php echo e($hide_brand, false); ?>">
 									<?php echo app('translator')->get('product.brand'); ?>
 								</th>
 								<th class="text-nowrap <?php echo e($hide_category, false); ?>">	
@@ -166,7 +166,7 @@
 						</thead>
 						<tbody>
                             <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <?php echo $__env->make('stock_transfer.partials.product_table_row', ['product' => $product, 'row_index' => $loop->index, 'sub_units' => !empty($product->unit_details) ? $product->unit_details : [], 'user_settings'=> $user_settings, 'is_admin'=> $is_admin, 'purchase_lines' => $product->purchase_lines ?? collect()], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                                <?php echo $__env->make('stock_transfer.partials.product_table_row', ['product' => $product, 'row_index' => $loop->index, 'sub_units' => !empty($product->unit_details) ? $product->unit_details : [], 'user_settings'=> $user_settings, 'is_admin'=> $is_admin, 'purchase_lines' => $product->purchase_lines ?? collect(), 'show_selling_price' => false, 'show_lot_column' => $show_lot_column], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                 <?php
                                     $product_row_index = $loop->index + 1;
                                     $subtotal += ($product->quantity_ordered * $product->last_purchased_price);
@@ -179,6 +179,7 @@
 								<td colspan="<?php echo e($colspan, false); ?>"></td>
 								<td><div class="float-end"><b><?php echo app('translator')->get('sale.total'); ?>:</b> <span id="total_adjustment"><?php echo e(number_format($subtotal, session('business.currency_precision', 2), session('currency')['decimal_separator'], session('currency')['thousand_separator']), false); ?></span></div>
 								</td>
+								<td></td>
 							</tr>
 						<?php endif; ?>
 						</tfoot>
@@ -358,7 +359,7 @@ $(document).ready(function() {
         $.ajax({
             method: 'POST',
             url: '/stock-adjustments/get_product_row',
-            data: { row_index: row_index, variation_id: variation_id, location_id: location_id, type: 'stock_transfer' },
+            data: { row_index: row_index, variation_id: variation_id, location_id: location_id, type: 'stock_transfer', warehouse_transfer_lot_column: 1, show_selling_price: 0 },
             dataType: 'html',
             success: await function (result) {
                 $('table#stock_transfer_product_table tbody').append(result);

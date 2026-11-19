@@ -40,6 +40,13 @@
                     <small class="form-text text-muted"><?php echo app('translator')->get('warehouse::lang.transfer_number_prefix_help'); ?></small>
                 </div>
             </div>
+            <div class="col-md-12">
+                <label class="form-check-label" for="show_cost_value">
+                    <?php echo Form::checkbox('show_cost_value', 1, $settings['show_cost_value'], ['id' => 'show_cost_value', 'class' => 'form-check-input']); ?>
+
+                    <?php echo app('translator')->get('warehouse::lang.show_cost_value'); ?>
+                </label>
+            </div>
         </div>
     <?php echo $__env->renderComponent(); ?>
 

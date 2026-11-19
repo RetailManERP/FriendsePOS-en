@@ -6,6 +6,7 @@ return [
     'warehouses' => 'Warehouses',
     'warehouse_management' => 'Warehouses',
     'warehouse_module' => 'Warehouse Module',
+    'show_cost_value' => 'Show Cost Value',
     'dashboard' => 'Dashboard',
     'active' => 'Active',
     'inactive' => 'Inactive',

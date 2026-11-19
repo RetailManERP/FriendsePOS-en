@@ -1,9 +1,54 @@
 # What's New - User Guide
-**Updated:** 2026-11-11
+**Updated:** 2026-11-18
+
+## Mobile POS, Offline Workstation, and Restaurant Printing - 2026-11-18
+
+What users can expect now:
+
+- Mobile POS detects an invalid or replaced Client Secret and shows **"YOUR CLIENT ID SECRET DOES NOT MATCH. PLEASE RECONFIGURE."** instead of a generic login error.
+- The same check works with a cloud URL and an offline workstation URL.
+- Offline Sync can save the access token obtained with a cashier's Mobile App Client Secret in the host-specific workstation environment file.
+- Offline sale synchronization reconciles payments for new and existing invoices through a dedicated endpoint and checks the cloud payment status before marking local rows synced. Run sale synchronization again to repair a previously **Due** invoice after its payment rows were missed.
+- Browser POS table-order **Print Bill** sends a receipt job to the selected Hardware Service receipt printer.
+
+How to use it:
+
+1. Generate the Mobile App Client from **User Management > Users > Edit** for the individual cashier.
+2. On the workstation, open **Synchronization / Offline Sync**, paste the Client Secret, and select **Generate & Save Access Token**. Then run the required download synchronization.
+3. Configure the mobile device with the cloud URL or workstation URL, its Client ID, and Client Secret. Keep the secret private.
+4. If the secret is regenerated or the app shows the mismatch message, select **Reconfigure** and enter the new secret. The app retains safe non-secret setup values where available.
+5. For browser table bills, select the table order and use **Print Bill** after the location's Hardware Setup has a receipt printer assigned.
+
+For the full deployment, role, offline, and printing procedures, see **Android POS Printing**, **Users & Roles**, and **Restaurant Features** in this guide collection.
+
+### Connector access policy for administrators
+
+When Connector is installed platform-wide and Mobile POS/Offline Sync should be available to every active business without adding the Connector Module to each package, set this in the deployment's active `.env` file:
+
+```env
+CONNECTOR_REQUIRE_SUBSCRIPTION=false
+```
+
+Then run `php artisan optimize:clear` in that deployment. On separate subdomain deployments, apply the setting in each deployment/tenant environment that should receive the policy. New tenants provisioned through RegisterFlow receive the setting automatically. This setting does not install Connector, activate disabled users, or bypass Client ID/Client Secret validation.
+
+## Host-Specific Environment Files - 2026-11-16
+
+What users can expect now:
+
+- The application works with the normal `.env` file in the main application folder. A `subdomains` folder is not required.
+- To use different settings for a specific host, create a file in that same folder named `.env.<host>`. For example, for a LAN address of `192.168.100.39`, use `.env.192.168.100.39`.
+- When the application is opened through that host, it uses the matching host-specific file. Hosts without a matching file continue to use the main `.env`.
+- Offline Sync saves its workstation credentials in the matching host-specific file, so it does not overwrite the main `.env`.
+
+How to use it:
+
+1. Keep the normal `.env` in the application root as the default configuration.
+2. Only when a host needs separate settings, copy the required values into `.env.<host>` in the same folder.
+3. Use lowercase host names and do not include `http://`, `https://`, a port, or a path in the filename.
 
 ## Offline Workstation Token Setup - 2026-11-11
 
-When connecting an offline installation to its cloud account, the generated client secret and access token are saved to the environment file selected for that host. For a LAN installation using `subdomains/.env.192.168.100.39`, credentials are saved in that file and the root `.env` remains untouched. Workstation authorization also supports Passport setups that store client secrets as hashes.
+When connecting an offline installation to its cloud account, the generated client secret and access token are saved to the environment file selected for that host. For a LAN installation using `.env.192.168.100.39`, credentials are saved in that file and the root `.env` remains untouched. Workstation authorization also supports Passport setups that store client secrets as hashes.
 
 ## Offline User List Download - 2026-11-11
 
