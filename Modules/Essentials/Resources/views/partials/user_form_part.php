@@ -166,7 +166,7 @@
         <div class="form-group">
             <?php echo Form::label('essentials_annual_tax_adjustment', __('essentials::lang.annual_taxable_adjustment') . ':'); ?>
 
-            <?php echo Form::number('essentials_annual_tax_adjustment', $user->essentials_annual_tax_adjustment ?? 0, ['class' => 'form-control', 'step' => '0.01']); ?>
+            <?php echo Form::number('essentials_annual_tax_adjustment', $user->essentials_annual_tax_adjustment ?? 0, ['class' => 'form-control', 'step' => 'any']); ?>
 
             <small class="text-muted"><?php echo app('translator')->get('essentials::lang.annual_taxable_adjustment_help'); ?></small>
         </div>

@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\CashRegister;
 use App\CashRegisterTransaction;
 use App\Transaction;
 use App\Utils\CashRegisterUtil;
@@ -50,6 +51,14 @@ class CashRegisterPaymentMethodEditTest extends TestCase
             $table->increments('id');
             $table->unsignedInteger('business_id')->nullable();
             $table->text('default_payment_accounts')->nullable();
+        });
+
+        Schema::create('transactions', function ($table) {
+            $table->increments('id');
+            $table->unsignedInteger('location_id');
+            $table->string('type');
+            $table->string('status');
+            $table->softDeletes();
         });
 
         DB::table('cash_registers')->insert([
@@ -152,6 +161,55 @@ class CashRegisterPaymentMethodEditTest extends TestCase
         $payment = CashRegisterTransaction::where('cash_register_id', 1)->first();
         $this->assertSame('bank_transfer', $payment->pay_method);
         $this->assertEquals(1800, $payment->amount);
+    }
+
+    public function test_rebuilding_an_open_register_does_not_repeat_a_payment_from_a_closed_register(): void
+    {
+        DB::table('transactions')->insert([
+            'id' => 42,
+            'location_id' => 2,
+            'type' => 'sell',
+            'status' => 'final',
+        ]);
+        DB::table('cash_registers')->insert([
+            'id' => 2,
+            'user_id' => 7,
+            'status' => 'close',
+        ]);
+        DB::table('cash_register_transactions')->where('cash_register_id', 1)->update([
+            'pay_method' => 'card',
+            'amount' => 100,
+        ]);
+        DB::table('cash_register_transactions')->insert([
+            'cash_register_id' => 2,
+            'transaction_id' => 42,
+            'transaction_type' => 'sell',
+            'pay_method' => 'card',
+            'type' => 'credit',
+            'amount' => 31.49,
+        ]);
+        Schema::create('transaction_payments', function ($table) {
+            $table->unsignedInteger('transaction_id');
+            $table->string('method');
+            $table->string('sub_method')->nullable();
+            $table->decimal('amount', 22, 4);
+            $table->boolean('is_return')->default(false);
+            $table->softDeletes();
+        });
+        DB::table('transaction_payments')->insert([
+            ['transaction_id' => 42, 'method' => 'card', 'amount' => 31.49],
+            ['transaction_id' => 42, 'method' => 'card', 'amount' => 100],
+        ]);
+
+        $util = new CashRegisterUtil();
+        $reconcile = new \ReflectionMethod($util, 'reconcileOpenRegisterSellPayments');
+        $register = CashRegister::findOrFail(1);
+        $reconcile->invoke($util, $register);
+        $reconcile->invoke($util, $register);
+
+        $this->assertEquals([1 => 100, 2 => 31.49], CashRegisterTransaction::orderBy('cash_register_id')
+            ->pluck('amount', 'cash_register_id')->all());
+        $this->assertSame(2, CashRegisterTransaction::withTrashed()->count());
     }
 
     public function test_restoring_a_payment_does_not_change_a_register_after_it_is_closed(): void

@@ -1,6 +1,6 @@
 <script type="text/javascript">
 	$(document).ready(function(){
-		$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+		$('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
             if ($(e.target).attr('href') == '#ouput-tax-project-invoice') {
                 if (typeof (output_tax_project_invoice_datatable) == 'undefined') {
                     output_tax_project_invoice_datatable = $('#output_tax_project_invoice_table').DataTable({
@@ -18,6 +18,7 @@
                                     .endDate.format('YYYY-MM-DD');
                                 d.start_date = start;
                                 d.end_date = end;
+                                d.tax_rate_id = $('#tax_report_rate_id').val();
                             }
                         },
                         columns: [
@@ -49,7 +50,7 @@
             }
         });
 
-        $('#tax_report_date_range').change( function(){
+        $('#tax_report_date_range, #tax_report_rate_id').change( function(){
             if ($("#ouput-tax-project-invoice").hasClass('active')) {
                 output_tax_project_invoice_datatable.ajax.reload();
             }
